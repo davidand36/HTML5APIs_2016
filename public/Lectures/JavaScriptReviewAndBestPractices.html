@@ -1835,24 +1835,32 @@ console.log( 'I was immediately invoked.' );
                 <button type="button" class="runCode">Run</button>
               </p>
               <p>
-                This function is anonymous, because we are only going to call it once, right away. It's declaration and definition are wrapped in parentheses, and the final pair of parentheses are simply the ones we use to call (invoke) the function.
+                This function is anonymous, because we are only going to call it once, right away. Its declaration and definition are wrapped in parentheses, and the final pair of parentheses are simply the ones we use to call (invoke) the function.
               </p>
             </div>
+          </div>
+          <h3>Private variables</h3>
+          <div>
             <div>
               <p>
-                The main value of IIFEs is that they help us keep variables and functions separate and "private", so that different parts of our program don't interfere with each other too much. Here is a somewhat artificial example:
+                The main value of IIFEs is that they help us keep variables and functions separate and "private", so that different parts of our program don't interfere with each other too much. In particular, they help us avoid global variables. Here is a somewhat artificial example:
               </p>
               <p>
                 First, let's write a program that updates a Fibonacci sequence every 100 milliseconds:
                 <pre>
 var x = 1;
 var y = 2;
+var i = 0;
 function updateFibonacci( ) {
-    console.log( 'Next Fibonacci: ' + x );
-    console.log( 'Next Fibonacci: ' + y );
-    x += y;
-    y += x;
-    if ( x &lt; 30 ) {
+    if ( i % 2 === 0 ) {
+        console.log( 'Next Fibonacci: ' + x );
+        x += y;
+    } else {
+        console.log( 'Next Fibonacci: ' + y );
+        y += x;
+    }
+    ++i;
+    if ( x &lt; 100 || y &lt; 100 ) {
         setTimeout( updateFibonacci, 100 );
     }
 }
@@ -1884,12 +1892,17 @@ updateSquares( );
                 <pre>
 var x = 1;
 var y = 2;
+var i = 0;
 function updateFibonacci( ) {
-    console.log( 'Next Fibonacci: ' + x );
-    console.log( 'Next Fibonacci: ' + y );
-    x += y;
-    y += x;
-    if ( x &lt; 30 ) {
+    if ( i % 2 === 0 ) {
+        console.log( 'Next Fibonacci: ' + x );
+        x += y;
+    } else {
+        console.log( 'Next Fibonacci: ' + y );
+        y += x;
+    }
+    ++i;
+    if ( x &lt; 100 || y &lt; 100 ) {
         setTimeout( updateFibonacci, 100 );
     }
 }
@@ -1910,7 +1923,7 @@ updateSquares( );
             </div>
             <div>
               <p>
-               Oh, what a mess! This obviously doesn't work because they are both using the same <code>x</code> variable. (Just because they are declared twice doesn't help.) We could try to solve this by using separate variables, e.g., <code>fibX</code>, <code>fibY</code>, and <code>squareX</code>, but in a large program that approach becomes unwieldly.
+               This obviously doesn't work because they are both using the same <code>x</code> variable. (Just because they are declared twice doesn't help.) We could try to solve this by using separate variables, e.g., <code>fibX</code>, <code>fibY</code>, and <code>squareX</code>, but in a large program that approach becomes unwieldly.
               </p>
               <p>
                 Instead, let's wrap each section in an IIFE:
@@ -1918,13 +1931,17 @@ updateSquares( );
 (function() {
 var x = 1;
 var y = 2;
-
+var i = 0;
 function updateFibonacci( ) {
-    console.log( 'Next Fibonacci: ' + x );
-    console.log( 'Next Fibonacci: ' + y );
-    x += y;
-    y += x;
-    if ( x &lt; 30 ) {
+    if ( i % 2 === 0 ) {
+        console.log( 'Next Fibonacci: ' + x );
+        x += y;
+    } else {
+        console.log( 'Next Fibonacci: ' + y );
+        y += x;
+    }
+    ++i;
+    if ( x &lt; 100 || y &lt; 100 ) {
         setTimeout( updateFibonacci, 100 );
     }
 }
