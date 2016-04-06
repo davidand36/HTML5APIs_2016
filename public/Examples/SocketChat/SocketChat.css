@@ -1,0 +1,14 @@
+/*
+  SocketChat.css
+  David M. Anderson
+
+  Styling for SocketChat app
+*/
+
+#message {
+    width: 40em;
+}
+
+.from-me {
+    color: blue;
+}

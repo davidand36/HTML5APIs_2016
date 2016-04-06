@@ -1,0 +1,16 @@
+@font-face {
+    font-family: 'Text';
+    src: url('fonts/capriola-regular-webfont.eot');
+    src: url('fonts/capriola-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/capriola-regular-webfont.woff') format('woff'),
+         url('fonts/capriola-regular-webfont.ttf') format('truetype'),
+         url('fonts/capriola-regular-webfont.svg#CapriolaRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.webFont
+{
+    font-family: Text;
+    color: white;
+}

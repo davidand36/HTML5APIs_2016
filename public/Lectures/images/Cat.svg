@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+                     "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg width="144" height="144"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>Cat</title>
+  <desc>Drawing of a cat</desc>
+
+  <defs>
+    <style type="text/css"><![CDATA[
+        .head,
+        .ear
+        {
+            stroke: black;
+            stroke-width: 3;
+            fill: white;
+        }
+
+        .eye
+        {
+            stroke: black;
+            fill: rgb( 100, 200, 100 );
+        }
+
+        .pupil
+        {
+            fill: black;
+        }
+
+        .whiskers,
+        .mouth
+        {
+            stroke: black;
+            fill: none;
+        }
+
+        .nose
+        {
+            stroke: black;
+            stroke-linejoin: miter;
+            fill: rgb( 255, 200, 200 );
+        }
+
+        .mouth
+        {
+            stroke-width: 2;
+        }
+
+        text
+        {
+            font-family: sans-serif;
+            font-size: 20px;
+            text-anchor: middle;
+        }
+    ]]></style>
+  </defs>
+
+  <polygon class="ear" points="30.5, 40  21.1, 13.1  48, 22.5" />
+  <polygon class="ear" points="113.5, 40  122.9, 13.1  96, 22.5" />
+  <circle class="head" cx="72" cy="64" r="48" />
+  <circle class="eye" cx="52" cy="64" r="8" />
+  <ellipse class="pupil" cx="52" cy="64" rx="4" ry="6" />
+  <circle class="eye" cx="92" cy="64" r="8" />
+  <ellipse class="pupil" cx="92" cy="64" rx="4" ry="6" />
+  <g id="whiskers" class="whiskers">
+    <line x1="62.3" y1="85.4" x2="10.2" y2="71.4" />
+    <line x1="62" y1="88" x2="8" y2="88" />
+    <line x1="62.3" y1="90.6" x2="10.2" y2="104.6" />
+  </g>
+  <use xlink:href="#whiskers" transform="scale(-1, 1) translate(-144, 0)" />
+  <path class="nose" d="M 78, 78  L 66, 78  A 6 8 0  0 0  78, 78  Z" />
+  <path id="mouth" class="mouth" d="M 48, 92  A 12 8 0  0 0  72, 92" />
+  <use xlink:href="#mouth" transform="scale(-1, 1) translate(-144, 0)" />
+  <text x="72" y="134">Cat</text>
+
+</svg>

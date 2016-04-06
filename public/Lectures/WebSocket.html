@@ -1,0 +1,208 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: WebSocket</title>
+    <link rel="stylesheet" href="Lecture.css" />
+  </head>
+  <body>
+    <div id="errorMsgDiv" style="display:none;"></div>
+
+    <h1 class="top">HTML5 APIs: WebSocket</h1>
+
+    <div class="accordion h1">
+      <h1>Introduction</h1>
+      <div>
+        <p>
+          <em>WebSocket</em> is a recent, but well-supported, standard that allows two-way low-latency communication between Web clients and servers.
+        </p>
+        <p>
+          Ajax allows Web applications to ask servers for just the data they need without full page refreshes, but still means that the client has to make the requests. If the server has new data, the client won't know unless and until it asks. Around the time Ajax was developed, Web technologists were developing various approaches to get around this limitation. The goal was sometimes referred to as "server push" (as opposed to "client pull"), and also as "Comet", <em>Comet</em> and <em>Ajax</em> being two well-known powdered cleansers. Comet was an umbrella term for several clever, but complex and somewhat limited, tricks using standard browser features.
+        </p>
+        <p>
+          The <em>WebSocket</em> API is pretty simple and has good support in modern browsers, including IE 10 and up. There are some libraries that extend and enhance it. One of the most popular is <em>Socket.IO</em>, which we will discuss shortly.
+        </p>
+      </div>
+
+      <h1>WebSocket</h1>
+      <div class="accordion h2">
+        <h2>Overview</h2>
+        <div>
+          <p>
+            <em>WebSocket</em> is both a <a href="http://tools.ietf.org/html/rfc6455" target="_blank">protocol</a> and an <a href="http://www.w3.org/TR/websockets/" target="_blank">API</a>. As a protocol, it is distinct from HTTP, the standard Web protocol. In fact the two are connected in two ways. First, modern Web browsers now handle both protocols, and WebSocket is intended for use with such user agents as clients. Second, the initial "handshake" that sets up a WebSocket connection is done via HTTP.
+          </p>
+          <p>
+            WebSocket URLs look much like regular Web URLs, the main difference is that the protocol is specified as <code>ws</code> (or <code>wss</code> for a secure, SSL-based, connection). Thus:
+            <pre>
+ws://example.com:8080/path
+            </pre>
+          </p>
+          <p>
+            The WebSocket API specifies the way a JavaScript client can interact with a server using this protocol.
+          </p>
+        </div>
+        <h2>Server</h2>
+        <div>
+          <p>
+            Setting up a WebSocket server is beyond the scope of this course, in part because it depends on the framework and language being used on the server. There are <a href="http://ajf.me/websocket/#libs" target="_blank">a variety of libraries</a> available. For NodeJS, one such is <a href="https://github.com/theturtle32/WebSocket-Node" target="_blank">WebSocket-Node</a>.
+          </p>
+        </div>
+        <h2>Client</h2>
+        <div class="accordion h3">
+          <h3>Connecting</h3>
+          <div>
+            <p>
+              The client makes a connection with a server through the WebSocket constructor:
+              <pre>
+var socket = new WebSocket( 'ws://example.com' );
+              </pre>
+            </p>
+          </div>
+          <h3>Events</h3>
+          <div>
+            <p>
+              There are four WebSocket events:
+              <ul>
+                <li><code>open</code>: connection has been made</li>
+                <li><code>close</code>: connection has been lost</li>
+                <li><code>message</code>: message received from the server</li>
+                <li><code>error</code>: an error occurred</li>
+              </ul>
+            </p>
+            <p>
+              To listen for events we set a callback function, e.g.:
+              <pre>
+socket.onmessage = function( event ) {
+    var message = event.data;
+    //Do something with this message
+}
+              </pre>
+            </p>
+            <p>
+              Of course we can also send messages:
+              <pre>
+socket.send( 'My message' );
+              </pre>
+              Originally, WebSocket only supported strings as message data. This is still the easiest type towork with. Even when you want to send JavaScript objects, it is usually easiest to use <code>JSON.stringify()</code> and <code>JSON.parse()</code>. But WebSocket can also transmit binary data. It is usually received as a <code>Blob</code> object, which can be used as a <code>src</code> for <code>&lt;img&gt;</code> elements and such.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <h1>Socket.IO</h1>
+      <div class="accordion h2">
+        <h2>Overview</h2>
+        <div>
+          <a href="http://socket.io" target="_blank">Socket.IO</a> is an open-source Node.js module that has both server and client components, facilitating bi-directional communication between them. When available, it uses WebSocket, but for older browsers (such as IE 9 and before), it falls back to a Comet technique called "long polling". It also has many features that make it more convenient to work with than WebSocket alone. (For one, it will attempt to restore lost connections.)
+        </div>
+        <h2>Server</h2>
+        <div class="accordion h3">
+          <h3>Setup</h3>
+          <div>
+            <p>
+              Using Socket.IO with NodeJS and Express is quite easy. You set up the Express app as usual to serve static and any other content (via HTTP(S)), and have it listen on the port of choice. Create the Socket.IO server based on the Express server. Then have it start listening for <code>connection</code> events.
+            </p>
+            <pre>
+var express = require( 'express' );
+var socketio = require( 'socket.io' );
+var app = express();
+//... Configure app as needed, e.g.:
+app.use( express.static( __dirname + '/public/' ) );
+//...
+var server = app.listen( port );
+// Create Socket.IO server:
+var io = socketio( server );
+// Watch for incoming Socket.IO connections:
+io.on(
+    'connection',
+    function( socket ) {
+        // set handlers for socket events
+    } );
+            </pre>
+            <p>
+              Each connection creates a <em>socket</em>, and we can now watch for events on that socket.
+            </p>
+          </div>
+          <h3>Events</h3>
+          <div>
+            <p>
+              Each socket represents the connection of the server with an individual client. If that connection is closed by the client, the socket will receive a <code>disconnect</code> event.
+            </p>
+            <p>
+              But one difference between Socket.IO and straight WebSocket is that the former allows the application to use its own custom message types, rather than just <code>message</code>. Furthermore, Socket.IO automatically stringifies and parses JSON so that most JavaScript objects can be sent as the message data, not just strings. Of course the client and server should agree on the event names and data formats.
+            </p>
+            <p>
+              There are several ways the server can send events to clients:
+              <ul>
+                <li><code>socket.emit( 'message type', messageData )</code> sends the message to the client on this socket.</li>
+                <li><code>io.emit( 'message type', messageData )</code> sends the message to everyone (all connected clients).</li>
+                <li><code>socket.broadcast.emit( 'message type', messageData )</code> sends the message to everyone other than the client on this socket.</li>
+              </ul>
+            </p>
+            <p>
+              To listen for incoming messages of a given type, we use the <code>socket.on()</code> method, passing in the message type and a function to be called whenever the message is received:
+              <pre>
+socket.on( 'message type', function( messageData ) { ... } );
+              </pre>
+            </p>
+          </div>
+        </div>
+        <h2>Client</h2>
+        <div class="accordion h3">
+          <h3>Connecting</h3>
+          <div>
+            <p>
+              The client HTML file should include the Socket.IO client script:
+              <pre>
+&lt;script src="/socket.io/socket.io.js"&gt;&lt;/script&gt;
+              </pre>
+              This script file is generated automatically by the Node.js server; you don't need to put it in your server's <code>public/</code> directory.
+            </p>
+            <p>
+              This script exposes a global function, <code>io()</code>. Calling it makes a connection with the server:
+              <pre>
+var socket = io( );
+              </pre>
+              We don't need to supply the URL if we are connecting with the server that hosts the site. (It is possible to connect with Socket.IO servers other than the one serving your Web site by supplying the URL.)
+            </p>
+          </div>
+          <h3>Events</h3>
+          <div>
+            <p>
+              As on the server, there are some standard events, such as <code>connect</code> and <code>disconnect</code>, that the socket can listen for, but messages themselves are given user-defined types, and the message data can be strings or anything that can be converted to JSON, i.e. most JavaScript objects.
+            </p>
+            <p>
+              To send a message, call
+              <pre>
+socket.emit( 'message type', messageData );
+              </pre>
+              (Unlike the server, the client has no way to broadcast messages; it can only talk to the server it has a connection with.)
+            </p>
+            <p>
+              To receive messages, listen for them by type:
+              <pre>
+socket.on( 'message type', function( messageData ) { ... } );
+              </pre>
+            </p>
+          </div>
+        </div>
+        <h2>Example</h2>
+        <div>
+          <p>
+            The "hello, world" of this technology is a chat program. Here is mine: <a href="/Examples/SocketChat/" target="_blank">SocketChat</a>.
+          </p>
+          <p>
+            The source code for this app is on <a href="https://github.com/davidand36/HTML5APIs_2015" target="_blank">GitHub</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" id="accordionToggle"></button>
+
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+  </body>
+</html>

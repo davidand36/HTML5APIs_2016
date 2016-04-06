@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Application Cache</title>
+    <link rel="stylesheet" href="Lecture.css" />
+  </head>
+  <body>
+    <div id="errorMsgDiv" style="display:none;"></div>
+
+    <h1 class="top">HTML5 APIs: Application Cache</h1>
+
+    <div class="accordion h1">
+      <h1>Introduction</h1>
+      <div>
+        <p>
+          Many Web applications simply require Internet access. If a site relies on dynamic data on a server (e.g. an airline reservation site, social networking site, or e-commerce site), or a large number of resources that the user is likely to visit (e.g. Wikipedia), then there may be little to offer without that connection. But some sites are primarily a small number of static resources, including many "brochure" sites for businesses and organizations, and even many single-player games.
+        </p>
+        <p>
+          HTML5 introduced the <em>Application Cache</em> to allow the latter type of Web sites to function even when the user is disconnected from the Internet. When the user visits the site for the first time, a <em>manifest</em> tells the browser which files to download, and once that has been accomplished, the site can be accessed later even when offline.
+        </p>
+        <p>
+          The Application Cache is distinct from the browser's regular cache. Browsers have always cached resources to avoid requesting the same files over and over. But they still rely on a connection to the server with that caching system. (For one thing, they generally check to make sure they have the latest version of the files.)
+        </p>
+      </div>
+
+      <h1>The Manifest</h1>
+      <div class="accordion h2">
+        <h2>The format</h2>
+        <div>
+          <p>
+            The app cache manifest is a simple text file. It must begin with the line:
+            <pre>
+CACHE MANIFEST
+            </pre>
+          </p>
+          <p>
+            Lines beginning with "#" are comments. I recommend adding a version number as a comment, partly for reasons discussed later.
+          </p>
+          <p>
+            The rest of the manifest is divided into up to three sections, each beginning with one of these headers:
+            <pre>
+CACHE:
+NETWORK:
+FALLBACK:
+            </pre>
+          </p>
+          <p>
+            In the <code>CACHE</code> section, you list the resources (files) that should be downloaded and saved for offline use.
+          </p>
+          <p>
+            In the <code>NETWORK</code> section, you list resources that should not be cached but rather always downloaded. They will not be available when offline. For many sites, you can use the wildcard <code>*</code> (asterisk), which represents every file not listed for caching. This makes sure that those resources are available when the user is online.
+          </p>
+          <p>
+            The <code>FALLBACK</code> section tells the browser what to do when it is offline and cannot access the <code>NETWORK</code> resources. In this section, each line specifies two resources: first the online one and second the fallback replacement. For the first resource you can use the wildcard <code>/</code> (slash), which matches any resource not cached.
+          </p>
+        </div>
+        <h2>Example manifest</h2>
+        <div>
+          <p>
+            A complete, if fairly short, Application Cache manifest might look like this:
+          </p>
+          <pre>
+CACHE MANIFEST
+# Version 8
+
+CACHE:
+index.html
+AppCache.css
+AppCacheClient.js
+ServerDataFallback.js
+lib/jquery-2.js
+
+NETWORK:
+ServerData.js
+
+FALLBACK:
+ServerData.js ServerDataFallback.js
+          </pre>
+        </div>
+        <h2>The <code>manifest</code> attribute</h2>
+        <div>
+          <p>
+            You tell the browser that you are using the Application Cache by adding an attribute to the <code>&lt;html&gt;</code> tag in your document. The attribute specifies the URL of the manifest file:
+            <pre>
+&lt;html manifest="appcache.manifest"&gt;
+            </pre>
+          </p>
+        </div>
+        <h2>Content-Type header</h2>
+        <div>
+          <p>
+            The browser will not respect the manifest unless it is sent from the server with the correct mime-type. In particular, the <code>Content-Type</code> header should be set to <code>text/cache-manifest</code>. How this is done depends on the server. For Node.js, you set the header in response to a request for the manifest thusly:
+            <pre>
+response.setHeader( 'Content-Type', 'text/cache-manifest' );
+            </pre>
+          </p>
+        </div>
+      </div>
+
+      <h1>The applicationCache object</h1>
+      <div>
+        <p>
+          The global <code>window</code> object has a property, <code>applicationCache</code> which has a <code>status</code> property and can trigger events as the cache is processed and updated. We'll see those in the example.
+        </p>
+      </div>
+
+      <h1>Example</h1>
+      <div>
+        <p>
+          <a href="/Examples/AppCache" target="_blank">AppCache</a> is a simple demo app that displays both the time on the client and that on the server. When it is offline it displays a message explaining that it can't show the latter. It just has one HTML file and a couple of scripts and stylesheets, all but one of which can be used offline. The manifest for this app is the one shown earlier.
+        </p>
+      </div>
+
+    </div>
+
+    <button type="button" id="accordionToggle"></button>
+
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+/*
+  AppCache.css
+  David M. Anderson
+
+  Styling for AppCache demo
+*/
+
+body {
+    background-color: rgb( 200, 200, 255 );
+    color: rgb( 0, 0, 50 );
+}

@@ -1,0 +1,1019 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Canvas Graphics</title>
+    <link rel="stylesheet" href="Lecture.css" />
+    <link rel="stylesheet" href="CanvasDemo.css" />
+    <link rel="stylesheet" href="WebFonts.css" />
+  </head>
+  <body>
+
+    <h1 class="top">HTML5 APIs: Canvas Graphics</h1>
+    
+    <div class="accordion h1">
+      <h1>What is Canvas?</h1>
+      <div>
+        <ul>
+          <li><code>&lt;canvas&gt;</code> is an HTML element tag which represents a drawing surface.</li>
+          <li>Canvas is a JavaScript API which allows programmers to draw on, read from, and manage the state of a <code>canvas</code> element.</li>
+          <li>The canvas API provides convenient high-level drawing methods as well as the ability to access individual pixels.</li>
+          <li>The API works primarily with a &quot;context&quot; obtained for a particular <code>canvas</code> element.</li>
+          <li>The usual context is for 2D graphics, but a 3D context can be obtained for use with <em>WebGL</em>.</li>
+          <li>This course will not cover 3D programming.</li>
+          <li>For a detailed treatment, read <br />
+            David Geary, <em>Core HTML5 Canvas: Graphics, Animation, and Game Development</em>, 2012 Prentice Hall (ISBN <a href="http://www.barnesandnoble.com/w/core-html5-canvas-david-geary/1110769915?ean=9780132761611" target="_blank">978-0-13-276161-1</a>)</li>
+        </ul>
+      </div>
+
+      <h1>Creating a canvas</h1>
+      <div class="accordion h2">
+        <h2>Directly in HTML</h2>
+        <div>
+          <ul>
+            <li>You can declare a canvas element right in your HTML:<br />
+              <code>&lt;canvas id=&quot;myCanvas&quot;&gt;&lt;/canvas&gt;</code>
+            </li>
+            <li>This will create a transparent 300x150-pixel canvas.</li>
+            <li>Anything between the &lt;canvas&gt; and &lt;/canvas&gt; tags will be displayed only if the browser does <em>not</em> support <code>canvas</code>.</li>
+            <li>We can then obtain a JavaScript object referring to this element in the usual ways, e.g. <code>var canvas = $(&quot;#myCanvas&quot;);</code></li>
+            <li>Generally, directly declaring <code>canvas</code> unnecessarily mixes intent with implementation.</li>
+          </ul>
+        </div>
+
+        <h2>In JavaScript</h2>
+        <div>
+          <ul>
+            <li>You can create a <code>canvas</code> element with JavaScript and append it into a DOM element: <br />
+              <pre>
+var canvas = document.createElement( 'canvas' );
+element.appendChild( canvas );
+              </pre>
+            </li>
+            <li>In the jQuery idiom this is:<br />
+              <pre>
+var canvas = $('&lt;canvas /&gt;')[0];
+$(canvas).appendTo( element );
+              </pre>
+            </li>
+          </ul>
+        </div>
+
+        <h2>Dimensions</h2>
+        <div>
+          <ul>
+            <li>By default, the <code>canvas</code> is 300x150 pixels.</li>
+            <li>You can resize it by setting the properties of the object:<br />
+              <pre>
+canvas.width = 800;
+canvas.height = 432;
+              </pre>
+            </li>
+            <li>
+              These properties are the dimensions of the surface into which we draw, but are not the dimensions of the element on the screen.<br />
+              Those dimensions are controlled via CSS.<br />
+              If these dimensions differ, the canvas's bitmap image will be stretched or shrunk to fit the CSS dimensions.
+            </li>
+            <li>
+              It is best to keep the two sets of dimensions in agreement. Suppose our containing element is declared in the HTML as <br />
+              <pre>
+&lt;div id=&quot;game&quot;&gt;
+  &lt;div id=&quot;gameBoard&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+              </pre>
+              Then the dimensions might be set in CSS as <br />
+              <pre>
+#game
+{
+    width: 40em;
+    height: 24em;
+}
+
+#gameBoard
+{
+    width: 100%;
+    height: 90%;
+}
+              </pre>
+              In our JavaScript (with jQuery), we create a canvas and set its dimensions to match those of the containing element like this: <br />
+              <pre>
+var boardDiv = $('#gameBoard'),
+    canvas = document.createElement( 'canvas' );
+canvas.width = boardDiv.width();
+canvas.height = boardDiv.height();
+$(canvas).appendTo( boardDiv );
+              </pre>
+            </li>
+          </ul>
+        </div>
+
+        <h2>Context</h2>
+        <div>
+          Most of the useful properties and methods we need are provided, not by the <code>canvas</code> object, but by a <em>CanvasRenderingContext2D</em> object, which is usually abbreviated to &quot;context&quot;, &quot;ctx&quot;, or &quot;CRC&quot;. <br />
+          We get this object for a given <code>canvas</code> simply by calling <br />
+          <pre>
+var ctx = canvas.getContext( '2d' );      
+          </pre>
+          (Again, we will not be covering 3D graphics, but for a 3D context one would call <code>getContext( 'webgl' );</code>.)
+        </div>
+      </div>
+
+      <h1>Shapes and paths</h1>
+      <div class="accordion h2">
+        <h2>Coordinates</h2>
+        <div>
+          <ul>
+            <li>By default, coordinates on the canvas are measured in pixels.</li>
+            <li>The X-axis has 0 on the left and increases to the right.</li>
+            <li>The Y-axis has 0 at the top and increases downward. This is the standard convention in 2D graphics, though it is opposite to the coordinate system used in most other contexts, including math texts and graphs in newspapers.</li>
+          </ul>
+        </div>
+        
+        <h2>Rectangles</h2>
+        <div class="accordion h3">
+          <h3>Drawing an outlined (stroked) rectangle</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            We specify a rectangle with four parameters: <em>x</em> (left), <em>y</em> (top), <em>width</em>, and <em>height</em>. <em>Stroke</em> draws the lines that form the rectangle.
+            <pre>
+ctx.strokeRect( 30, 20, 100, 50 );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Drawing a filled rectangle</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            In contrast to <em>stroke</em>, <em>fill</em> fills the area defined by the rectangle.
+            <pre>
+ctx.fillRect( 30, 20, 100, 50 );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Filling the canvas</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            Passing the appropriate values fills the whole canvas.
+            <pre>
+ctx.fillRect( 0, 0, canvas.width, canvas.height );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Clearing a rectangle</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            <em>Clear</em> fills the rectangle with transparent black.
+            <pre>
+ctx.fillRect( 0, 0, canvas.width, canvas.height );
+<b>ctx.clearRect( 30, 20, 100, 50 );</b>
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+        </div>
+
+        <h2>Paths</h2>
+        <div class="accordion h3">
+          <h3>Paths</h3>
+          <div>
+            Shapes other than rectangles are drawn by creating paths. Paths are made out of line segments, arcs, and other curves.
+          </div>
+          
+          <h3>Creating a simple path</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            This code creates a simple path, made of two connected line segments, but nothing actually gets drawn yet.
+            <pre>
+ctx.beginPath( );
+ctx.moveTo( 100, 10 );
+ctx.lineTo( 20, 80 );
+ctx.lineTo( 180, 80 );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Drawing a path</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            We need to call <code>stroke()</code> to render the path.
+            <pre>
+ctx.beginPath( );
+ctx.moveTo( 100, 10 );
+ctx.lineTo( 20, 80 );
+ctx.lineTo( 180, 80 );
+<b>ctx.stroke( );</b>
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Filling a path</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            We can also <em>fill</em> a path.
+            <pre>
+ctx.beginPath( );
+ctx.moveTo( 100, 10 );
+ctx.lineTo( 20, 80 );
+ctx.lineTo( 180, 80 );
+<b>ctx.fill( );</b>
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Closing a path</h3>
+          <div>
+            Notice that <code>fill()</code> worked as if we had closed the path by drawing a line back to the starting point.
+            <div class="canvasDemo">
+              <canvas class="demo"></canvas>
+              Of course we can do this manually:
+              <pre>
+ctx.beginPath( );
+ctx.moveTo( 100, 10 );
+ctx.lineTo( 20, 80 );
+ctx.lineTo( 180, 80 );
+<b>ctx.lineTo( 100, 10 );</b>
+ctx.stroke( );
+              </pre>
+              <button type="button" class="runCanvasCode">Run</button>
+              <button type="button" class="clearCanvas">Clear</button>
+            </div>
+            <div class="canvasDemo">
+              <canvas class="demo"></canvas>
+              But an easier, and more error-proof, way is with <code>closePath()</code>:
+              <pre>
+ctx.beginPath( );
+ctx.moveTo( 100, 10 );
+ctx.lineTo( 20, 80 );
+ctx.lineTo( 180, 80 );
+<b>ctx.closePath( );</b>
+ctx.stroke( );
+              </pre>
+              <button type="button" class="runCanvasCode">Run</button>
+              <button type="button" class="clearCanvas">Clear</button>
+            </div>
+          </div>
+          
+          <h3>Setting color</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            Colors used for stroking and filling paths (and rectangles) are controlled by setting two properties of the context: <code>strokeStyle</code> and <code>fillStyle</code>. <br />
+            There are various ways to set these styles, but the most common is to set the <em>red</em>, <em>green</em>, and <em>blue</em> values to numbers between 0 and 255, using a string containing a call to the <code>rgb</code> function.
+            <pre>
+<b>ctx.fillStyle = "rgb( 0, 255, 0 )";
+ctx.strokeStyle = "rgb( 192, 0, 0 )";</b>
+ctx.beginPath( );
+ctx.moveTo( 100, 10 );
+ctx.lineTo( 20, 80 );
+ctx.lineTo( 180, 80 );
+ctx.fill( );
+ctx.stroke( );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Line width</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            We can also control the width of the stroke by setting the <code>lineWidth</code> property.
+            <pre>
+ctx.fillStyle = "rgb( 0, 255, 0 )";
+ctx.strokeStyle = "rgb( 192, 0, 0 )";
+<b>ctx.lineWidth = 6.0;</b>
+ctx.beginPath( );
+ctx.moveTo( 100, 10 );
+ctx.lineTo( 20, 80 );
+ctx.lineTo( 180, 80 );
+ctx.fill( );
+ctx.stroke( );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Line caps and joins</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            The <code>lineCap</code> and <code>lineJoin</code> properties give further control over the look of paths.
+            <pre>
+ctx.beginPath( );
+ctx.moveTo( 10, 30 );
+ctx.lineTo( 50, 130 );
+ctx.lineTo( 90, 30 );
+ctx.strokeStyle = "rgb( 0, 0, 128 )";
+ctx.lineWidth = 12.0;
+ctx.stroke( );
+ctx.strokeStyle = "rgb( 255, 255, 0 )";
+ctx.lineWidth = 1.0;
+ctx.stroke( );
+
+ctx.beginPath( );
+ctx.moveTo( 70, 130 );
+ctx.lineTo( 110, 30 );
+ctx.lineTo( 150, 130 );
+ctx.strokeStyle = "rgb( 0, 0, 128 )";
+<b>ctx.lineCap = "butt";
+ctx.lineJoin = "miter";</b>
+ctx.lineWidth = 12.0;
+ctx.stroke( );
+ctx.strokeStyle = "rgb( 255, 255, 0 )";
+ctx.lineWidth = 1.0;
+ctx.stroke( );
+
+ctx.beginPath( );
+ctx.moveTo( 130, 30 );
+ctx.lineTo( 170, 130 );
+ctx.lineTo( 210, 30 );
+<b>ctx.lineCap = "square";
+ctx.lineJoin = "bevel";</b>
+ctx.strokeStyle = "rgb( 0, 0, 128 )";
+ctx.lineWidth = 12.0;
+ctx.stroke( );
+ctx.strokeStyle = "rgb( 255, 255, 0 )";
+ctx.lineWidth = 1.0;
+ctx.stroke( );
+
+ctx.beginPath( );
+ctx.moveTo( 190, 130 );
+ctx.lineTo( 230, 30 );
+ctx.lineTo( 270, 130 );
+ctx.strokeStyle = "rgb( 0, 0, 128 )";
+<b>ctx.lineCap = "round";
+ctx.lineJoin = "round";</b>
+ctx.lineWidth = 12.0;
+ctx.stroke( );
+ctx.strokeStyle = "rgb( 255, 255, 0 )";
+ctx.lineWidth = 1.0;
+ctx.stroke( );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Alpha</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            We can also control the opacity of the stroke or fill by setting the <em>alpha</em> value of the color. This is a value between 0.0 and 1.0, where 0 is completely transparent and 1 is completely opaque (the default). <br />
+            This is done by using <code>rgba</code> instead of <code>rgb</code>.
+            <pre>
+ctx.fillStyle = "rgb<b>a</b>( 0, 0, 192, <b>1.0</b> )"
+ctx.fillRect( 0, 0, 90, 100 );
+ctx.fillStyle = "rgb<b>a</b>( 0, 255, 0, <b>0.3</b> )";
+ctx.strokeStyle = "rgb<b>a</b>( 192, 0, 0, <b>0.7</b> )";
+ctx.lineWidth = 6.0;
+ctx.beginPath( );
+ctx.moveTo( 100, 10 );
+ctx.lineTo( 20, 80 );
+ctx.lineTo( 180, 80 );
+ctx.fill( );
+ctx.stroke( );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Arcs</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            An arc is a segment of a circle. It is created by specifying the center of the circle (<em>x</em> and <em>y</em>), its <em>radius</em>, and the <em>start angle</em> and <em>end angle</em>. <br />
+            Angles are measured in <em>radians</em> clockwise from the positive X-axis. In other words angle 0 on the circle is directly to the right of the center; angle PI/2 is down, angle PI is to the left, and angle PI*3/2 is up. (This is consistent with the &quot;Y-axis points down&quot; coordinate system.)
+            <pre>
+ctx.strokeStyle = "rgb( 0, 0, 192 )";
+ctx.lineWidth = 4.0;
+ctx.beginPath( );
+<b>ctx.arc( 75, 75, 50, 0.25 * Math.PI, Math.PI );</b>
+ctx.stroke( );
+ctx.beginPath( );
+<b>ctx.arc( 200, 75, 50, 1.75 * Math.PI, Math.PI );</b>
+ctx.stroke( );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Arc direction</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            By default arcs are draw clockwise, but if you add an argument of <code>true</code>, they are drawn counter-clockwise. Notice that the angles themselves are still the same.
+            <pre>
+ctx.strokeStyle = "rgb( 0, 0, 192 )";
+ctx.lineWidth = 4.0;
+ctx.beginPath( );
+ctx.arc( 75, 75, 50, 0.25 * Math.PI, Math.PI, <b>true</b> );
+ctx.stroke( );
+ctx.beginPath( );
+ctx.arc( 200, 75, 50, 1.75 * Math.PI, Math.PI, <b>true</b> );
+ctx.stroke( );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Connecting arcs</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            I created separate arcs by calling <code>beginPath()</code> before each one, but like line segments, they can be used to build up a path. Line segments are automatically added to connect them.
+            <pre>
+ctx.fillStyle = "rgb( 255, 255, 0 )";
+ctx.strokeStyle = "rgb( 0, 0, 192 )";
+ctx.lineWidth = 4.0;
+ctx.beginPath( );
+ctx.arc( 75, 75, 50, 0.25 * Math.PI, Math.PI );
+<b>//No beginPath();</b>
+ctx.arc( 200, 75, 50, 1.75 * Math.PI, Math.PI );
+ctx.fill( );
+ctx.stroke( );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Other path elements</h3>
+          <div>
+            In addition to line segments and arcs, the Canvas API offers quadratic and cubic <em>Bezier curves</em>. The math behind these is more complicated, but they offer the ability to draw a variety of nice shapes. You can read about them in Geary books.
+          </div>
+          
+        </div>
+
+        <h2>Gradients and patterns</h2>
+        <div class="accordion h3">
+          Fill and stroke styles do not need to be solid colors.
+          
+          <h3>Linear gradients</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            A linear gradient blends colors along a line specified by the endpoints. Here our line runs from [ 100, 50 ] to [ 50, 100 ]. We set color stops at points on the line ranging from 0 for the beginning ([100, 50]) to 1 for the end ([50, 100]).
+            <pre>
+var gradient = ctx.createLinearGradient( 100, 50,  50, 100 );
+gradient.addColorStop( 0, "rgb( 255, 0, 0 )" );
+gradient.addColorStop( 0.7, "rgb( 0, 255, 0 )" );
+gradient.addColorStop( 1, "rgb( 0, 0, 255 )" );
+ctx.fillStyle = gradient;
+ctx.fillRect( 10, 10, 130, 130 );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Radial gradients</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            Radial gradients are similar, but create a circular pattern.
+            <pre>
+var gradient = ctx.createRadialGradient( 40, 40, 20,  40, 40, 120 );
+gradient.addColorStop( 0, "rgb( 255, 0, 0 )" );
+gradient.addColorStop( 0.7, "rgb( 0, 255, 0 )" );
+gradient.addColorStop( 1, "rgb( 0, 0, 255 )" );
+ctx.fillStyle = gradient;
+ctx.fillRect( 10, 10, 130, 130 );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Gradients for lighting effect</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            The previous examples used rather garish colors, but gradients are more often used to create more subtle lighting effects.
+            <pre>
+var gradient = ctx.createLinearGradient( 0, 0,  150, 150 );
+ctx.fillStyle = gradient;
+gradient.addColorStop( 0, "rgb( 128, 128, 255 )" );
+gradient.addColorStop( 1, "rgb( 0, 0, 128 )" );
+ctx.fillRect( 10, 10, 130, 130 );
+
+gradient = ctx.createRadialGradient( 150, 0, 10,  150, 0, 220 );
+ctx.fillStyle = gradient;
+gradient.addColorStop( 0, "rgb( 128, 128, 255 )" );
+gradient.addColorStop( 1, "rgb( 0, 0, 128 )" );
+ctx.fillRect( 160, 10, 130, 130 );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+          <h3>Patterns</h3>
+          <div class="canvasDemo">
+            <canvas class="demo"></canvas>
+            <img src="images/TurkishFlag.png" id="bayrak" />
+            We can also use an image, such as this little Turkish flag, as a pattern for filling shapes. You specify whether to repeat the image horizontally, vertically, both, or neither. Both (&quot;repeat&quot;) is usually best.
+            <pre>
+var img = $("#bayrak")[0];
+var pattern = ctx.createPattern( img, "repeat" );
+ctx.fillStyle = pattern;
+ctx.fillRect( 10, 10, 280, 130 );
+            </pre>
+            <button type="button" class="runCanvasCode">Run</button>
+            <button type="button" class="clearCanvas">Clear</button>
+          </div>
+          
+        </div>
+        
+      </div>
+
+      <h1>Clipping</h1>
+      <div class="canvasDemo">
+        <canvas class="demo"></canvas>
+        By default we can draw anywhere on the canvas. However, we can set a <em>clipping path</em> which restricts the area affected by any drawing operations to the interior of that path. <br />
+        This technique has many uses. One of the most obvious is to simulate a window or opening through which part of a scene is visible.
+        <pre>
+ctx.beginPath( );
+ctx.moveTo( 10, 75 );
+ctx.lineTo( 200, 10 );
+ctx.lineTo( 200, 140 );
+ctx.closePath( );
+<b>ctx.clip( );</b>
+ctx.fillStyle = "rgb( 0, 255, 0 )";
+ctx.strokeStyle = "rgb( 0, 0, 192 )";
+ctx.lineWidth = 5.0;
+ctx.beginPath( );
+ctx.arc( 60, 75, 50, 0, 2 * Math.PI );
+ctx.fill( );
+ctx.stroke( );
+ctx.beginPath( );
+ctx.arc( 190, 75, 50, 0, 2 * Math.PI );
+ctx.fill( );
+ctx.stroke( );
+        </pre>
+        <button type="button" class="runCanvasCode">Run</button>
+        <button type="button" class="clearCanvas">Clear</button>
+      </div>
+      
+      <h1>Saving and restoring state</h1>
+      <div class="accordion h2">
+        <h2>The context state</h2>
+        <div>
+          <ul>
+            <li>The canvas context has a <em>state</em>, which includes the current values of many properties, including:
+              <ul>
+                <li>Stroke and fill styles and line properties</li>
+                <li>The clipping path</li>
+                <li>Text properties</li>
+                <li>Shadow properties</li>
+                <li>The transformation matrix</li>
+              </ul>
+            </li>
+            <li><code>save()</code> and <code>restore()</code> operate on the entire state.</li>
+            <li>States are saved by pushing them onto a stack and restored by popping them off in a last-in-first-out fashion.</li>
+            <li>This allows you to nest pairs of save/restore calls.</li>
+        </div>
+
+        <h2>Example</h2>
+        <div class="canvasDemo">
+          <canvas class="demo"></canvas>
+          <pre>
+ctx.lineWidth = 6.0;      
+ctx.fillStyle = "rgb( 255, 255, 0 )";
+ctx.strokeStyle = "rgb( 255, 0, 255 )";
+<b>ctx.save( );</b>
+ctx.fillStyle = "rgb( 0, 0, 255 )";
+ctx.strokeStyle = "rgb( 255, 0, 0 )";
+<b>ctx.save( );</b>
+ctx.beginPath( );
+ctx.moveTo( 10, 75 );
+ctx.lineTo( 200, 10 );
+ctx.lineTo( 200, 140 );
+ctx.closePath( );
+ctx.clip( );
+ctx.fillRect( 30, 10, 50, 130 );
+ctx.strokeRect( 30, 10, 50, 130 );
+<b>ctx.restore( );</b>
+ctx.fillRect( 130, 10, 50, 130 );
+ctx.strokeRect( 130, 10, 50, 130 );
+<b>ctx.restore( );</b>
+ctx.fillRect( 230, 10, 50, 130 );
+ctx.strokeRect( 230, 10, 50, 130 );
+          </pre>
+          <button type="button" class="runCanvasCode">Run</button>
+          <button type="button" class="clearCanvas">Clear</button>
+        </div>
+      </div>
+
+      <h1>Text</h1>
+      <div class="accordion h2">
+        <h2>Drawing text</h2>
+        <div class="canvasDemo">
+          <canvas class="demo"></canvas>
+          <pre>
+ctx.font = "bold 40px sans-serif";
+ctx.fillText( "Merhaba!", 20, 50 );
+ctx.strokeText( "Merhaba!", 20, 100 );
+          </pre>
+          <button type="button" class="runCanvasCode">Run</button>
+          <button type="button" class="clearCanvas">Clear</button>
+        </div>
+        
+        <h2>Placement</h2>
+        <div class="canvasDemo">
+          <canvas class="demo"></canvas>
+          <pre>
+ctx.strokeStyle = "rgb( 255, 0, 0 )";
+ctx.beginPath( );
+ctx.moveTo( 0, 30 );
+ctx.lineTo( 299, 30 );
+ctx.moveTo( 0, 60 );
+ctx.lineTo( 299, 60 );
+ctx.moveTo( 0, 90 );
+ctx.lineTo( 299, 90 );
+ctx.moveTo( 0, 120 );
+ctx.lineTo( 299, 120 );
+ctx.moveTo( 150, 0 );
+ctx.lineTo( 150, 149 );
+ctx.stroke( );
+ctx.strokeStyle = "rgb( 0, 0, 0 )";
+ctx.font = "bold 15px Text";
+ctx.strokeText( "default default", 150, 30 );
+ctx.textAlign = "left";
+ctx.textBaseline = "alphabetic";
+ctx.strokeText( "left alphabetic", 150, 60 );
+ctx.textAlign = "center";
+ctx.textBaseline = "middle";
+ctx.strokeText( "center middle", 150, 90 );
+ctx.textAlign = "right";
+ctx.textBaseline = "top";
+ctx.strokeText( "right top", 150, 120 );
+          </pre>
+          <button type="button" class="runCanvasCode">Run</button>
+          <button type="button" class="clearCanvas">Clear</button>
+        </div>
+        
+      </div>
+
+      <h1>Shadows</h1>
+      <div class="canvasDemo">
+        <canvas class="demo"></canvas>
+        <pre>
+ctx.fillStyle = "rgb( 255, 0, 255 )";
+ctx.shadowColor = "rgb( 0, 0, 0 )";
+ctx.shadowOffsetX = 10;
+ctx.shadowOffsetY = 20;
+ctx.shadowBlur = 0;
+ctx.fillRect( 20, 20, 100, 100 );
+ctx.shadowColor = "rgb( 0, 255, 0 )";
+ctx.shadowOffsetX = -20;
+ctx.shadowOffsetY = -10;
+ctx.shadowBlur = 10;
+ctx.fillRect( 180, 20, 100, 100 );
+        </pre>
+        <button type="button" class="runCanvasCode">Run</button>
+        <button type="button" class="clearCanvas">Clear</button>
+      </div>
+
+      <h1>Transformations</h1>
+      <div class="accordion h2">
+        <h2>Changing coordinates</h2>
+        <div>
+          <ul>
+            <li>A transformation changes the current coordinate system used for drawing.</li>
+            <li>Transformations can include and/or combine translation, rotation, scaling (uniform and nonuniform), or any other linear operation.</li>
+            <li>You will generally apply transformations within a <code>save/restore</code> block.</li>
+          </ul>
+        </div>
+        
+        <h2>Translation</h2>
+        <div class="canvasDemo">
+          <canvas class="demo"></canvas>
+          <code>translate</code> takes two parameters, <em>x</em> and <em>y</em> and adds the vector [ x, y ] to each point.
+          <pre>
+ctx.fillStyle = "rgb( 96, 96, 96 )";
+ctx.lineWidth = 4.0;
+ctx.fillRect( 110, 55, 80, 40 );
+<b>ctx.translate( -60, 30 );</b>
+ctx.strokeRect( 110, 55, 80, 40 );
+          </pre>
+          <button type="button" class="runCanvasCode">Run</button>
+          <button type="button" class="clearCanvas">Clear</button>
+        </div>
+        
+        <h2>Scaling</h2>
+        <div class="canvasDemo">
+          <canvas class="demo"></canvas>
+          <code>scale</code> takes two parameters, <em>sx</em> and <em>sy</em> and multiplies the x-coordinates by sx and the y-coordinates by sy. <br />
+          This is equivalent to scalar multiplication of vectors if sx = sy. That is called <em>uniform</em> scaling.
+          <pre>
+ctx.fillStyle = "rgb( 96, 96, 96 )";
+ctx.lineWidth = 4.0;
+ctx.fillRect( 110, 55, 80, 40 );
+<b>ctx.scale( 0.5, 2 );</b>
+ctx.strokeRect( 110, 55, 80, 40 );
+          </pre>
+          <button type="button" class="runCanvasCode">Run</button>
+          <button type="button" class="clearCanvas">Clear</button>
+        </div>
+        
+        <h2>Scaling about a point</h2>
+        <div class="canvasDemo">
+          <canvas class="demo"></canvas>
+          Scaling changes both the size and position of objects. Often you want to keep some point, say the center of the object, fixed. In this case you must first translate the origin to that point, then scale, then translate back. <br />
+          (We can't do much about the fact that non-uniform scaling scales the stroke non-uniformly.)
+          <pre>
+ctx.fillStyle = "rgb( 96, 96, 96 )";
+ctx.lineWidth = 4.0;
+ctx.fillRect( 110, 55, 80, 40 );
+<b>ctx.translate( 150, 75 );</b>
+ctx.scale( 0.5, 2 );
+<b>ctx.translate( -150, -75 );</b>
+ctx.strokeRect( 110, 55, 80, 40 );
+          </pre>
+          <button type="button" class="runCanvasCode">Run</button>
+          <button type="button" class="clearCanvas">Clear</button>
+        </div>
+        
+        <h2>Rotation</h2>
+        <div class="canvasDemo">
+          <canvas class="demo"></canvas>
+          <code>rotate</code> takes one parameter, an angle, and rotates the coordinate system clockwise by this angle. <br />
+          Note that rotation is about the origin ([ 0, 0 ]) which is the top-left corner of the canvas.
+          <pre>
+ctx.fillStyle = "rgb( 96, 96, 96 )";
+ctx.lineWidth = 4.0;
+ctx.fillRect( 110, 55, 80, 40 );
+<b>ctx.rotate( Math.PI / 6 );</b>
+ctx.strokeRect( 110, 55, 80, 40 );
+          </pre>
+          <button type="button" class="runCanvasCode">Run</button>
+          <button type="button" class="clearCanvas">Clear</button>
+        </div>
+        
+        <h2>Rotation about a point</h2>
+        <div class="canvasDemo">
+          <canvas class="demo"></canvas>
+          Generally want to rotate about another point, say the center of the object you are drawing. In this case you must first translate the origin, then rotate, then translate back.
+          <pre>
+ctx.fillStyle = "rgb( 96, 96, 96 )";
+ctx.lineWidth = 4.0;
+ctx.fillRect( 110, 55, 80, 40 );
+<b>ctx.translate( 150, 75 );</b>
+ctx.rotate( Math.PI / 6 );
+<b>ctx.translate( -150, -75 );</b>
+ctx.strokeRect( 110, 55, 80, 40 );
+          </pre>
+          <button type="button" class="runCanvasCode">Run</button>
+          <button type="button" class="clearCanvas">Clear</button>
+        </div>
+
+        <h2>Transformation matrix</h2>
+        <div>
+          <ul>
+            <li>All of the supported transformations are <em>linear</em>: they preserve the straightness of lines.</li>
+            <li>Any linear translation can be represented by a <em>matrix</em>, which is a two-dimensional array of numbers in the same sense that a point or vector is a one-dimensional array (e.g. [ x, y ]).</li>
+            <li>For example, this is the matrix that represents <code>translate( x, y )</code>:
+              <pre>
+1 0 x
+0 1 y
+0 0 1
+              </pre>
+            </li>
+            <li>There is a well-defined way that matrices can be multiplied by vectors, points, and other matrices to produce new vectors, points, or matrices. But we will not go into this mathematics in this class.</li>
+            <li>The canvas context maintains the current transformations as a matrix and even allows you to set the top two rows directly: <br />
+              <code>setTransform( a, b, c, d, e, f )</code> sets the matrix to
+              <pre>
+a c e
+b d f
+0 0 1
+              </pre>
+            </li>
+            <li>Setting the transformation matrix does allow for some special transformations, such as shearing, which are used occasionally. <code>translate</code>, <code>scale</code>, and <code>rotate</code> will generally be plenty.</li>
+          </ul>
+        </div>
+        
+      </div>
+
+      <h1>Images</h1>
+      <div class="accordion h2">
+        <h2>Drawing an image</h2>
+        <div class="canvasDemo">
+          <canvas class="demo"></canvas>
+          <img src="images/NewTux.png" id="Tux" />
+          The simplest form of <code>drawImage</code> takes three parameters. The first specifies the image, which can be an HTML <code>img</code> element, or a <code>canvas</code> element (or the current frame from a video). The next parameters, <em>x</em> and <em>y</em>, specify the location of the top-left corner on the canvas. The whole image is rendered.
+          <pre>
+var img = $("#Tux")[0];
+ctx.drawImage( img, 25, 10 );  
+          </pre>
+          <button type="button" class="runCanvasCode">Run</button>
+          <button type="button" class="clearCanvas">Clear</button>
+        </div>
+        
+        <h2>Scaling an image</h2>
+        <div class="canvasDemo">
+          <canvas class="demo"></canvas>
+          We can also pass a <em>width</em> and <em>height</em> parameter. The whole image is rendered, but scaled to fill the specified rectangle on the canvas. <br />
+          This will make our well-fed penguin even fatter.
+          <pre>
+var img = $("#Tux")[0];
+ctx.drawImage( img, 25, 10, 200, 100 );
+          </pre>
+          <button type="button" class="runCanvasCode">Run</button>
+          <button type="button" class="clearCanvas">Clear</button>
+        </div>
+        
+        <h2>Drawing part of an image</h2>
+        <div class="canvasDemo">
+          <canvas class="demo"></canvas>
+          Another form of <code>drawImage</code> takes nine parameters: the image object and two rectangles. The first rectangle is the portion of the source image to render and the second is the position and extent of the canvas destination. <br />
+          This will both crop and scale our image:
+          <pre>
+var img = $("#Tux")[0];
+ctx.drawImage( img, 40, 0, 64, 60,  125, 10, 128, 120 );
+          </pre>
+          <button type="button" class="runCanvasCode">Run</button>
+          <button type="button" class="clearCanvas">Clear</button>
+        </div>
+        
+      </div>
+
+      <h1>Accessing pixel data</h1>
+      <div class="accordion h2">
+        <h2>Pixel data</h2>
+        <div>
+          <ul>
+            <li>A <em>pixel</em> (short for &quot;picture element&quot;) represents a single dot on the screen, the &quot;atom&quot; of raster-based graphics.</li>
+            <li>On the Canvas, each pixel is four bytes, representing the <em>red</em>, <em>green</em>, <em>blue</em>, and <em>alpha</em> values of the color (and opacity) of the pixel.</li>
+            <li>The <code>getImageData</code> method gets the pixel data from a rectangle on the canvas.</li>
+            <li>The image data is a sequence of bytes, four for each pixel, arranged from left to right, top to bottom.</li>
+            <li>We can read from and write to this array</li>
+            <li>The <code>putImageData</code> method writes an image data array to the canvas at the specified location.</li>
+            <li>Most often we will write it back to the same location we read from, after making some modifications.</li>
+          </ul>
+        </div>
+
+        <h2>Example</h2>
+        <div class="canvasDemo">
+          <canvas class="demo"></canvas>
+          We first draw some horizontal lines on the canvas. Then we read this image data as our source. We create a destination data buffer of the same size. For each pixel in the destination buffer we use one in the source buffer that is at the same X, but with its Y offset by a specific amount using the sine function. We write the destination buffer back to our canvas.
+          <pre>
+var bg = { r: 64, g: 64, b: 255, a: 255 },
+    srcImgData, destImgData, imgWidth, imgHeight,
+    waveTable, i, a, s,
+    x, y, srcY, srcLoc, destLoc;
+//Draw strips on the canvas
+ctx.fillStyle = "rgb( " + bg.r + ", " + bg.g + ", " + bg.b + " )";
+ctx.fillRect( 0, 0, canvas.width, canvas.height );
+ctx.strokeStyle = "rgb( 0, 255, 0 )";
+ctx.lineWidth = 10;
+ctx.beginPath( );
+for ( i = 0; i &lt; canvas.height / 20; ++i )
+{
+    ctx.moveTo( 0, i * 20 );
+    ctx.lineTo( 300, i * 20 );
+}
+ctx.stroke( );
+//Read the image data and make a copy to write to
+srcImgData = ctx.getImageData( 0, 0, canvas.width, canvas.height );
+destImgData = ctx.createImageData( srcImgData );
+imgWidth = srcImgData.width;
+imgHeight = srcImgData.height;
+//Make a table of wave offsets
+waveTable = [];
+for ( i = 0; i &lt; imgWidth; ++i )
+{
+    a = (i/imgWidth) * 6 * Math.PI;
+    s = Math.sin( a );
+    waveTable.push( Math.round( s * 15 ) );
+}
+//Build the dest image data based on the source
+for ( y = 0; y &lt; imgHeight; ++y )
+{
+    for ( x = 0; x &lt; imgWidth; ++x )
+    {
+        destLoc = (x  +  y * imgWidth) * 4;
+        srcY = y - waveTable[ x ];
+        if ( (srcY &gt;= 0) && (srcY &lt; imgHeight) )
+        {
+            srcLoc = (x  +  srcY * imgWidth) * 4;
+            for ( i = 0; i &lt; 4; ++i )
+            {
+                destImgData.data[ destLoc + i ] = srcImgData.data[ srcLoc + i ];
+            }
+        }
+        else
+        {
+            destImgData.data[ destLoc ] = bg.r;
+            destImgData.data[ destLoc + 1 ] = bg.g;
+            destImgData.data[ destLoc + 2 ] = bg.b;
+            destImgData.data[ destLoc + 3 ] = bg.a;
+        }
+    }
+}
+//Replace the canvas's image data with the new version
+ctx.putImageData( destImgData, 0, 0 );
+          </pre>
+          <button type="button" class="runCanvasCode">Run</button>
+          <button type="button" class="clearCanvas">Clear</button>
+        </div>
+      </div>
+        
+      <h1>Exercises</h1>
+      <div class="accordion h2">
+        <h2>Circle</h2>
+        <div class="accordion h3">
+          <h3>Problem</h3>
+          <div>
+            Write functions to stroke and fill a circle.
+          </div>
+          <h3>Solution</h3>
+          <div>
+            <div class="canvasDemo">
+              <canvas class="demo"></canvas>
+              <pre>
+function circle( x, y, radius ) {
+    ctx.moveTo( (x + radius), y );
+    ctx.arc( x, y, radius, 0, Math.PI * 2 );
+}
+
+function strokeCircle( x, y, radius )
+{
+    ctx.beginPath( );
+    circle( x, y, radius );
+    ctx.stroke( );
+}
+
+function fillCircle( x, y, radius )
+{
+    ctx.beginPath( );
+    circle( x, y, radius );
+    ctx.fill( );
+}
+
+ctx.strokeStyle = 'rgb( 0, 0, 255 )';
+ctx.lineWidth = 10;
+ctx.fillStyle = 'rgb( 0, 200, 0 )';
+strokeCircle( 75, 75, 50 );
+fillCircle( 225, 75, 50 );
+              </pre>
+              <button type="button" class="runCanvasCode">Run</button>
+              <button type="button" class="clearCanvas">Clear</button>
+            </div>
+          </div>
+        </div>
+        <h2>Rounded rectangle</h2>
+        <div class="accordion h3">
+          <h3>Problem</h3>
+          <div>
+            Write functions to stroke and fill a rounded rectangle.
+          </div>
+          <h3>Solution</h3>
+          <div>
+            <div class="canvasDemo">
+              <canvas class="demo"></canvas>
+              <pre>
+function roundedRect( x, y, width, height, radius )
+{
+    ctx.moveTo( x, (y + radius) );
+    ctx.arc( (x + radius), (y + radius), radius,
+             Math.PI, Math.PI * 3/2 );
+    ctx.arc( (x + width - radius), (y + radius), radius,
+             Math.PI * 3/2, 0 );
+    ctx.arc( (x + width - radius), (y + height - radius), radius,
+             0, Math.PI * 1/2 );
+    ctx.arc( (x + radius), (y + height - radius), radius,
+             Math.PI * 1/2, Math.PI );
+    ctx.lineTo( x, (y + radius) );
+}
+
+function strokeRoundedRect( x, y, width, height, radius )
+{
+    ctx.beginPath( );
+    roundedRect( x, y, width, height, radius );
+    ctx.stroke( );
+}
+
+function fillRoundedRect( x, y, width, height, radius )
+{
+    ctx.beginPath( );
+    roundedRect( x, y, width, height, radius );
+    ctx.fill( );
+}
+
+ctx.strokeStyle = 'rgb( 0, 0, 255 )';
+ctx.lineWidth = 10;
+ctx.fillStyle = 'rgb( 0, 200, 0 )';
+strokeRoundedRect( 20, 20, 100, 100, 20 );
+fillRoundedRect( 180, 20, 100, 100, 20 );
+              </pre>
+              <button type="button" class="runCanvasCode">Run</button>
+              <button type="button" class="clearCanvas">Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <button type="button" id="accordionToggle"></button>
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+    <script src="CanvasLecture.js"></script>
+  </body>
+</html>
+  

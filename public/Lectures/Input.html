@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Input</title>
+    <link rel="stylesheet" href="Lecture.css" />
+  </head>
+  <body>
+    <div id="errorMsgDiv" style="display:none;"></div>
+
+    <h1 class="top">HTML5 APIs: Input</h1>
+    
+    <div class="accordion h1">
+      <h1>Event handlers</h1>
+      <div>
+        <ul>
+          <li>Event handlers are functions which respond to events such as mouse movement and key presses.</li>
+          <li>While the idea is simple and the set of events reasonably small, there are unfortunately several different ways to refer to them and set their handlers.</li>
+          <li>See, e.g., <a href="http://www.quirksmode.org/js/introevents.html" target="_blank">Quirks Mode: Introduction to Events</a></li>
+          <li><em>jQuery</em> and similar libraries smooth over these differences.</li>
+          <li>The most general way is to use jQuery's <code>on()</code> and <code>off()</code> functions to set and clear handlers.</li>
+          <li>The most common events have their own jQuery methods, such as <code>mousedown()</code>.</li>
+          <li>These are are methods of DOM element objects, so they deal with events that happen to an element, e.g. when the mouse is over the element or the element has keyboard focus.</li>
+          <li>The event handler function is passed an argument representing the event that occurred.</li>
+          <li>Example:
+            <div>
+              <button type="button" class="exampleButton">Please click me!</button>
+              <button type="button" class="exampleButton">No, me! Me!</button>
+              <pre>
+$('.exampleButton').on( 'click',
+    function( event )
+    {
+        var element = $( event.target );
+        console.log( 'The button you clicked says "' + element.text() + '"' );
+        return false; //prevent bubbling & default
+    }
+);
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </div>
+            <p>
+              Or, using the jQuery <code>$.click()</code> shortcut:
+            </p>
+            <div>
+              <button type="button" class="exampleButton">Please click me!</button>
+              <button type="button" class="exampleButton">No, me! Me!</button>
+              <pre>
+$('.exampleButton').click(
+    function( event )
+    {
+        var element = $( event.target );
+        console.log( 'The button you clicked says "' + element.text() + '"' );
+        return false; //prevent bubbling & default
+    }
+);
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+      
+      <h1>Mouse events</h1>
+      <div>
+        Events:
+        <ul>
+          <li>mousedown</li>
+          <li>mouseup</li>
+          <li>mousemove</li>
+          <li>click</li>
+          <li>mouseenter (IE, jQuery)</li>
+          <li>mouseleave (IE, jQuery)</li>
+        </ul>
+        Event properties:
+        <ul>
+          <li>button (0=left, 1=middle, 2=right)</li>
+          <li>clientX, clientY</li>
+          <li>target</li>
+        </ul>
+      </div>
+
+      <h1>Keyboard events</h1>
+      <div>
+        Events:
+        <ul>
+          <li>keydown</li>
+          <li>keyup</li>
+          <li>keypress</li>
+        </ul>
+        The <code>keypress</code> event provides standard character codes, taking the shift state into account (e.g. 97 ("a") or 65 ("A")). But not all keys correspond to characters. For example, the arrow keys do not.<br />
+        The <code>keydown</code> and <code>keyup</code> provide "raw" key codes. Unfortunately these vary across both platforms and browsers. (See Jon Wolter, <a href="http://unixpapa.com/js/key.html" target="_blank">JavaScript Madness: Keyboard Events</a>.)<br />
+        Jonathan Tang has written <a href="http://jonathan.tang.name/code/js_keycode" target="_blank">KeyCode.js</a>, which converts the event keycodes to in a consistent, "normalized" manner.
+      </div>
+
+      <h1>Touch events</h1>
+      <div>
+        Events:
+        <ul>
+          <li>touchstart</li>
+          <li>touchmove</li>
+          <li>touchend</li>
+        </ul>
+        Event properties:
+        <ul>
+          <li>touches (array; each element has <code>clientX</code>, <code>clientY</code> properties)</li>
+          <li>targetTouches (same as above, but only touches on the element)</li>
+          <li>changedTouches (same as above, but only touches which changed). Need to use this for <code>touchend</code>.</li>
+        </ul>
+        Brian Carstensen has written <a href="http://www.vodori.com/blog/phantom-limb.html" target="_blank">Phantom Limb</a>, which allows us to test a Web site's touch interface on a PC. Simply including <em>phantom-limb.js</em> converts mouse events to touch equivalents.
+      </div>
+    </div>
+    
+    <button type="button" id="accordionToggle"></button>
+    
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+  </body>
+</html>

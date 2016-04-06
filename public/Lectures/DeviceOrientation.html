@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Device Orientation</title>
+    <link rel="stylesheet" href="Lecture.css" />
+  </head>
+  <body>
+    <div id="errorMsgDiv" style="display:none;"></div>
+
+    <h1 class="top">HTML5 APIs: Device Orientation</h1>
+    
+    <div class="accordion h1">
+      <h1>Introduction</h1>
+      <div>
+        <p>
+          Many mobile devices, and recently even some laptops, have sensors that can measure the orientation and/or motion of the device. These may include
+          <ul>
+            <li><em>Accelerometers</em>, which measure changes in velocity directly. Since the device is usually accelerating upward in a gravitational field (Einstein's <a href="http://en.wikipedia.org/wiki/Equivalence_principle" target="_blank">equivalance principle</a>), accelerometers can also detect orientation.</li>
+            <li><em>Gyroscopes</em>, which measure either changes in orientation or in rotational velocity</li>
+            <li><em>Magnetometers</em>, which use Earth's magnetic field to work as <em>compasses</em></li>
+          </ul>
+        </p>
+        <p>
+          In HTML5 there are DOM events which can be used to access orientation and motion data. It does not provide direct access to the sensors, only higher-level data.
+        </p>
+      </div>
+      <h1>Specification</h1>
+      <div>
+        The W3C maintains the specification for Device Orientation at <a href="http://dev.w3.org/geo/api/spec-source-orientation.html" target="_blank">http://dev.w3.org/geo/api/spec-source-orientation.html</a>.
+      </div>
+      <h1>Events</h1>
+      <div class="accordion h2">
+        <h2>Overview</h2>
+        <div>
+          <p>
+          The Device Orientation interface works through DOM events. Generally we set handlers on the <code>window</code> (or <code>$(window)</code>) to receive updates.
+          </p>
+          <p>
+            There are three events we can watch for:
+            <ul>
+              <li><code>deviceorientation</code>, which supplies the physical orientation of the device</li>
+              <li><code>devicemotion</code>, which supplies the translational acceleration and/or rotation rate of the device</li>
+              <li><code>compassneedscalibration</code>, to inform the user that the device's compass needs to be calibrated. This can be done by waving it in a &quot;figure-8&quot; pattern so that it goes through various orientations. It may be required if the device was near a magnet.</li>
+            </ul>
+          </p>
+        </div>
+        <h2>Device orientation</h2>
+        <div>
+          <p>
+            If a handler is attached to the <code>deviceorientation</code> event, the <em>event</em> object passed to the handler will have three properies, representing angles (in degrees) of rotation about three axes:
+            <ul>
+              <li><code>alpha</code>: rotation about the Z axis, which points up</li>
+              <li><code>beta</code>: rotation about the X axis, which points east</li>
+              <li><code>gamma</code>: rotation about the Y axis, which points north</li>
+            </ul>
+          </p>
+          <p>
+            (See the <a href="http://dev.w3.org/geo/api/spec-source-orientation.html" target="_blank">spec</a> for some helpful illustrations.)
+          </p>
+          <p>
+            The event will also have a boolean property, <code>absolute</code>. If it is <code>true</code> the description above applies. Otherwise the orientation may be relative to some arbitrary orientation. (A device may have accelerometers, but no magnetometer, for instance.)
+          </p>
+          <p>
+            Any or all of these properties may be <code>null</code>.
+          </p>
+          <p>
+            Depending on the version of <em>jQuery</em> or <em>Zepto</em> you are using, you may need to access the <code>originalEvent</code> member of the event object to get these properties.
+          </p>
+        </div>
+        <h2>Device motion</h2>
+        <div>
+          <p>If a handler is attached to the <code>devicemotion</code> event, the <em>event</em> object passed to the handler will have several properties, each possibly <code>null</code> but otherwise having informative properties of their own:
+            <ul>
+              <li><code>acceleration</code> has
+                <ul>
+                  <li><code>x</code></li>
+                  <li><code>y</code></li>
+                  <li><code>z</code></li>
+                </ul>
+                These are expressed in meters/second<sup>2</sup>, and use the same coordinate system as that described above for <code>deviceorientation</code>. This property accounts for gravity, so that a device at rest has an acceleration of zero.
+              </li>
+              <li><code>accelerationIncludingGravity</code> has
+                <ul>
+                  <li><code>x</code></li>
+                  <li><code>y</code></li>
+                  <li><code>z</code></li>
+                </ul>
+                These are similar to the above, but a device in free fall has an acceleration, including gravity, of zero, while a stationary device lying face-up will have values of { x: 0, y: 0, z: 9.81 }.
+              </li>
+              <li><code>rotationRate</code> has
+                <ul>
+                  <li><code>alpha</code></li>
+                  <li><code>beta</code></li>
+                  <li><code>gamma</code></li>
+                </ul>
+                These are expressed in degrees/second, and represent rates of change of the same Euler angles used by <code>deviceorientation</code>.
+              </li>
+              <li><code>interval</code>, measured in milliseconds, gives the rate at which the data are obtained. It is supposed to be constant.</li>
+            </ul>
+        </div>
+      </div>
+      <h1>Simple example</h1>
+      <div>
+        <pre>
+$(window).on( 'deviceorientation',
+    function handleOrientation( event )
+    {
+        var orientation = event.originalEvent ? event.originalEvent : event;
+        console.log( 'α: ' + orientation.alpha );
+        console.log( 'β: ' + orientation.beta );
+        console.log( 'γ: ' + orientation.gamma );
+    } );
+        </pre>
+        <button type="button" class="runCode">Run</button>
+      </div>
+      <h1>Richer example</h1>
+      <div>
+        <p>
+          <a href="http://epsilondelta.us/WhereAmI/" target="_blank">Where Am I?</a>
+        </p>
+        <p>
+          (Click <em>Watch Orientation</em>.)
+        </p>
+      </div>
+    </div>
+    
+    <button type="button" id="accordionToggle"></button>
+    
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+  </body>
+</html>

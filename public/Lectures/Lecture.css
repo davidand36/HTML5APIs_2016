@@ -1,0 +1,33 @@
+/*
+  Lecture.css
+
+  CSS for a lecture
+*/
+
+h1.top
+{
+    color: navy;
+}
+
+h1, h2, h3, h4, h5
+{
+    color: gray;
+}
+
+.ui-state-active
+{
+    color: black;
+}
+
+h2,
+h2 + div
+{
+    margin-left: 24px;
+}
+
+h3,
+h3 + div
+{
+    margin-left: 32px;
+}
+

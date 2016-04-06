@@ -1,0 +1,754 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Scalable Vector Graphics</title>
+    <link rel="stylesheet" href="Lecture.css" />
+    <link rel="stylesheet" href="SVG_Lecture.css" />
+  </head>
+  <body>
+
+    <h1 class="top">HTML5 APIs: Scalable Vector Graphics</h1>
+
+    <div class="accordion h1">
+      <h1>Overview</h1>
+      <div>
+        <p>
+          Graphics systems such as Canvas use <em>raster graphics</em>. In this approach, the image being drawn is regarded as a rectangular collection of pixels, each with a particular color. This is often referred to as <em>bitmap graphics</em>. Since most display devices (and printers) are essentially raster devices, displaying the image is essentially a matter of copying pixel data. (Compression, image scaling, and translucency (alpha) may complicate this copying, of course.)
+        </p>
+        <p>
+          Raster graphics are especially appropriate for photographs. Tools like <a href="http://www.gimp.org/" target="_blank">GIMP</a> and <em>Photoshop</em> are designed for manipulating bitmap images. Formats like <em>JPEG</em> are ideal for storing them. <em>PNG</em> and <em>GIF</em> are also bitmap formats. Once uncompressed, all of them are simply series of numbers representing the colors of successive pixels.
+        </p>
+        <p>
+          In a <em>vector graphics</em>, images are represented as series of commands for drawing various shapes. While certain specialized monitors and plotters are capable of displaying vector graphics directly, generally a specialized interpreter is required to render them.
+        </p>
+        <p>
+          Vector graphics are appropriate for images that can be described in terms of geometric forms, gradients of color, etc. Tools like <a href="https://inkscape.org/en/" target="_blank">Inkscape</a> and <em>Adobe Illustrator</em> work well with vector images.
+        </p>
+        <p>
+          <em>SVG</em>, which stands for <em>Scalable Vector Graphics</em> is the format developed by the World Wide Web Consortium (W3C) for vector graphics. Work on this format began in 1998, and modern Web browsers (inluding IE 9+) support most features.
+        </p>
+      </div>
+
+      <h1>Using SVG</h1>
+      <div class="accordion h2">
+        <h2>The format</h2>
+        <div>
+          <p>
+            SVG images are XML text files. It represents the image as a hierarchy of graphical elements, which can include various shapes and paths, raster graphics, and text. These elements can have various attributes and content that provides for interactivity, animation, hyperlinks, etc.
+          </p>
+        </div>
+        <h2>Example</h2>
+        <div>
+          <p>
+            Here is the raw code for a simple SVG:
+          </p>
+          <pre>
+&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+                     "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"&gt;
+
+&lt;svg width="144" height="144"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
+  &lt;title&gt;Cat&lt;/title&gt;
+  &lt;desc&gt;Drawing of a cat&lt;/desc&gt;
+
+  &lt;defs&gt;
+    &lt;style type="text/css"&gt;&lt;![CDATA[
+        .head,
+        .ear
+        {
+            stroke: black;
+            stroke-width: 3;
+            fill: white;
+        }
+
+        .eye
+        {
+            stroke: black;
+            fill: rgb( 100, 200, 100 );
+        }
+
+        .pupil
+        {
+            fill: black;
+        }
+
+        .whiskers,
+        .mouth
+        {
+            stroke: black;
+            fill: none;
+        }
+
+        .nose
+        {
+            stroke: black;
+            fill: rgb( 255, 200, 200 );
+        }
+
+        .mouth
+        {
+            stroke-width: 2;
+        }
+
+        text
+        {
+            font-family: sans-serif;
+            font-size: 20px;
+            text-anchor: middle;
+        }
+    ]]&gt;&lt;/style&gt;
+  &lt;/defs&gt;
+
+  &lt;polygon class="ear" points="30.5, 40  21.1, 13.1  48, 22.5" /&gt;
+  &lt;polygon class="ear" points="113.5, 40  122.9, 13.1  96, 22.5" /&gt;
+  &lt;circle class="head" cx="72" cy="64" r="48" /&gt;
+  &lt;circle class="eye" cx="52" cy="64" r="8" /&gt;
+  &lt;ellipse class="pupil" cx="52" cy="64" rx="4" ry="6" /&gt;
+  &lt;circle class="eye" cx="92" cy="64" r="8" /&gt;
+  &lt;ellipse class="pupil" cx="92" cy="64" rx="4" ry="6" /&gt;
+  &lt;g id="whiskers" class="whiskers"&gt;
+    &lt;line x1="62.3" y1="85.4" x2="10.2" y2="71.4" /&gt;
+    &lt;line x1="62" y1="88" x2="8" y2="88" /&gt;
+    &lt;line x1="62.3" y1="90.6" x2="10.2" y2="104.6" /&gt;
+  &lt;/g&gt;
+  &lt;use xlink:href="#whiskers" transform="scale(-1, 1) translate(-144, 0)" /&gt;
+  &lt;path class="nose" d="M 78, 78  L 66, 78  A 6 8 0  0 0  78, 78  Z" /&gt;
+  &lt;path id="mouth" class="mouth" d="M 48, 92  A 12 8 0  0 0  72, 92" /&gt;
+  &lt;use xlink:href="#mouth" transform="scale(-1, 1) translate(-144, 0)" /&gt;
+  &lt;text x="72" y="134"&gt;Cat&lt;/text&gt;
+
+&lt;/svg&gt;
+          </pre>
+          <p>
+            As you can see, it looks quite a bit like HTML, though with a different set of tags. Like HTML, CSS styling can be applied to various elements, which can be selected by tag or class.
+          </p>
+        </div>
+        <h2>As <code>&lt;img&gt;</code> elements</h2>
+        <div class="accordion h3">
+          <h3>Original size</h3>
+          <div>
+            <p>
+              Modern browsers support <em>SVG</em> files as the <code>src</code> for <code>&lt;img&gt;</code> elements. For example, here is the <em>Cat.svg</em> whose XML we just saw:
+            </p>
+            <img src="images/Cat.svg" title="Cat" alt="Drawing of a cat" />
+            <p>
+              Using Inkscape, I converted this to a <em>PNG</em> file, which we can view for comparison. At the original scale, they look the same:
+            </p>
+            <img src="images/Cat.png" title="Cat" alt="Drawing of a cat" />
+          </div>
+          <h3>Enlarged</h3>
+          <div>
+            <p>
+              But if we resize them, either using CSS or, as I do here, using the <code>width</code> attribute, the difference becomes apparent. First the SVG:
+            </p>
+            <img src="images/Cat.svg" title="Cat" alt="Drawing of a cat" width="720" />
+            <p>
+              Then the PNG:
+            </p>
+            <img src="images/Cat.png" title="Cat" alt="Drawing of a cat" width="720" />
+            <p>
+              This shows where the <em>Scalable</em> in SVG comes in. Because the browser's renderer is not just putting down pixels (and doing its best to anti-alias them for smoothness), but actually drawing lines, circles, etc., at the new scale, the image retains its sharpness.
+            </p>
+          </div>
+        </div>
+        <h2>In CSS properties</h2>
+        <div>
+          <p>
+            Modern browsers also support SVG graphics where images are referrenced in CSS, e.g. as background images.
+          </p>
+          <div class="cat-bg">
+            This section uses my drawing of a cat as a background. It's not a very good choice, but not because it is an SVG.
+          </div>
+        </div>
+        <h2>Inline SVG</h2>
+        <div>
+          <p>
+            HTML5 (and XHTML in all browsers since about 2012) allows the use of the <code>&lt;svg&gt;</code> tag, and all of the corresponding nested SVG tags. Here comes one now:
+            <svg class="cat" viewBox="0 0 144 144">
+              <title>Cat</title>
+              <desc>Drawing of a cat</desc>
+              <polygon class="ear" points="30.5, 40  21.1, 13.1  48, 22.5" />
+              <polygon class="ear" points="113.5, 40  122.9, 13.1  96, 22.5" />
+              <circle class="head" cx="72" cy="64" r="48" />
+              <circle class="eye" cx="52" cy="64" r="8" />
+              <ellipse class="pupil" cx="52" cy="64" rx="4" ry="6" />
+              <circle class="eye" cx="92" cy="64" r="8" />
+              <ellipse class="pupil" cx="92" cy="64" rx="4" ry="6" />
+              <g id="whiskers" class="whiskers">
+                <line x1="62.3" y1="85.4" x2="10.2" y2="71.4" />
+                <line x1="62" y1="88" x2="8" y2="88" />
+                <line x1="62.3" y1="90.6" x2="10.2" y2="104.6" />
+              </g>
+              <use xlink:href="#whiskers" transform="scale(-1, 1) translate(-144, 0)" />
+              <path class="nose" d="M 78, 78  L 66, 78  A 6 8 0  0 0  78, 78  Z" />
+              <path id="mouth" class="mouth" d="M 48, 92  A 12 8 0  0 0  72, 92" />
+              <use xlink:href="#mouth" transform="scale(-1, 1) translate(-144, 0)" />
+              <text x="72" y="134">Cat</text>
+            </svg>
+            You can use your browser's <em>Inspect Element</em> option to view the elements herein.
+          </p>
+          <p>
+            It is not just a "black-box" image for the browser now, but a collection of DOM elements within our document. That's where the fun really begins. For one thing, this allows us to move the styling of the constituent elements into the page's style sheet. More importantly, it opens up the possibility of dynamically inserting, removing, modifying, and restyling these image elements using JavaScript, just as we can do for other elements of the DOM.
+          </p>
+          <p>
+            Notice that, unless you specify otherwise in your CSS, an <code>&lt;svg&gt;</code> element is displayed inline, as is an <code>&lt;img&gt;</code>. You can set <code>display: block</code>, for example, to override this.
+          </p>
+        </div>
+        <h2>Better examples</h2>
+        <div>
+          Here are a few rather more impressive examples of SVGs:
+          <ul>
+            <li><a href="http://svg-wow.org/filterEffects/chiseled.svg" target="_blank">Chisled (Vincent Hardy)</a></li>
+            <li><a href="http://svg-wow.org/camera/camera.xhtml" target="_blank">"Camera" (Vincent Hardy)</a></li>
+            <li><a href="http://upload.wikimedia.org/wikipedia/commons/6/6c/Trajans-Column-lower-animated.svg" target="_blank">"Trajan's Column" (artist unknown)</a>
+          </ul>
+        </div>
+        <h2>Further reading</h2>
+        <div>
+          <p>
+            There are many features and details of SVG that we cannot cover in this course. The W3C maintains the <a href="http://www.w3.org/TR/SVG/" target="_blank">official documentation</a>. The Mozilla Developer Network has a nice <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial" target="_blank">SVG Tutorial</a>. A good book is J. David Eisenberg &amp; Amelia Bellamy-Royds, <em>SVG Essentials: Producing Scalable Vector Graphics with XML</em>, O'Reilly, 2014 <a href="http://shop.oreilly.com/product/0636920032335.do" target="_blank">(Print ISBN: 978-1-4493-7435-8, Ebook ISBN: 978-1-4493-7434-1)</a>.
+          </p>
+        </div>
+      </div>
+
+      <h1>Raphaël</h1>
+      <div class="accordion h2">
+        <h2>Overview</h2>
+        <div>
+          <p>
+            The ability to embed SVG elements directly into the DOM of an HTML page opens up many possibilities for programmatically-controlled graphics. Just as jQuery simplifies working with the HTML DOM, a popular open-source library called <a href="http://raphaeljs.com" target="_blank">Raphaël</a> simplifies working with SVG. In fact, just as jQuery also smooths over browser differences, Raphaël even works with older browsers that do not support SVG, by falling back to an older approach called <em>VML</em> (Vector Markup Language).
+          </p>
+        </div>
+        <h2>Creating Paper</h2>
+        <div>
+          <p>
+            The Raphaël library provides a single global variable, <code>Raphael</code>, which provides a variety of useful utility methods. Most important, it can be called as a function to create the element in which you can draw. The Raphaël documentation sometimes calls this a "canvas", but it is documented as having the <code>Paper</code> interface, and so we shall use this term.
+          </p>
+          <p>
+            The most useful way to call the function is to provide the DOM element which will contain the SVG element Raphaël creates, together with the desired width and height, e.g.:
+          </p>
+          <pre>
+var element = $('#svgHolder');
+var paper = Raphael( element, 320, 200 );
+          </pre>
+          <p>
+            This <code>paper</code> object is the one you will use for most drawing operations.
+          </p>
+        </div>
+        <h2>Shapes, paths, text, images</h2>
+        <div class="accordion h3">
+          <h3>Coordinates</h3>
+          <div>
+            <ul>
+              <li>By default, coordinates on the canvas are measured in pixels.</li>
+              <li>The X-axis has 0 on the left and increases to the right.</li>
+              <li>The Y-axis has 0 at the top and increases downward.</li>
+            </ul>
+          </div>
+          <h3>Rectangles</h3>
+          <div>
+            <p>
+              We can use the <code>Paper.rect()</code> function to specify a rectangle with four parameters: <em>x</em> (left), <em>y</em> (top), <em>width</em>, and <em>height</em>.
+            </p>
+            <div>
+              <div class="svgHolder"></div>
+              <pre>
+var rect1 = paper.rect( 30, 20, 100, 50 );
+              </pre>
+              <button type="button" class="runSvgCode">Run</button>
+              <button type="button" class="clearSvg">Clear</button>
+            </div>
+            <p>
+              Unlike a raster graphics system like Canvas, this doesn't just draw a rectangle. It inserts an <code>rect</code> element into the DOM, as a child of the <code>paper</code> element, and returns a reference to that element. This is valuable, as it allows us to make subsequent modifications to the rectangle.
+            </p>
+          </div>
+          <h3>Stroke and fill attributes</h3>
+          <div>
+            <p>
+              Elements have several properties that affect how they are drawn. The attributes <code>stroke</code> and <code>stroke-width</code> specify the color and width of the stroke (outline). We set the attributes with the <code>attr()</code> method, passing an object with the attibute names and values. For example:
+            </p>
+            <div>
+              <div class="svgHolder"></div>
+              <pre>
+var rect1 = paper.rect( 30, 20, 100, 50 );
+rect1.attr( {
+    stroke: 'rgb( 0, 200, 0 )',
+    'stroke-width': 10
+} );
+              </pre>
+              <button type="button" class="runSvgCode">Run</button>
+              <button type="button" class="clearSvg">Clear</button>
+            </div>
+            <p>
+              The <code>fill</code> attribute can also be a color:
+            </p>
+            <div>
+              <div class="svgHolder"></div>
+              <pre>
+var rect1 = paper.rect( 30, 20, 100, 50 );
+rect1.attr( {
+    fill: 'rgb( 0, 0, 200 )'
+} );
+              </pre>
+              <button type="button" class="runSvgCode">Run</button>
+              <button type="button" class="clearSvg">Clear</button>
+            </div>
+            <p>
+              We can combine these, and even use alpha for translucency:
+            </p>
+            <div>
+              <div class="svgHolder"></div>
+              <pre>
+var rect1 = paper.rect( 30, 20, 100, 50 );
+rect1.attr( {
+    stroke: 'rgba( 0, 200, 0, 0.5 )',
+    'stroke-width': 10,
+    fill: 'rgb( 0, 0, 200 )'
+} );
+              </pre>
+              <button type="button" class="runSvgCode">Run</button>
+              <button type="button" class="clearSvg">Clear</button>
+            </div>
+            <p>
+              Notice that the stroke is centered on the border of the rectangle, so that half of the stroke overlaps the fill.
+            </p>
+            <p>
+              The default fill is <code>'none'</code>, but the default stroke is 1-pixel width and black, or something similar. You will need to set it explicitly to <code>'none'</code> if you don't want an outline.
+            </p>
+            <p>
+              There are several other stroke and fill settings. For example, you can get dotted and/or dashed lines. You can also specify linear or radial gradients or the URL of a bitmap (e.g. <code>.png</code>) file for <code>fill</code>.
+            </p>
+          </div>
+          <h3>Rounded rectangles</h3>
+          <div>
+            <p>
+              With Raphaël, you can create rectangles with rounded corners by adding a fifth parameter, the corner radius, to <code>rect()</code>.
+            </p>
+            <div>
+              <div class="svgHolder"></div>
+              <pre>
+var rect1 = paper.rect( 30, 20, 100, 120, 15 );
+rect1.attr( {
+    stroke: 'rgb( 0, 200, 0 )',
+    'stroke-width': 10,
+    fill: 'rgb( 0, 0, 200 )'
+} );
+              </pre>
+              <button type="button" class="runSvgCode">Run</button>
+              <button type="button" class="clearSvg">Clear</button>
+            </div>
+          </div>
+          <h3>Circles</h3>
+          <div>
+            <p>
+              The <code>circle()</code> method takes three parameters: the <code>x</code> and <code>y</code> coordinates of the center, and the <code>radius</code>:
+            </p>
+            <div>
+              <div class="svgHolder"></div>
+              <pre>
+var circle1 = paper.circle( 100, 80, 50 );
+circle1.attr( {
+    stroke: 'rgb( 0, 200, 0 )',
+    'stroke-width': 6,
+    fill: 'rgb( 0, 0, 200 )'
+} );
+              </pre>
+              <button type="button" class="runSvgCode">Run</button>
+              <button type="button" class="clearSvg">Clear</button>
+            </div>
+          </div>
+          <h3>Ellipses</h3>
+          <div>
+            <p>
+              The <code>ellipse()</code> method takes four parameters: the <code>x</code> and <code>y</code> coordinates of the center, the <code>x-radius</code> and the <code>y-radius</code>:
+            </p>
+            <div>
+              <div class="svgHolder"></div>
+              <pre>
+var ellipse1 = paper.ellipse( 100, 80, 50, 30 );
+ellipse1.attr( {
+    stroke: 'rgb( 0, 200, 0 )',
+    'stroke-width': 6,
+    fill: 'rgb( 0, 0, 200 )'
+} );
+var ellipse2 = paper.ellipse( 250, 80, 30, 50 );
+ellipse2.attr( {
+    stroke: 'rgb( 0, 0, 200 )',
+    'stroke-width': 6,
+    fill: 'rgb( 0, 200, 0 )'
+} );
+              </pre>
+              <button type="button" class="runSvgCode">Run</button>
+              <button type="button" class="clearSvg">Clear</button>
+            </div>
+          </div>
+          <h3>Paths</h3>
+          <div>
+            <p>
+              In SVG, a path is represented as a string consisting of one-letter commands followed by sequences of numbers as parameters to the commands. For example, my cat's nose was drawn using this path:
+            </p>
+            <pre>
+&lt;path class="nose" d="M 78, 78  L 66, 78  A 6 8 0  0 0  78, 78  Z" /&gt;
+            </pre>
+            <p>
+              Raphaël also allows you to use a string, but improves on this somewhat by also allowing an array, so the equivalent would be
+            </p>
+            <div>
+              <div class="svgHolder"></div>
+              <pre>
+var x1 = 78, y1 = 78,
+    x2 = 66, y2 = 78;
+var nose = paper.path( [ 'M', x1, y1,
+                         'L', x2, y2,
+                         'A', 6, 8, 0, 0, 0, x1, x1,
+                         'Z'
+                     ] );
+nose.attr( {
+    stroke: 'black',
+    fill: 'rgb( 255, 200, 200 )'
+} );
+              </pre>
+              <button type="button" class="runSvgCode">Run</button>
+              <button type="button" class="clearSvg">Clear</button>
+            </div>
+            <p>
+              One advantage using arrays has is that we can use variables in addition to hard-coded values.
+            </p>
+            <p>
+              These are the main path commands:
+              <dl>
+                <dt>M</dt><dd>"moveto": A path must begin with this. It specifies the point where the path begins. It can also start a new subpath within a path, picking the "pen" up an putting it down elsewhere.</dd>
+                <dt>Z</dt><dd>"closepath": Draws a line back to the start of the path (or subpath).</dd>
+                <dt>L</dt><dd>"lineto": Draws a line to the specified point. You can list several points for a series of joined line segments.</dd>
+                <dt>A</dt><dd>"elliptical arc": Draw an arc to a point.</dd>
+                <dt>Q</dt><dd>"quadratic Bézier curve": Draws a curve to a point using a designated control point.</dd>
+                <dt>C</dt><dd>"cubic Bézier curve": Draws a curve to a point using two designated control points.</dd>
+                <dt>R</dt><dd>"Catmull-Rom curve": Draws a curve that passes through the designated points.</dd>
+              </dl>
+              We will not go into the details of the various arcs and curves here. The W3C specification documents SVG <a href="http://www.w3.org/TR/SVG/paths.html#PathData" target="_blank">path data</a> well. You can get a feeling for how the control points of Bézier curves work at <a href="http://www.jasondavies.com/animated-bezier/" target="_blank">Jason Davies's animated Bézier demo</a>.
+            </p>
+          </div>
+          <h3>Text</h3>
+          <div>
+            <p>
+              The <code>text()</code> method puts text at specified coordinates. There are most of the usual CSS attributes for setting the font family, size, etc. The <code>text-anchor</code> attribute controls horizontal alignment. Vertically, text always seems to be centered. By default, fill is black and stroke is none.
+            </p>
+            <div>
+              <div class="svgHolder"></div>
+              <pre>
+paper.path( [ 'M', 0, 75,  'L', 299, 75 ] )
+    .attr( { stroke: 'rgb( 50, 50, 50 )' } );
+
+paper.text( 10, 75, 'Merhaba' )
+    .attr( {
+         font: 'bold 18px sans-serif',
+         'text-anchor': 'start'
+    } );
+paper.text( 150, 75, 'Two lines\nin the middle' )
+    .attr( {
+         font: 'bold 18px sans-serif',
+         'text-anchor': 'middle',
+         stroke: 'black',
+         fill: 'none'
+    } );
+paper.text( 290, 75, 'Tschüß' )
+    .attr( {
+         font: '18px sans-serif',
+         'font-style': 'italic',
+         'text-anchor': 'end',
+         fill: 'blue'
+    } );
+              </pre>
+              <button type="button" class="runSvgCode">Run</button>
+              <button type="button" class="clearSvg">Clear</button>
+            </div>
+          </div>
+          <h3>Images</h3>
+          <div>
+            <p>
+              You can add bitmap images to your drawing with the <code>image()</code> method. It takes source URL, position, and size parameters. Notice that this allows scaling in either direction.
+            </p>
+            <div>
+              <div class="svgHolder"></div>
+              <pre>
+var img1 = paper.image( 'images/NewTux.png', 20, 20, 104, 125 );
+var img2 = paper.image( 'images/NewTux.png', 220, 20, 52, 125 );
+              </pre>
+              <button type="button" class="runSvgCode">Run</button>
+              <button type="button" class="clearSvg">Clear</button>
+            </div>
+          </div>
+        </div>
+        <h2>Events</h2>
+        <div>
+          <p>
+            Because SVG elements are in the DOM, it is possible to set event handlers on them. Raphaël provides methods for setting just about any mouse, touch, or drag-and-drop event you want on an element. Here's a simple example:
+          </p>
+          <div>
+            <div class="svgHolder"></div>
+            <pre>
+var rect = paper.rect( 10, 10, 130, 100 );
+var circle = paper.circle( 210, 75, 60 );
+rect.attr( { fill: 'blue' } );
+circle.attr( { fill: 'blue' } );
+
+rect.click( function( ) {
+    var curColor = this.attr( 'fill' );
+    var newColor = (curColor === 'blue')  ?  'red'  :  'blue';
+    this.attr( { fill: newColor } );
+} );
+
+circle.mouseover( function( ) {
+    this.attr( { fill: 'red' } );
+} );
+
+circle.mouseout( function( ) {
+    this.attr( { fill: 'blue' } );
+} );
+            </pre>
+            <button type="button" class="runSvgCode">Run</button>
+            <button type="button" class="clearSvg">Clear</button>
+          </div>
+        </div>
+        <h2>Animation</h2>
+        <div>
+          <p>
+            Raphaël's <code>animate()</code> method makes it easy to modify an element's attributes over time.
+          </p>
+          <p>
+            In its simplest form, we specify an object with the final value of the attributes we want to change, as well as the duration of the animation, in milliseconds.
+          </p>
+          <p>
+            We can also provide the "easing" function, which indicates how the animation accelerates or decelerates. We can also provide a function to be called when the animation completes. In the example below, when the circle's first animation finishes, a new animation is begun.
+          </p>
+          <div>
+            <div class="svgHolder"></div>
+            <pre>
+var rect = paper.rect( 10, 10, 10, 100 );
+var circle = paper.circle( 75, 80, 50 );
+rect.attr( { fill: 'green' } );
+circle.attr( { fill: 'green' } );
+
+rect.animate( {
+        y: 130,
+        width: 100,
+        height: 10,
+        'border-width': 10
+    },
+    2000 );
+
+circle.animate( {
+        cx: 240,
+        cy: 75,
+        r: 5,
+        opacity: 0.5
+    },
+    1500,
+    'easeInOut',
+    function( ) {
+        circle.animate( {
+                r: 50,
+                opacity: 1.0
+            },
+            500,
+            'bounce' );
+    } );
+            </pre>
+            <button type="button" class="runSvgCode">Run</button>
+            <button type="button" class="clearSvg">Clear</button>
+          </div>
+        </div>
+        <h2>Further reading</h2>
+        <div>
+          <p>
+            Raphaël offers more than could be covered here, including clipping and transformations.
+          </p>
+          <p>
+            In addition to the <a href="http://raphaeljs.com" target="_blank">official Raphaël Web site</a>, the book Damien Dawber, <em>Learning Raphaël Vector Graphics</em>, Packt Publishing, 2013 <a href="http://shop.oreilly.com/product/9781782169161.do" target="_blank">(ISBN: 978-1-78216-916-1)</a>, offers good coverage of this library.
+          </p>
+        </div>
+      </div>
+
+      <h1>D3</h1>
+      <div class="accordion h2">
+        <h2>Overview</h2>
+        <div>
+          <p>
+            <a href="http://d3js.org/" target="_blank">D3</a>, which stands for <em>Data-Driven Documents</em> is another library which makes great use of SVG, in this case for the purpose of data visualization. It can be used to create a wide variety of graphs and charts.
+          </p>
+        </div>
+        <h2>Binding data to DOM elements</h2>
+        <div>
+          <p>
+            Although D3 is usually used with SVG, it can work with any sort of DOM elements. Its syntax is a bit strange, because it does some magic under the hood to make it easy to connect arrays of data to arrays of DOM elements.
+          </p>
+          <p>
+            Here is a simple example which uses <code>&lt;p&gt;</code> elements. They will get added to an element I have set up here called <code>svgHolder</code> (though in this case it won't hold an SVG).
+          </p>
+          <div>
+            <div class="svgHolder"></div>
+            <pre>
+var sampleData = [
+        { color: 'red', regions: 7, area: 0.4154 },
+        { color: 'white', regions: 56, area: 0.3973 },
+        { color: 'blue', regions: 1, area: 0.1874 }
+    ];
+
+d3.select( svgHolder )  //Can use a CSS selector or reference to DOM element
+    .selectAll( 'p' )   //These four lines
+    .data( sampleData ) // bind our data
+    .enter( )           // to (new) &lt;p&gt;
+    .append( 'p' )      // elements in the original selection.
+    //Now we can set properties of each &lt;p&gt; element based on the data:
+    .text( function( d, i ) {
+               if ( d.regions === 1 ) {
+                   return (i+1) + ') There is ' + d.regions + ' ' +
+                       d.color + ' region in the US flag.';
+               } else {
+                   return (i+1) + ') There are ' + d.regions + ' ' +
+                       d.color + ' regions in the US flag.';
+               }
+           } )
+    .style( 'color',
+            function( d ) {
+                if ( d.color === 'white' ) {
+                    return 'black';
+                } else {
+                    return d.color;
+                }
+            } );
+            </pre>
+            <button type="button" class="runD3Code">Run</button>
+            <button type="button" class="clearSvg">Clear</button>
+          </div>
+        </div>
+        <h2>D3 with SVG</h2>
+        <div>
+          <p>
+            Text is nice, but we want some graphics. So we'll tell D3 to create an SVG. Then we'll add circles to that, one for each data item. We'll position them uniformly across our chart. We'll size them so that their areas are proportional to the <code>area</code> values in the data. We'll color them using the <code>color</code> values in the data. We'd better put an outline around the circles or we won't see the white one.
+          </p>
+          <div>
+            <div class="svgHolder"></div>
+            <pre>
+var sampleData = [
+        { color: 'red', regions: 7, area: 0.4154 },
+        { color: 'white', regions: 56, area: 0.3973 },
+        { color: 'blue', regions: 1, area: 0.1874 }
+    ];
+
+var svgWidth = $(svgHolder).width(),
+    svgHeight = $(svgHolder).height();
+var svg = d3.select( svgHolder )
+            .append( 'svg' )
+            .attr( 'width', svgWidth )
+            .attr( 'height', svgHeight );
+
+var margin = 10;
+var maxRadius = (svgWidth - (sampleData.length + 1) * margin) / (2 * sampleData.length);
+svg.selectAll( 'circle' )
+    .data( sampleData )
+    .enter( )
+    .append( 'circle' )
+    .attr( 'cx',
+           function( d, i ) {
+               return margin + maxRadius  +  i * (margin + 2 * maxRadius);
+           } )
+    .attr( 'cy', function( ) {
+               return svgHeight / 2;
+           } )
+    .attr( 'r', function( d ) {
+               var relR = Math.sqrt( d.area ); //area of circle = πr²
+               return relR * maxRadius;
+           } )
+    .attr( 'fill', function( d ) {
+              return d.color;
+           } )
+    .attr( 'stroke', function( ) {
+              return 'black';
+           } );
+            </pre>
+            <button type="button" class="runD3Code">Run</button>
+            <button type="button" class="clearSvg">Clear</button>
+          </div>
+        </div>
+        <h2>Pie chart</h2>
+        <div>
+          <p>
+            D3 provides many utility functions that make it pretty easy to create standard charts and graphs. For example, there is <code>d3.layout.pie()</code>, which takes a dataset and computes the appropriate angles, etc., for making pie charts. And then <code>d3.arc()</code> creates a function that takes the results of those computations for each datum and creates an SVG path with the right arcs and lines.
+          </p>
+          <div>
+            <div class="svgHolder"></div>
+            <pre>
+var sampleData = [
+        { color: 'red', regions: 7, area: 0.4154 },
+        { color: 'white', regions: 56, area: 0.3973 },
+        { color: 'blue', regions: 1, area: 0.1874 }
+    ];
+
+var svgWidth = $(svgHolder).width(),
+    svgHeight = $(svgHolder).height();
+var svg = d3.select( svgHolder )
+            .append( 'svg' )
+            .attr( 'width', svgWidth )
+            .attr( 'height', svgHeight );
+
+var pieLayout = d3.layout.pie();
+pieLayout.value( function( d ) {   //Tell it to
+        return d.area;             // use the area field
+    } );                           // from our data.
+
+var radius = (Math.min( svgWidth, svgHeight ) / 2) - 10;
+var arcFn = d3.svg.arc().innerRadius( 0 ).outerRadius( radius );
+
+svg.selectAll( 'g.slice' )
+    .data( pieLayout( sampleData ) )
+    .enter( )
+    .append( 'g' ) //SVG Group element for each pie slice
+    .attr( 'class', 'slice' )
+    .attr( 'transform',
+           'translate(' + svgWidth / 2 + ',' + svgHeight / 2 + ')' )
+    .append( 'path' )
+    .attr( 'fill',
+           function( d ) {
+               return d.data.color;
+           } )
+    .attr( 'd', arcFn );
+
+svg.append( 'circle' )
+    .attr( 'cx', svgWidth / 2 )
+    .attr( 'cy', svgHeight / 2 )
+    .attr( 'r', radius )
+    .attr( 'stroke', 'black' )
+    .attr( 'fill', 'none' );
+            </pre>
+            <button type="button" class="runD3Code">Run</button>
+            <button type="button" class="clearSvg">Clear</button>
+          </div>
+        </div>
+        <h2>Further reading</h2>
+        <div>
+          <p>
+            D3 offers much more than can be mentioned here, including interactivity, animation, geomapping, and exporting to various formats.
+          </p>
+          <p>
+            In addition to the <a href="http://d3js.org/" target="_blank">official D3 Web site</a>, the book Scott Murray, <em>Interactive Data Visualization for the Web</em>, O'Reilly, 2013 <a href="http://shop.oreilly.com/product/0636920026938.do" target="_blank">(Print ISBN:978-1-4493-3973-9, Ebook ISBN:978-1-4493-3972-2)</a> provides a gentle but thorough introduction.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <button type="button" id="accordionToggle">Expand</button>
+
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="../lib/raphael.js"></script>
+    <script src="../lib/d3.v3.js"></script>
+    <script src="Lectures.js"></script>
+    <script src="SVG_Lecture.js"></script>
+  </body>
+</html>

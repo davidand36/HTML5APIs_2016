@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Storing User Data</title>
+    <link rel="stylesheet" href="Lecture.css" />
+  </head>
+  <body>
+
+    <h1 class="top">HTML5 APIs: Storing User Data</h1>
+
+    <div class="accordion h1">
+      <h1>Overview</h1>
+      <div>
+        <ul>
+          <li>It is often useful to store data for future sessions of a Web application. Uses include
+            <ul>
+              <li>Settings: the user's preferences</li>
+              <li>Application state: Some apps, such as games, allow players to pick up where they left off.</li>
+              <li>Acheivements: high scores, milestones, etc.</li>
+              <li>Cache: results of queries or computations.</li>
+            </ul>
+          </li>
+          <li>Storage may be on the client's and/or server's system.</li>
+          <li>Server-side storage
+            <ul>
+              <li>can use sophisticated databases</li>
+              <li>can combine data from many players</li>
+              <li>requires client-server communication, typically using AJAX</li>
+            </ul>
+          </li>
+          <li>
+            Client-side storage
+            <ul>
+              <li>is fairly simple</li>
+              <li>places no burden on server</li>
+              <li>traditionally used <em>cookies</em></li>
+              <li>now generally uses <em>Web Storage</em></li>
+            </ul>
+         </li>
+      </div>
+
+      <h1>Cookies</h1>
+      <div>
+        <ul>
+          <li>Prior to HTML5, <em>cookies</em> provided the main way for the browser to save data.</li>
+          <li>The <code>document.cookie</code> property is a string of &quot;cookies&quot; separated by semicolons.</li>
+          <li>Each cookie is a <code>key=value</code> pair.</li>
+          <li>Cookies can be <em>persistent</em> (with a specified expiration date), or session-only.</li>
+          <li>They can be made available across a whole domain (<code>domain=example.com</code>) or restricted by subdomain and/or path (<code>path=/FreeCell</code>).</li>
+          <li>Cookies are passed between the client and server in HTTP requests.</li>
+          <li>Browsers impose limits on the number (e.g. 50) and size of cookies (e.g. 4 KB per domain).</li>
+          <li>For a well-designed library for reading and writing cookies, see <a href="https://developer.mozilla.org/en-US/docs/DOM/document.cookie" target="_blank">Mozilla Development Network: document.cookie</a></li>
+        </ul>
+      </div>
+
+      <h1>Web Storage</h1>
+      <div class="accordion h2">
+        <h2>Overview</h2>
+        <div>
+          <em>Web Storage</em> is a new HTML5 API. Like cookies, it stores string key-value pairs, but unlike cookies:
+          <ul>
+            <li>Much larger data are allowed: at least 2 MB and usually 5 MB or more per domain.</li>
+            <li>Data stay on the client and are not transmitted to or from the server.</li>
+            <li>A simple interface is provided to save, retrieve, and remove data.</li>
+          </ul>
+          There are actually two storage objects: <code>sessionStorage</code> and <code>localStorage</code>. We will be using the latter.
+        </div>
+
+        <h2>API</h2>
+        <div>
+          You can add a new datum or change an existing one with any of these:
+          <pre>
+localStorage.setItem( "aKey" ) = "aValue";
+localStorage[ "aKey" ] = "aValue";
+localStorage.aKey = "aValue";
+          </pre>
+          You can read a value with any of these:
+          <pre>
+var value = localStorage.getItem( "aKey" );
+var value = localStorage[ "aKey" ];
+var value = localStorage.aKey;
+          </pre>
+          If no value has been assigned for the key, <code>null</code> is returned.<br />
+          And you can remove a datum with:
+          <pre>
+localStorage.removeItem( "aKey" );
+          </pre>
+          You can remove all data with:
+          <pre>
+localStorage.clear( );
+          </pre>
+          The total number of key-value pairs is <code>localStorage.length</code>, and the keys can be obtained as <code>localStorage.key( n )</code>, where <code>0 &lt;= n &lt; localStorage.length</code>. So we can iterate through all of the data like this:
+          <pre>
+for ( i = 0, lim = localStorage.length; i &lt; lim; ++i )
+{
+    key = localStorage.key( i );
+    value = localStorage[ key ];
+    ...
+}
+          </pre>
+          Unless your domain is used for a single application, <code>clear()</code> may remove more items than you want. The iteration over all keys is also of questionable value, though it might be useful if you want to tie data between apps together.
+        </div>
+
+        <h2>Using JSON with Web Storage</h2>
+        <div>
+          <ul>
+            <li>Web Storage requires <em>string</em> values.</li>
+            <li>Using JSON we can store and retrieve most forms of data easily.</li>
+            <li>We can store an item with:
+              <pre>
+                localStorage[ "aKey" ] = JSON.stringify( data );
+              </pre>
+            </li>
+            <li>We can then read it back with:
+              <pre>
+                var data = JSON.parse( localStorage[ "akey" ] );
+              </pre>
+            </li>
+          </ul>
+        </div>
+
+        <h2>Naming keys</h2>
+        <div>
+          <p>
+            Web storage, like cookies, is provided on a per-domain basis: you have access to all and only the cookies that are set for your site's domain.
+          </p>
+          <p>
+            You will often have several Web applications running from the same domain. To keep their data distinct, I find it generally useful to prefix the keys with the name of the application. For example, the key for the shopping cart for the PlasticAjax application is called "PlasticAjax_cart".
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <button type="button" id="accordionToggle">Expand</button>
+
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+  </body>
+</html>

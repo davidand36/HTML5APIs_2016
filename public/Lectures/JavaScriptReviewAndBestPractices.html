@@ -1,0 +1,1965 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: JavaScript: Review and Best Practices</title>
+    <link rel="stylesheet" href="Lecture.css" />
+  </head>
+  <body>
+
+    <h1 class="top">HTML5 APIs: JavaScript: Review and Best Practices</h1>
+
+    <div class="accordion h1">
+      <h1>Types</h1>
+      <div class="accordion h2">
+        <h2>Boolean</h2>
+        <div>
+          <p>
+            A Boolean is either <code>true</code> or <code>false</code>.
+          </p>
+        </div>
+
+        <h2>Number</h2>
+        <div>
+          <p>
+            JavaScript has only a single numeric type, which can represent both integers (whole numbers) and floating-point numbers (those with a fractional part). Specifically, JavaScript uses double-precision floating-point numbers (IEEE 754), which uses 64 bits. This allows for integers up to 2<sup>53</sup> (about 9×10<sup>15</sup>) as well as "real" numbers as small as about 1.8×10<sup>-308</sup> or as large as about 1.8×10<sup>308</sup>.
+          </p>
+          <p>
+            Number literals look like <code>1</code>, <code>-1.25</code>, <code>6.674e-11</code>.
+          </p>
+          <p>
+            There are two special numeric values. <code>Infinity</code> represents any value greater than about 1.8×10<sup>308</sup>. (<code>-Infinity</code> naturally represents anything less than about -1.8×10<sup>308</sup>.)
+          </p>
+          <p>
+            <code>NaN</code> (Not a Number) represents the result of an operation that cannot produce a normal number. It has the unique property that if <code>x</code> has the value <code>NaN</code>, then <code>x === x</code> is <em>false</em>.
+          </p>
+          <p>
+            JavaScript has a built-in library, <code>Math</code>, which provides a lot of useful functions, including
+            <ul>
+              <li><code>Math.PI</code> and <code>Math.E</code></li>
+              <li><code>Math.abs()</code></li>
+              <li><code>Math.max()</code> and <code>Math.min()</code></li>
+              <li><code>Math.round()</code>, <code>Math.floor()</code>, and <code>Math.ceil()</code></li>
+              <li><code>Math.sqrt()</code>, <code>Math.exp()</code>, <code>Math.pow()</code>, <code>Math.log()</code>, etc.</li>
+              <li><code>Math.sin()</code>, <code>Math.cos()</code>, <code>Math.atan2()</code>, etc.</li>
+              <li><code>Math.random()</code></li>
+            </ul>
+          </p>
+        </div>
+
+        <h2>String</h2>
+        <div>
+          <p>
+            Strings are immutable sequences of characters. (Characters are 16-bit Unicode values.)
+          </p>
+          <p>
+            String literals are enclosed in either single or double quotes, e.g. <code>'He said, "She said..."'</code> or <code>"I'm fine"</code>.
+          </p>
+          <p>
+            Strings can be <em>concatenated</em> using the <code>+</code> operator to produce a new string. (So <code>'con' + 'cat' + 'enate' === 'concatenate'</code>.)
+          </p>
+          <p>
+            Strings have a <code>length</code> property, so <code>'cat'.length === 3</code>. They also have a number of useful methods, including
+            <ul>
+              <li><code>string.charAt()</code></li>
+              <li><code>string.indexOf()</code> and <code>string.lastIndexOf()</code></li>
+              <li><code>string.substr()</code></li>
+              <li><code>string.toLowerCase()</code> and <code>string.toUpperCase()</code></li>
+              <li><code>string.trim()</code></li>
+            </ul>
+          </p>
+        </div>
+
+        <h2>Object</h2>
+        <div class="accordion h3">
+          <h3>Basics</h3>
+          <div>
+            <p>
+              JavaScript objects are collections of named properties. The names (a.k.a. <em>keys</em>) are strings, and the values can be of any type, including numbers, <code>null</code>, functions, and other objects.
+            </p>
+            <p>
+              Object literals are enclosed in braces (curly brackets), with properties separated by commas, and the key and value of each property separated by a olon. E.g.:
+              <pre>
+var dave = <b>{</b>
+    "full-name": "David M. Anderson"<b>,</b>
+    nickname: "Dave"<b>,</b>
+    age: 61<b>,</b>
+    marathonPR: {
+        hours: 3,
+        minutes: 43,
+        seconds: 44
+    }<b>,</b>
+    homeState: 'Oregon'
+<b>}</b>;
+              </pre>
+              If a property key is a legal identifier (doesn't start with a digit, no spaces or punctuation aside from underscore, etc.), it doesn't need to be enclosed in quotation marks, though it may be.
+            </p>
+            <p>
+              Property values can be retrieved and set using either bracket or dot notation:
+              <pre>
+console.log( <b>dave[ 'full-name' ]</b> );
+console.log( <b>dave.age</b> );
+console.log( <b>dave.marathonPR.hours</b> );
+<b>dave.nickname = 'Dandy Dave'</b>;
+console.log( dave.nickname );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <h3>Prototypes</h3>
+          <div class="accordion h4">
+            <h4>The prototype chain</h4>
+            <div>
+              <p>
+                Every object has a "hidden" property, its <em>prototype</em>, which is either <code>null</code>, or another object. When you refer to a property of an object, JavaScript first looks at the object's own properties, and if it doesn't find the property there, it looks for the prototype's properties, and if it doesn't find it there, it looks at the prototype's prototype's properties, and so on until it gets to a null prototype, in which case it decides that the property is undefined.
+              </p>
+              <p>
+                For example, suppose <code>obj1</code> looks like this:
+                <pre>
+{
+    a: Math.PI,
+    b: 'be'
+}
+                </pre>
+                and suppose that the prototype of <code>obj1</code> is <code>obj2</code>, which looks like this:
+                <pre>
+{
+    b: 'bee',
+    c: 'see'
+}
+                </pre>
+                and suppose that the prototype of <code>obj2</code> is <code>obj3</code>, which looks like this:
+                <pre>
+{
+    c: 'sea',
+    d: 1000
+}
+                </pre>
+                and suppose that the prototype of <code>obj3</code> is <code>null</code>.
+              </p>
+              <p>
+                Then JavaScript will give us the following results:
+                <pre>
+obj1.a  //3.141592653589793
+obj1.b  //'be'
+obj1.c  //'see'
+obj1.d  //1000
+obj1.e  //undefined
+
+obj2.a  //undefined
+obj2.b  //'bee'
+obj2.c  //'see'
+obj2.d  //1000
+obj2.e  //undefined
+
+obj3.a  //undefined
+obj3.b  //undefined
+obj3.c  //'sea'
+obj3.d  //1000
+obj3.e  //undefined
+                </pre>
+              </p>
+              <p>
+                JavaScript only follows the prototype chain when getting (reading) a property. Setting (writing) a property always works directly on the object:
+                <pre>
+obj1.d = 42;
+obj1.d  //42
+obj2.d  //1000
+obj3.d  //1000
+                </pre>
+              </p>
+              <div>
+                <p>
+                  You can only set the prototype of an object when it is created; it cannot be changed thereafter.
+                </p>
+                <p>
+                  If you create an object using a literal, e.g.,
+                  <pre>
+var someone = {
+   name: 'Bob',
+   friends: [ 'Ayşa', 'Cordelia' ]
+};
+                  </pre>
+                  then its prototype is the default prototype, which is <code>Object.prototype</code>. (The prototype of <code>Object.prototype</code> is <code>null</code>.)
+                </p>
+                <p>
+                  You can get the prototype of an object with the function <code>Object.getPrototypeOf( obj )</code>, by the way:
+                  <pre>
+var someone = {
+   name: 'Bob',
+   friends: [ 'Ayşa', 'Cordelia' ]
+};
+
+var proto = Object.getPrototypeOf( someone );
+
+console.log( proto );
+console.log( Object.getPrototypeOf( proto ) );
+                  </pre>
+                  <button type="button" class="runCode">Run</button>
+                </p>
+              </div>
+            </div>
+            <h4><code>Using Object.create()</code></h4>
+            <div>
+              <div>
+                <p>
+                  The simplest way to create an object with a specific prototype is to use the <code>Object.create()</code> function. We start with an object we want to use for the prototype, say:
+                  <pre>
+var personProto = {
+    greet: function( greeting ) {
+        console.log( greeting + ', I am ' + this.name + '.' );
+    },
+    sayAge: function( ) {
+        console.log( 'I am ' + this.age + ' years old.' );
+    }
+};
+                  </pre>
+                  (We'll talk about <code>this</code> later.)
+                  Then we can create objects with this prototype like this:
+                  <pre>
+var person1 = Object.create( personProto );
+var person2 = Object.create( personProto );
+                  </pre>
+                  At this point, <code>person1</code> has no properties of its own. We can easily set them individually, e.g.:
+                  <pre>
+person1.name = 'Ayşa';
+person1.age = 15;
+                  </pre>
+                  In modern browsers, we can also use the <code>Object.assign()</code> function so that we can assign several properties at once with an object literal:
+                  <pre>
+Object.assign( person2, {
+    name: 'Cordelia',
+    age: 18
+} );
+                  </pre>
+                  And now you can reference the objects' prototype methods:
+                  <pre>
+person1.greet( 'Hi' );  //'Hi, I am Ayşa.'
+person2.sayAge( );      //'I am 18 years old.'
+                  </pre>
+                  <button type="button" class="runCode">Run</button>
+                </p>
+              </div>
+            </div>
+            <h4>Constructors</h4>
+            <div>
+              <div>
+                <p>
+                  <code>Object.create()</code> and <code>Object.assign()</code> are relatively new to JavaScript. The traditional way to establish a prototype chain is with the keyword <code>new</code>, which invokes an object <em>constructor</em>.
+                </p>
+                <p>
+                  We start by defining a function, the constructor. It will generally look something like this:
+                  <pre>
+function Person( name, age ) {
+    this.name = name;
+    this.age = age;
+}
+                  </pre>
+                  Traditionally, we capitalize the names of constructors, to remind us to use them with <code>new</code>. We also use the <code>this</code> keyword to refer to the object being constructed.
+                </p>
+                <p>
+                  Then we set the <code>prototype</code> property of the function. We can either do this by setting the <code>prototype</code> to an object, like this
+                  <pre>
+Person.prototype = {
+    greet: function( greeting ) {
+        console.log( greeting + ', I am ' + this.name + '.' );
+    },
+    sayAge: function( ) {
+        console.log( 'I am ' + this.age + ' years old.' );
+    }
+};
+                  </pre>
+                  or by setting individual properties on the prototype, like this
+                  <pre>
+Person.prototype.greet = function( greeting ) {
+        console.log( greeting + ', I am ' + this.name + '.' );
+    };
+Person.prototype.sayAge = function( ) {
+        console.log( 'I am ' + this.age + ' years old.' );
+    };
+                  </pre>
+                </p>
+                <p>
+                  Then we can create objects by calling the constructor using <code>new</code>:
+                  <pre>
+var person1 = <strong>new</strong> Person( 'Ayşa', 15 );
+var person2 = <strong>new</strong> Person( 'Cordelia', 18 );
+                  </pre>
+                  These objects each now have the assigned prototype and can access its properties:
+                  <pre>
+person1.greet( 'Hi' );  //'Hi, I am Ayşa.'
+person2.sayAge( );      //'I am 18 years old.'
+                  </pre>
+                </p>
+                <button type="button" class="runCode">Run</button>
+              </div>
+              <div>
+                <p>
+                  Effectively what is going on here is that the <code>new</code> keyword converts the function <code>Person()</code> into something like this:
+                  <pre>
+function Person( name, age ) {
+    <strong>var this = Object.create( Person.prototype );</strong>
+    this.name = name;
+    this.age = age;
+    <strong>return this;</strong>
+}
+                  </pre>
+                  except that that would not be allowed because <code>this</code> is a reserved keyword.
+                </p>
+                <p>
+                  One thing that makes this a bit confusing is that <code>Person.prototype</code> is not the prototype of <code>Person</code>. <code>Person</code> is a function. In JavaScript, functions are a special type of object, and they can have properties, like any other object. <code>prototype</code> is just a built-in property of functions that doesn't represent the prototype of the function itself, but instead is used as the prototype of the object created when the function is called with the <code>new</code> keyword.
+                </p>
+              </div>
+            </div>
+            <h4>Use</h4>
+            <div>
+              <p>
+                So when should you use prototypes? What good are they? My personal view is, "Not all that often."
+              </p>
+              <p>
+                The presence of <code>new</code>, constructors, and also <code>instanceof</code> in JavaScript make the language seem similar to other object-oriented languages, such as Java and C++. In particular, it makes it look like JavaScript supports <em>classes</em>, the most common approach to object-oriented programming (OOP). In those languages, each object is an instance of some class, and it is easy and natural to build hierarchies of such classes.
+              </p>
+              <p>
+                For example, in a graphical application, one might have a <code>Shape</code> class with an <em>interface</em> that includes methods like <code>draw()</code> and <code>move()</code>, and then have classes such as <code>Rectangle</code> and <code>Circle</code> inherit from <code>Shape</code>, each with specific implementations of <code>draw()</code> and <code>move()</code>. A function that works with these could accept any object of class <code>Shape</code> as an argument, and call these methods with confidence.
+              </p>
+              <p>
+                But JavaScript does not do this sort of type checking. Instead, it supports <a href="https://en.wikipedia.org/wiki/Duck_typing" target="_blank">duck typing</a>. ("If it walks like a duck and quacks like a duck, it's a duck.") Any object that has the right set of properties and methods is fine. In this example, any object that has <code>draw()</code>, <code>move()</code>, etc., can be used, regardless of inheritance.
+              </p>
+              <p>
+                The best use of prototypes is to share methods. If you have several or a lot of objects that are similar, so that the same functionality can be applied to all of them, then it makes sense to put that functionality in one object and make it the prototype of the other objects.
+              </p>
+              <p>
+                In the earlier examples, we might have a lot of objects representing people. If we create each one like this:
+                <pre>
+var person1 = {
+    name: Ayşa,
+    age: 15,
+    greet: function( greeting ) {
+        console.log( greeting + ', I am ' + this.name + '.' );
+    },
+    sayAge: function( ) {
+        console.log( 'I am ' + this.age + ' years old.' );
+    }
+};
+
+var person2 = {
+    name: 'Cordelia',
+    age: 18,
+    greet: function( greeting ) {
+        console.log( greeting + ', I am ' + this.name + '.' );
+    },
+    sayAge: function( ) {
+        console.log( 'I am ' + this.age + ' years old.' );
+    }
+};
+                </pre>
+                then we are duplicating the same functions, possibly many times. Much better to put them in a prototype.
+              </p>
+              <p>
+                Even in these cases, the OOP approach of objects with methods is not always necessary or best. Consider stand-alone functions that accept objects as arguments, e.g.
+                <pre>
+function greetPerson( greeting, person ) {
+    console.log( greeting + ', I am ' + person.name + '.' );
+}
+                </pre>
+                No <code>this</code> to worry about, and it actually works with any object that has a <code>name</code> property.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <h2>Array</h2>
+        <div class="accordion h3">
+          <h3>Basics</h3>
+          <div>
+            <p>
+              In <em>JavaScript: The Good Parts</em>, Douglas Crockford writes
+              <blockquote>
+                An <em>array</em> is a linear allocation of memory in which elements are accessed by integers that are used to compute offsets. arrays can be very fast data structures. Unfortunately, JavaScript does not have anything like this kind of array.
+              </blockquote>
+              With modern JavaScript compilers, this is only partly true.
+            </p>
+            <p>
+              Arrays are a type of object where the property names (keys) are integers. (Technically, they are strings like '0', '1', etc., but we can usually ignore this.) We refer to a key in an array as an <em>index</em> or <em>subscript</em>. The values (a.k.a. <em>elements</em>) can be of any type.
+            </p>
+            <div>
+              <p>
+                Array literals enclose a consecutive list of values in (square) brackets, separated by spaces, e.g.,
+                <pre>
+var arr = <b>[</b> 'first'<b>,</b> 'one'<b>,</b> true<b>,</b> { a: 'A', b: 2 } <b>]</b>;
+                </pre>
+              </p>
+              <p>
+                Values are accessed by enclosing the index in square brackets. Indexes represent offsets from the beginning of the array, and so the first element in the array, which is at distance zero from the beginning, has index 0; the second, index 1; etc.
+                <pre>
+console.log( <b>arr[ 0 ]</b> );
+console.log( <b>arr[ 3 ].b</b> );
+                </pre>
+              </p>
+              <p>
+                You can also assign to elements, even elements outside the current range:
+                <pre>
+<b>arr[ 1 ] = 'ein'</b>;
+console.log( arr[ 1 ] );
+<b>arr[ 4 ] = 'vier'</b>;
+console.log( arr[ 4 ] );
+                </pre>
+              </p>
+              <button type="button" class="runCode">Run</button>
+            </div>
+            <p>
+              Arrays have a <code>length</code> property, which is the largest index plus one, i.e. generally the number of elements in the array.
+            </p>
+            <p>
+              Arrays also have a variety of useful methods, including
+              <ul>
+                <li><code>array.push()</code> and <code>array.pop()</code></li>
+                <li><code>array.unshift()</code> and <code>array.shift()</code></li>
+                <li><code>array.indexOf()</code> and array.lastIndexOf()</li>
+                <li><code>array.concat()</code></li>
+                <li><code>array.slice()</code></li>
+                <li><code>array.splice()</code></li>
+                <li><code>array.filter()</code></li>
+                <li><code>array.map()</code></li>
+                <li><code>array.join()</code></li>
+              </ul>
+            </p>
+            <p>
+              Sometimes you need to know whether you have an object or an array of objects. Unfortunately, <code>typeof arr</code> returns <code>'object'</code> for arrays. Fortunately, JavaScript 5 provides the function <code>Array.isArray( arr )</code>, which returns <code>true</code> if <code>arr</code> is an array.
+            </p>
+          </div>
+          <h3>Sparse arrays</h3>
+          <div>
+            <div>
+              <p>
+                JavaScript allows you to create arrays with "holes" in them, i.e. with gaps in their indexes. For example, we can assign elements at non-contiguous indexes, e.g.
+                <pre>
+var arr = [ 'alpha' ];
+arr[ 2 ] = 'gamma';
+console.log( arr[ 0 ] );
+console.log( arr[ 1 ] );
+console.log( arr[ 2 ] );
+console.log( arr.length );
+                </pre>
+              </p>
+              <p>
+                You can also delete elements from an array:
+                <pre>
+var arr = [ 'alpha', 'beta', 'gamma' ];
+delete arr[ 1 ];
+console.log( arr[ 0 ] );
+console.log( arr[ 1 ] );
+console.log( arr[ 2 ] );
+console.log( arr.length );
+                </pre>
+              </p>
+              <button type="button" class="runCode">Run</button>
+            </div>
+            <p>
+              Either way, <code>arr.length</code> is 3, but <code>arr</code> has only 2 elements.
+            </p>
+            <p>
+              Arrays like this are called <em>sparse</em> arrays. You will generally want to avoid creating them, but you need to be aware that they are possible. For example, when looping through the elements of an array, you may need to check that <code>arr[ i ] !== undefined</code>.
+            </p>
+          </div>
+        </div>
+
+        <h2>Undefined and Null</h2>
+        <div>
+          <p>
+            The types <em>Undefined</em> and <em>Null</em> each have one value, <code>undefined</code> and <code>null</code>, respectively.
+          </p>
+          <div>
+            <p>
+              When JavaScript has no value to provide, it produces <code>undefined</code>. For example:
+              <pre>
+var x;
+console.log( x );
+
+var obj = { a: 3 };
+console.log( obj.b );
+
+function foo( ) {
+    //does not return a value
+}
+
+var rslt = foo( );
+console.log( rslt );
+
+function bar( val ) {
+    return val;
+}
+
+rslt = bar( 5 );
+console.log( rslt );
+rslt = bar( );
+console.log( rslt );
+              </pre>
+            </p>
+            <button type="button" class="runCode">Run</button>
+          </div>
+          <div>
+            <p>
+              In the example above, the variable <code>x</code> was declared, but given no value. If you refer to an identifier that has never even been declared, JavaScript will throw a ReferenceError exception. You can safely use <code>typeof</code> to check for this situation:
+              <pre>
+try {
+    console.log( unknownVar );
+} catch ( exception ) {
+    console.log( 'Exception thrown: ', exception );
+}
+console.log( <b>typeof unknownVar</b> );
+              </pre>
+            </p>
+            <button type="button" class="runCode">Run</button>
+          </div>
+          <p>
+            <em>Null</em> values represent the explicit absence of an object value; <code>null</code> is sort of the non-numeric equivalent of <code>NaN</code>. For example, a function that is supposed to search for and return an object, but fails to find it, should return <code>null</code>.
+          </p>
+        </div>
+
+        <h2>Function</h2>
+        <div class="accordion h3">
+          <h3>Basics</h3>
+          <div>
+            <p>
+              In JavaScript, functions are <em>first-class objects</em>, which is to say that they can be assigned to variables, passed as arguments to other functions, and be return values of functions. 
+            </p>
+            <p>
+              You can declare a function a couple of ways:
+              <pre>
+function add( a, b ) {
+    return a + b;
+}
+              </pre>
+              or
+              <pre>
+var add = function( a, b ) {
+    return a + b;
+}
+              </pre>
+              These are almost equivalent. You should use the first form when you will not be assigning another function (or anything else) to <code>add</code> later on. One important difference is that with the first form, the definition, and not just the declaration, is <em>hoisted</em>, so that it is available throiughout the scope in which it is declared.
+            </p>
+          </div>
+          <h3>Anonymous functions</h3>
+          <div>
+            <p>
+              Functions don't always need to have names. <em>Anonymous</em> functions are often used when passing a function as an argument to another function. For example, the <code>array.map()</code> method requires a function parameter. We can call it like this:
+              <pre>
+var people = [
+             { name: 'Ayşa', age: 15 },
+             { name: 'Bob', age: 42 },
+             { name: 'Cordelia', age: 18 }
+           ];
+
+function getName( person ) {
+    return person.name;
+}
+
+var names = people.map( getName );
+console.log( arr2 );
+              </pre>
+              But we can also call it like this:
+              <pre>
+names = people.map( function( person ) {
+    return person.name;
+} );
+console.log( names );
+              </pre>
+              In this approach, the anonymous function is defined "on the fly" where it is needed. Such functions are also called <em>lambdas</em>. Though not required, you are actually allowed to name lambdas, so we could have written
+              <pre>
+names = people.map( function getName1( person ) {
+    return person.name;
+} );
+console.log( names );
+              </pre>
+              Because it is created at the moment it is passed to <code>arr1.map()</code>, you wouldn't be able to call <code>getName1()</code> anywhere else. But the name is still sometimes useful for debugging.
+            </p>
+            <button type="button" class="runCode">Run</button>
+          </div>
+          <h3>Scope</h3>
+          <div>
+            <p>
+              <em>Scope</em> refers to the range in a program within which a variable or function can be referenced. In JavaScript the rule is very simple: every variable's (or function's) scope is the entire function within which it is declared. If it is not declared within a function, it has <em>global</em> scope, i.e. it is available everywhere.
+            </p>
+            <div>
+              <p>
+                Here is an example of variables with different scopes. If we try to run this as is, it will fail because it tries to access variables and call functions that are out of scope or not yet declared. Try to identify the offending lines.
+                <pre>
+var <b>a</b> = 1;
+var <b>b</b> = 2;
+console.log( a );
+console.log( b );
+console.log( c );
+console.log( d );
+console.log( e );
+console.log( x );
+console.log( y );
+
+foo( 10 );
+bar( 30 );
+
+console.log( a );
+console.log( b );
+console.log( c );
+console.log( d );
+console.log( e );
+console.log( x );
+console.log( y );
+
+function <b>foo</b>( <b>x</b> ) <b>{</b> //global function. Scope of x is foo()
+    var <b>c</b> = 3;    //scope is foo()
+
+    console.log( a );
+    console.log( b );
+    console.log( c );
+    console.log( d );
+    console.log( e );
+    console.log( x );
+    console.log( y );
+
+    bar( 20 );
+
+    function <b>bar</b>( <b>y</b> ) <b>{</b> //callable anywhere in foo()
+                                             //Scope of y is bar()
+       var <b>d</b> = 4; //scope is bar()
+       var <b>a</b> = 5; //scope is bar(), overrides global
+       <b>e</b> = 6;     //No var, so global
+
+       console.log( a );
+       console.log( b );
+       console.log( c );
+       console.log( d );
+       console.log( e );
+       console.log( x );
+       console.log( y );
+    <b>}</b>
+<b>}</b>
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+              <p>
+                Notice that the variable <code>e</code> became a global variable, even though it was declared inside of <code>bar()</code>, because we omitted the <code>var</code> keyword. This is almost always a mistake. The <code>"use strict"</code> directive, which will be discussed later, would prevent this.
+              </p>
+            </div>
+            <div>
+              <p>
+                Here is the same code with the offending lines commented out:
+                <pre>
+var <b>a</b> = 1; //global variable
+var <b>b</b> = 2; //global variable
+console.log( a ); //1
+console.log( b ); //2
+
+foo( 10 );
+//bar( 30 ); //error: not defined (out of scope)
+
+console.log( a ); //1
+console.log( b ); //2
+//console.log( c ); //error: not defined (out of scope)
+//console.log( d ); //error: not defined (out of scope)
+console.log( e ); //6
+//console.log( x ); //error: not defined (out of scope)
+//console.log( y ); //error: not defined (out of scope)
+
+function <b>foo</b>( <b>x</b> ) <b>{</b> //global function. Scope of x is foo()
+    var <b>c</b> = 3;    //scope is foo()
+
+    console.log( a ); //1
+    console.log( b ); //2
+    console.log( c ); //3
+    //console.log( d ); //error: not defined (out of scope)
+    //console.log( e ); //error: not yet defined
+    console.log( x );
+    //console.log( y ); //error: not defined (out of scope)
+
+    bar( 20 );
+
+    function <b>bar</b>( <b>y</b> ) <b>{</b> //callable anywhere in foo()
+                                             //Scope of y is bar()
+       var <b>d</b> = 4; //scope is bar()
+       var <b>a</b> = 5; //scope is bar(), overrides global
+       <b>e</b> = 6;     //No var, so global
+
+       console.log( a ); //5
+       console.log( b ); //2
+       console.log( c ); //3
+       console.log( d ); //4
+       console.log( e ); //6
+       console.log( x );
+       console.log( y );
+    <b>}</b>
+<b>}</b>
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+            </div>
+          </div>
+          <h3>Closures</h3>
+          <div>
+            <p>
+              As we have seen, a function can be defined inside another function and has access to variables in the surrounding environment. It turns out that it can access these even after it appears that that environment has gone away.
+            </p>
+            <div>
+              <p>
+                Consider this function, which creates functions that greet people:
+                <pre>
+function makeGreeter( ) {
+    var greeting = 'Hello';
+    function greet( name ) {
+        console.log( greeting + ', ' + name );
+    };
+    return greet;
+}
+
+var greeter = makeGreeter( );
+greeter( 'Alice' );
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+              <p>
+                By the time we call <code>greeter('Bob')</code>, <code>makeGreeter()</code> has already returned, so one would expect its local variable <code>greeting</code> to be gone. Instead, <code>greeter()</code> has become a <em>closure</em>, which combines both the function <code>greet()</code> and the environment in which that function was created. That environment consists of all of the local variables which were in scope.
+              </p>
+            </div>
+            <div>
+              <p>
+                Arguments to nesting functions are included in this environment, so we can also do this:
+                <pre>
+function makeGreeter( greeting ) {
+    return function( name ) {
+        console.log( greeting + ', ' + name );
+    };
+}
+
+var greeter1 = makeGreeter( 'Hello' );
+var greeter2 = makeGreeter( 'Hi' );
+greeter1( 'Alice' );
+greeter2( 'Bob' );
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+              <p>
+                Notice that the environments of <code>greeter1()</code> and <code>greeter2()</code> are different; they have separate instances of <code>greeting</code>.
+              </p>
+            </div>
+            <div>
+              <p>
+                Closures can modify, as well as read, the variables in their environment:
+                <pre>
+function makeCounter( ) {
+    var count = 0;
+    return function( ) {
+        ++count;
+        console.log( count );
+    };
+}
+
+var counter1 = makeCounter( );
+var counter2 = makeCounter( );
+counter1( );
+counter1( );
+counter2( );
+counter1( );
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+            </div>
+          </div>
+          <h3>Methods and <code>this</code></h3>
+          <div class="accordion h4">
+            <h4>Methods</h4>
+            <div>
+              <div>
+                <p>
+                  A function which is a property of an object is called a <em>method</em>.
+                  <pre>
+var sayer = {
+    foo: function( ) {
+        console.log( 'I say "foo".' );
+    },
+    bar: function( ) {
+        console.log( 'I say "bar".' );
+    }
+};
+
+sayer.foo( );
+sayer.bar( );
+                  </pre>
+                  <button type="button" class="runCode">Run</button>
+                </p>
+              </div>
+              <div>
+                <p>
+                  Methods can refer to their object with the keyword <code>this</code>, and thus access other properties of the object:
+                  <pre>
+var counter = {
+    count: 0,
+    addAndLog: function( increment ) {
+        this.count += increment;
+        console.log( this.count );
+    }
+};
+
+counter.addAndLog( 4 );
+counter.addAndLog( -12 );
+                  </pre>
+                  <button type="button" class="runCode">Run</button>
+                </p>
+              </div>
+            </div>
+            <h4><code>this</code></h4>
+            <div class="accordion h5">
+              <h5>The receiver of a function</h5>
+              <div>
+                <p>
+                  Functions in JavaScript can refer to an object called <code>this</code>, often called the <em>receiver</em> of the function. We also say that the function is <em>bound</em> to the receiver object. The receiver does not depend on the function, but on how it is called.
+                </p>
+              </div>
+              <h5>Ordinary function calls</h5>
+              <div>
+                <p>
+                  If you simply call an ordinary function, then <code>this</code> traditionally refers to the <em>global</em> object, which is <code>window</code> in a browser. That's usually a mistake, so in <em>strict</em> mode JavaScript 5 sets the default binding to <code>undefined</code>. That way you will get an error when you attempt to use it.
+                  <pre>
+function greet( greeting ) {
+    <b>'use strict'</b>;
+    console.log( greeting + ', ' + this.firstname );
+}
+
+try {
+    greet( );
+} catch ( exception ) {
+    console.log( 'Exception thrown: ', exception );
+}
+                  </pre>
+                  <button type="button" class="runCode">Run</button>
+                </p>
+              </div>
+              <h5>Methods</h5>
+              <div>
+                <p>
+                  If a function is called as the method of an object, then, as we've seen, that object is the receiver.
+                  <pre>
+function greetPerson( greeting ) {
+    console.log( greeting + ', ' + this.firstname );
+}
+
+var person1 = {
+    firstname: 'Ayşa',
+    greet: greetPerson
+};
+
+var person2 = {
+    firstname: 'Betty',
+    greet: greetPerson
+};
+
+person1.greet( 'Hello' );
+person2.greet( 'Hi' );
+                  </pre>
+                  <button type="button" class="runCode">Run</button>
+                </p>
+              </div>
+              <h5>Constructors</h5>
+              <div>
+                <p>
+                  If a function is called with <code>new</code>, then it is interpreted as a <em>constructor</em>, and <code>this</code> refers to the new object being created, as discussed earlier.
+                </p>
+              </div>
+              <h5><code>call()</code>, <code>apply()</code>, <code>bind()</code></h5>
+              <div>
+                <p>
+                  JavaScript also provides methods to bind any function to any object:
+                  <ul>
+                    <li>function.call()</li>
+                    <li>function.apply()</li>
+                    <li>function.bind()</li>
+                  </ul>
+                  For example:
+                  <pre>
+function greetPerson( greeting ) {
+    console.log( greeting + ', ' + this.firstname );
+}
+
+var person1 = {
+    firstname: 'Ayşa'
+};
+
+var person2 = {
+    firstname: 'Betty'
+};
+
+greetPerson.call( person1, 'Hello' );
+greetPerson.apply( person2, [ 'Hi' ] );
+                  </pre>
+                  <button type="button" class="runCode">Run</button>
+                </p>
+              </div>
+              <h5>Nested functions</h5>
+              <div>
+                <p>
+                  One thing to be aware of is that <code>this</code>, unlike normal local variables, is not passed along to nested, inner functions. Those functions have their own <code>this</code>, determined by the rules just discussed.
+                </p>
+                <div>
+                  <p>
+                    For example, consider this code, where a constructor calls a nested function to set the properties of <code>this</code> based on the properties of the argument it receives:
+                    <pre>
+function Thing( props ) {
+    'use strict';
+    function copyProps( ) {
+        for ( var key in props ) {
+            <b>this</b>[ key ] = props[ key ];
+        }
+    }
+    copyProps( );
+}
+
+var thing1 = new Thing( { foo: 1, bar: 'bar' } );
+console.log( thing1 );
+                    </pre>
+                    <button type="button" class="runCode">Run</button>
+                  </p>
+                  <p>
+                    The problem here is that <code>this</code> in <code>copyProps()</code> does not refer to the <code>Thing</code> constructor's <code>this</code>. Instead, since <code>copyProps()</code> is being called as an ordinary function and we are in strict mode, <code>this</code> is set to <code>undefined</code>.
+                  </p>
+                </div>
+                <div>
+                  <p>
+                    There are a couple of ways we can fix this. One is to pass <code>Thing()</code>'s <code>this</code> as a parameter to <code>copyProps()</code>:
+                    <pre>
+function Thing( props ) {
+    'use strict';
+    function copyProps( <b>dest</b> ) {
+        for ( var key in props ) {
+            <b>dest</b>[ key ] = props[ key ];
+        }
+    }
+    copyProps( <b>this</b> );
+}
+
+var thing1 = new Thing( { foo: 1, bar: 'bar' } );
+console.log( thing1 );
+                    </pre>
+                    <button type="button" class="runCode">Run</button>
+                  </p>
+                </div>
+                <div>
+                  <p>
+                    Another option is to create a regular local variable in <code>Thing()</code> that holds a reference to <code>this</code>. That variable will then be in the scope of <code>copyProps()</code>:
+                    <pre>
+function Thing( props ) {
+    'use strict';
+    var <b>self = this</b>;
+    function copyProps( ) {
+        for ( var key in props ) {
+            <b>self</b>[ key ] = props[ key ];
+        }
+    }
+    copyProps( );
+}
+
+var thing1 = new Thing( { foo: 1, bar: 'bar' } );
+console.log( thing1 );
+                    </pre>
+                    <button type="button" class="runCode">Run</button>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3>Arguments</h3>
+          <div>
+            <p>
+              Every function automatically has a local variable called <code>arguments</code>, which is an array-like list of the arguments that were actually passed in the function call. For example:
+              <pre>
+function showArgs( ) {
+    var i, len;
+    for ( i = 0, len = arguments.length; i &lt; len; ++i ) {
+        console.log( i + ': ' + arguments[ i ] );
+    }
+}
+
+showArgs( 'Hello', 'Zoe', 23 );                                          
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+            <p>
+              This is particularly useful for functions that accept a variable number of arguments. Notice that <code>showArgs()</code> doesn't even declare any parameters, but still accepts arguments. JavaScript is very flexible that way.
+            </p>
+          </div>
+        </div>
+
+        <h2>Regular Expressions</h2>
+        <div>
+          <p>
+            <em>Regular expressions</em> are a standard way of describing patterns of characters that a string may have or contain. They are, unfortunately, rather difficult both to write and to read, but they can be concise and powerful solutions to problems of matching, searching, and replacing string content.
+          </p>
+          <p>
+            In JavaScript, regular expression literals are enclosed in forward slashes like <code>/0x[0-9a-fA-F]+/</code>. (This matches any whole number written in hexadecimal.)
+          </p>
+          <div>
+            <p>
+              The simplest way to use a regular expression is with <code>RegExp.test()</code> For example, to determine whether a string contains a traditional American phone number:
+              <pre>
+var phoneRegEx = /\(\d{3}\) \d{3}-\d{4}/;
+console.log( phoneRegEx.test( 'My phone number is (425) 555-1212' ) );
+console.log( phoneRegEx.test( 'I do not have a phone.' ) );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <p>
+            Other functions that use regular expressions include:
+            <ul>
+              <li>string.search()</li>
+              <li>string.replace()</li>
+              <li>string.match()</li>
+            </ul>
+          </p>
+          <p>
+            You can learn more about regular expressions from these resources:
+            <ul>
+              <li>The <a href="http://www.regular-expressions.info/quickstart.html" target="_blank">Regular-Expressions.info</a> Web site</li>
+              <li>The book <a href="http://shop.oreilly.com/product/0636920012337.do" target="_blank">Introducing Regular Expressions</a></li>
+              <li>The book <a href="http://shop.oreilly.com/product/9780596528126.do" target="_blank">Mastering Regular Expressions</a></li>
+            </ul>
+          </p>
+        </div>
+
+        <h2>Coercions</h2>
+        <div>
+          <p>
+            One thing to be careful about is that JavaScript will often silently convert a value of one type to the type it is expecting in a particular context. This can be convenient at times, but also lead to subtle errors.
+          </p>
+          <div>
+            <p>
+              One form of coercion is often referred to as <em>truthiness</em>. Where JavaScript expects a boolean value, such as in <code>if</code> statements, it will happily convert values of other types. The way it works is that the following "falsy" values are considered <code>false</code>:
+              <ul>
+                <li><code>false</code></li>
+                <li><code>0</code> and <code>-0</code></li>
+                <li><code>NaN</code></li>
+                <li><code>''</code></li>
+                <li><code>null</code></li>
+                <li><code>undefined</code></li>
+              </ul>
+              All other values are "truthy" and converted to <code>true</code>. Notice, for example, that the string <code>'false'</code> is truthy.
+            </p>
+            <pre>
+function checkIfTruthy( x ) {
+    if ( x ) {
+        console.log( 'truthy' );
+    } else {
+        console.log( 'falsy' );
+    }
+}
+
+checkIfTruthy( true );
+checkIfTruthy( false );
+checkIfTruthy( 'true' );
+checkIfTruthy( 'false' );
+checkIfTruthy( undefined );
+checkIfTruthy( ); //undefined
+checkIfTruthy( 0 );
+checkIfTruthy( 100 );
+checkIfTruthy( '' );
+checkIfTruthy( [] );
+checkIfTruthy( {} );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+          <div>
+            <p>
+              To avoid unexpected results, it is usually best to test explicitly for the values you are interested in, e.g.,
+              <pre>
+function checkIfTrue( x ) {
+    if ( x === true ) {
+        console.log( 'true' );
+    } else {
+        console.log( 'Not true' );
+    }
+}
+
+checkIfTrue( true );
+checkIfTrue( false );
+checkIfTrue( 'true' );
+checkIfTrue( undefined );
+checkIfTrue( );
+
+function checkIfDefined( x ) {
+    if ( x !== undefined ) {
+        console.log( 'defined' );
+    } else {
+        console.log( 'undefined' );
+    }
+}
+
+checkIfDefined( true );
+checkIfDefined( false );
+checkIfDefined( 0 );
+checkIfDefined( undefined );
+checkIfDefined( );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <div>
+            <p>
+              In most mathematical operations, JavaScript will attempt to convert values to numbers.
+              <pre>
+var a = '23';
+console.log( a * 1 );
+a = '  64';
+console.log( Math.sqrt( a ) );
+a = 'five';
+console.log( a - 0 );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <div>
+            <p>
+              The binary <code>+</code> operator is particularly interesting, because it will perform numerical addition if both operands are numbers, but will perform string concatenation if either operand is a string, converting the other operand into a string.
+              <pre>
+var a = 1;
+var b = 2;
+var c = '3';
+console.log( a + b );
+console.log( b + c );
+console.log( a + b + c );
+console.log( a + c + b );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            <p>
+          </div>
+          <div>
+            <p>
+              If you are unsure of the types of the variables involved, you can explicitly force the coercion you want. To convert to numbers, you can either use the <code>Number()</code> function or the unary (prefix) <code>+</code> operation. You'd have to do this for all of the operands, since a single string operand will cause the whole expression to yield a string.
+              <pre>
+var a = 1;
+var b = 2;
+var c = '3';
+console.log( Number( a ) + Number( b ) );
+console.log( +b + +c );
+console.log( +a + +b + +c );
+console.log( Number( a ) + +c + +b );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <div>
+            <p>
+              To convert to strings, you can use the <code>toString()</code> method that every object has, or you can start with an empty string. You only need to make the first (or second) operand a string, since JavaScript will interpret the rest as string concatenation.
+              <pre>
+var a = 1;
+var b = 2;
+var c = '3';
+console.log( a.toString() + b.toString() );
+console.log( '' + b + c );
+console.log( a.toString() + b + c );
+console.log( a + c.toString() + b );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <div>
+            <p>
+              The best approach, however, is to write your application with specific types in mind for each variable. For example, if you are reading user input or a text file which is supposed to represent numbers, convert the strings to numbers when you get them, check for unexpected values (especially <code>NaN</code>) and warn users right away, if possible. From then on, you can proceed with confidence that you have numbers.
+            </p>
+            <p>
+              Similarly, when you call a function, make sure you know what types of arguments it is expecting and the type of value it will return. When you write a function for others to call, document the types of arguments and return values. In some cases you should check that the user has indeed supplied the correct arguments, perhaps issuing a <code>console.error()</code> message if not. (Wise programmers always check the console.)
+            </p>
+          </div>
+        </div>
+      </div>
+
+
+      <h1>Operators</h1>
+      <div class="accordion h2">
+        <h2>Arithmetic</h2>
+        <div>
+          <p>
+            JavaScript provides operations for common arithmetic operations:
+            <ul>
+              <li>unary (prefix) <code>+</code> (positive)</li>
+              <li>unary (prefix) <code>-</code> (negative)</li>
+              <li>binary (infix) <code>+</code> (add)</li>
+              <li>binary (infix) <code>-</code> (subtrace)</li>
+              <li><code>*</code> (multiply)</li>
+              <li><code>/</code> (divide)</li>
+              <li><code>%</code> (modulo a.k.a. remainder)</li>
+              <li><code>++</code> (increment)</li>
+              <li><code>--</code> (decrement)</li>
+            </ul>
+          </p>
+          <p>
+            The unary <code>-</code> operator changes the sign of a number, i.e. if <code>x</code> is 23, <code>-x</code> is -23, and if <code>y</code> is -7.5, <code>-y</code> is 7.5. Like most of the numeric operators, it coerces a conversion of non-numeric values into numbers (possbily <code>NaN</code>).
+          </p>
+          <p>
+            The unary <code>+</code> operator also coerces conversion to a number, but does not change the number's value, so if <code>x</code> is 23, then so is <code>+x</code> and if <code>y</code> is -7.5, then so is <code>+y</code>.
+          </p>
+          <p>
+            The binary <code>+</code> operator means addition when its operands are numbers, but it means string concatenation when either argument is a string.
+          <p>
+            The <code>%</code> operator produces the remainder left when dividing two numbers, e.g. <code>7 % 3</code> is 1 and <code>10 % 5</code> is 0. This is meaningful mostly when both operands are whole numbers.
+          </p>
+          <p>
+            Unfortunately, JavaScript does not provide a corresponding integer division operation, so we cannot say that <code>x === (x/y)*y + (x%y)</code>. At best, we can say that <code>x === Math.floor(x/y)*y + (x%y)</code>, and even that is only true when both <code>x</code> and <code>y</code> are non-negative.
+          </p>
+          <p>
+            The <code>++</code> operator (increment) is a unary operator which increases its operand by 1. So
+            <pre>
+++x;
+            </pre>
+            is equivalent to
+            <pre>
+x = x + 1;
+            </pre>
+            Similarly, the unary <code>--</code> operator (decrement) decreases its operand by 1.
+          </p>
+          <div>
+            <p>
+              But unlike those assignment statements, the increment and decrement operators also "return" values, and there are two forms of each. The <em>prefix</em> operators return the value after the incrementation or decrementation.
+              <pre>
+var x = 3;
+console.log( ++x );
+console.log( x );
+console.log( --x );
+console.log( x );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <div>
+            <p>
+              The <em>suffix</em> operators return the value before it was changed.
+              <pre>
+var x = 3;
+console.log( x++ );
+console.log( x );
+console.log( x-- );
+console.log( x );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <p>
+            You should usually use the prefix form of increment and decrement, both because the value after the change is usually what you are interested in and because they are slightly more efficient.
+          </p>
+        </div>
+
+        <h2>Comparison</h2>
+        <div>
+          <div>
+            <p>
+              JavaScript offers two types of operators for testing for equality, "strict" and "abstract":
+              <ul>
+                <li><code>===</code> (strict equality)</li>
+                <li><code>!==</code> (strict inequality)</li>
+                <li><code>==</code> (abstract equality)</li>
+                <li><code>!=</code> (abstract inequality)</li>
+              </ul>
+              The difference is that the strict operators only consider values to be equal if they are of the same type, while the abstract operators will convert the values and then compare them.
+              <pre>
+console.log( '' === 0 );
+console.log( 0 === '0' );
+console.log( '' === '0' );
+console.log( '' == 0 );
+console.log( 0 == '0' );
+console.log( '' == '0' );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+            <p>
+              You should almost always use the longer, strict equality and inequality operators unless you know exactly what you are doing.
+            </p>
+          </div>
+          <div>
+            <p>
+              JavaScript offers (abstract) relational operators:
+              <ul>
+                <li><code>&lt;</code> (less)</li>
+                <li><code>&lt;=</code> (less or equal)</li>
+                <li><code>&gt;</code> (greater)</li>
+                <li><code>&gt;=</code> (greater or equal)</li>
+              </ul>
+            </p>
+            <div>
+              <p>
+                These can compare both numbers and strings. For numbers it works fine.
+                <pre>
+console.log( 3 &lt; 3 );
+console.log( 3 &lt;= 3 );
+console.log( -5.25 &gt; 5 );
+console.log( -5.25 &gt;= 5 );
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+            </div>
+            <div>
+              <p>
+                The rule for strings is fairly naive: it compares the Unicode value of the first character, then the second character, and so on, until it encounters a difference. This is called <em>lexicographic</em> ordering. It is simple and efficient, but does not really match the dictionary order in any language. For one thing, it is sensitive to case, accent marks, etc.
+                <pre>
+console.log( 'Resume' &lt; 'resume' );
+console.log( 'resume' &lt; 'résumé' );
+console.log( 'resume' &gt;= 'resume' );
+console.log( 'ışın' &lt;= 'isim' );
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+              <p>
+                For serious comparison of human-language strings you should use <code>string.localeCompare()</code> instead.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <h2>Logical</h2>
+        <div>
+          <p>
+            JavaScript has three logical operators:
+            <ul>
+              <li>unary <code>!</code> (not)</li>
+              <li>binary <code>&amp;&amp;</code> (and)</li>
+              <li>binary <code>||</code> (or)</li>
+            </ul>
+            These work with Boolean values, but also generally with other types based on "truthiness".
+          </p>
+          <div>
+            <p>
+              The unary <code>!</code> operator converts a truthy value to <code>false</code> and a falsy value to <code>true</code>.
+              <pre>
+console.log( ! true );
+console.log( ! 0 );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <div>
+            <p>
+              If we apply <code>!</code> twice, then truthy values are converted to <code>true</code> and falsy values to <code>false</code>. This way we can coerce expressions into actual Booleans.
+              <pre>
+console.log( !! 'Non-empty string' );
+console.log( !! null );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <p>
+            The binary logical operators use <em>short-circuit</em> evaluation, meaning that as they evaluate their operands from left to right, they stop as soon as they can make a decision, and return the decisive value.
+          </p>
+          <p>
+            For example, consider <code>a &amp;&amp; b &amp;&amp; c</code> ("a AND b AND c"). This will be falsy if either <code>a</code>, <code>b</code>, or <code>c</code> is falsy. Otherwise it will be truthy. So JavaScript first looks at <code>a</code>. If <code>a</code> is falsy, JavaScript stops there and returns <code>a</code>. Otherwise it continues on to <code>b</code>. If it is falsy, JavaScript stops and returns <code>b</code>. Otherwise it contiues on to <code>c</code> and the result is truthy or falsy depending on its value.
+          </p>
+          <div>
+            <p>
+              We can use this in obvious ways. For example:
+              <pre>
+var x = 3;
+var y = 5;
+var z = 7;
+console.log( x &lt;= y &amp;&amp; y &lt;= z );
+console.log( y &lt;= x &amp;&amp; x &lt;= z );
+console.log( x &lt;= z &amp;&amp; z &lt;= y );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <div>
+            <p>
+              But you'll also see it used in JavaScript in less obvious ways, for example to check that an object is defined before evaluating its property:
+              <pre>
+function checkAndShowDiv( obj ) {
+    if ( obj &amp;&amp; obj.showDiv ) {
+        console.log( 'Show the div' );
+    } else {
+        console.log( "Don't show the div" );
+    }
+}
+
+checkAndShowDiv( );
+checkAndShowDiv( { showDiv: false } );
+checkAndShowDiv( { showDiv: true } );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+            <p>
+              In the first case, <code>obj</code> is <code>undefined</code>, but we don't get an error trying to access <code>undefined.showDiv</code> because the <code>&amp;&amp;</code> operation stopped as soon as it saw the falsiness of <code>obj</code>.
+            </p>
+          </div>
+          <p>
+            Next, consider <code>a || b || c</code> ("a OR b OR c"). This will be truthy if either <code>a</code>, <code>b</code>, or <code>c</code> is truthy. Otherwise it will be falsy. So JavaScript first looks at <code>a</code>. If <code>a</code> is truthy, JavaScript stops there and returns <code>a</code>. Otherwise it continues on to <code>b</code>. If it is truthy, JavaScript stops and returns <code>b</code>. Otherwise it contiues on to <code>c</code> and the result is truthy or falsy depending on its value.
+          </p>
+          <div>
+            <p>
+              Again, this can be used in obvious ways, e.g.,
+              <pre>
+function checkInRange( x ) {
+    if ( isNaN( x ) || x &lt; 0 || x &gt; 2000 ) {
+        console.log( 'Not a number between 0 and 2000' );
+    } else {
+        console.log( 'In range' );
+    }
+}
+
+checkInRange( 1729 );
+checkInRange( -1 );
+checkInRange( 0 );
+checkInRange( Infinity );
+checkInRange( 'fifty' );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <div>
+            <p>
+              But you will also see it used in less obvious ways, for example to choose a truthy value, if there is any, from a prioritized list of alternatives:
+              <pre>
+var userSetting;
+var config = {};
+var readOnly = userSetting || config.readOnly || true;
+console.log( readOnly );
+
+var app = app || {};
+app.menu = [ 'Home', 'Help' ];
+console.log( app );
+var app = app || {};
+app.settings = { readOnly: readOnly };
+console.log( app );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+        </div>
+
+        <h2>Assignment</h2>
+        <div>
+          <p>
+            JavaScript has several assignment operators. The most important are these:
+            <ul>
+              <li><code>=</code> (assignment)</li>
+              <li><code>+=</code> (addition assignment)</li>
+              <li><code>-=</code> (subtraction assignment)</li>
+              <li><code>*=</code> (multiplication assignment)</li>
+              <li><code>/=</code> (division assignment)</li>
+            </ul>
+          </p>
+          <div>
+            <p>
+              By far the most important is simple assignment, <code>=</code>, which assigns the value on the right side to the variable on the left. One interesting feature is that it can be chained, assigning the right-most value to several variables.
+              <pre>
+var a = 10;
+var b = 20;
+var c = 30;
+console.log( a );
+console.log( b );
+console.log( c );
+a = b;
+console.log( a );
+console.log( b );
+console.log( c );
+a = b = c;
+console.log( a );
+console.log( b );
+console.log( c );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <div>
+            <p>
+              The other assignment operators are shorthand combining an arithmetic operation with assignment. For example, <code>x += 4</code> is equivalent to <code>x = x + 4</code>. And remember, the most common of these operations, <code>x += 1</code>, can be written even more concisely.
+              <pre>
+var x = 7;
+console.log( x );
+x += 15;
+console.log( x );
+x -= 10;
+console.log( x );
+x *= 3;
+console.log( x );
+x /= 6;
+console.log( x );
+++x;
+console.log( x );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+        </div>
+
+        <h2>Conditional</h2>
+        <div>
+          <p>
+            JavaScript has one <em>ternary</em> operator which returns either the second or third operand, depending on whether the first is truthy. It is written <code>condition <b>?</b> value1 <b>:</b> value2</code>. If <code>condition</code> is truthy, then <code>value1</code> is returned. Otherwise <code>value2</code> is.
+          </p>
+          <div>
+            <p>
+              The conditional operator is often used with assignment:
+              <pre>
+var yes = true;
+var no = false;
+var a = {
+    ifSo: 3,
+    ifNot: 13
+};
+
+var x = (yes  ?  a.ifSo  :  a.ifNot);
+console.log( x );
+x = (no  ?  a.ifSo  :  a.ifNot);
+console.log( x );
+              </pre>
+              We could have written this using <code>if</code> statements, but less concisely or clearly:
+              <pre>
+var x;
+if ( yes ) {
+    x = a.ifSo;
+} else {
+    x = a.ifNot;
+}
+console.log( x );
+if ( no ) {
+    x = a.ifSo;
+} else {
+    x = a.ifNot;
+}
+console.log( x );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <div>
+            <p>
+              Another common use for the conditional operator is for building strings which depend on some condition, e.g.,
+              <pre>
+function writeAboutCats( num ) {
+    console.log( 'I have ' + num + ' ' + ((num === 1)  ?  'cat'  :  'cats') );
+}
+
+writeAboutCats( 1 );
+writeAboutCats( 10 );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+        </div>
+      </div>
+
+
+      <h1>Statements</h1>
+      <div class="accordion h2">
+        <h2><code>if</code> and <code>else</code></h2>
+        <div>
+          <p>
+            The <code>if</code> statement is pretty straightforward: if the expression in the following parentheses is truthy, it executes the following statement(s). You can also include an optional <code>else</code> block that executes if the expression is falsy.
+          </p>
+          <div>
+            <p>
+              If there are more than one statement to execute in the <code>if</code> or <code>else</code> branches, they must be enclosed in braces (<code>{</code> and <code>}</code>). Braces are optional for a single statement, but you should use them anyway. In other words, don't do this:
+              <pre>
+var x = 1;
+if ( x === 1 )
+    console.log( 'One' );
+else
+    console.log( 'Many' );
+              </pre>
+              Do this instead:
+              <pre>
+if ( x === 1 ) {
+    console.log( 'One' );
+} else {
+    console.log( 'Many' );
+}
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+        </div>
+
+        <h2><code>switch</code></h2>
+        <div>
+          <div>
+            <p>
+              The <code>switch</code> statement chooses a block of statements to execute based on the value of an expression. For example:
+              <pre>
+function doSwitch( x ) {
+    <b>switch</b> ( x ) <b>{</b>
+    <b>case</b> 1<b>:</b>
+        console.log( 'One' );
+        <b>break</b>;
+    <b>case</b> 2<b>:</b>
+        console.log( 'Two' );
+        <b>break</b>;
+    <b>case</b> 3<b>:</b>
+    <b>case</b> 4<b>:</b>
+        console.log( 'Few' );
+        <b>break</b>;
+    <b>default</b><b>:</b>
+        console.log( 'Many' );
+        <b>break</b>;
+    <b>}</b>
+}
+
+doSwitch( 1 );
+doSwitch( 2 );
+doSwitch( 4 );
+doSwitch( 6 );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+            <p>
+              You mustn't forget the <code>break</code> statements after each <code>case</code> block. (There are occasional exceptions, but they should be commented clearly.) And you should usually include a <code>default</code> block, either to handle the typical cases, or to handle unexpected values. Note that it is OK to have more than one <code>case</code> for a block of code.
+            </p>
+          </div>
+          <div>
+            <p>
+              A <code>switch</code> statement like this is functionally equivalent to an <code>if</code> statement:
+              <pre>
+function doIfs( x ) {
+    if ( x === 1 ) {
+        console.log( 'One' );
+    } else if ( x === 2 ) {
+        console.log( 'Two' );
+    } else if ( x === 3 || x === 4 ) {
+        console.log( 'Few' );
+    } else {
+        console.log( 'Many' );
+    }
+}
+
+doIfs( 1 );
+doIfs( 2 );
+doIfs( 4 );
+doIfs( 6 );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+            <p>
+              The main advantage of the <code>switch</code> statement is that it clearly indicates that all of the branches are based on the value of the same variable or expression.
+            </p>
+          </div>
+        </div>
+
+        <h2><code>while</code></h2>
+        <div>
+          <div>
+            <p>
+              A <code>while</code> statement creates a loop that executes until the condition is falsy. For example:
+              <pre>
+var x = 1;
+var y = 2;
+while ( x &lt; 30 ) {
+    console.log( x );
+    console.log( y );
+    x += y;
+    y += x;
+}
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+            <p>
+              Note that if the condition starts off falsy, then the statements inside the block will not be executed at all. That is often intentional and fine. (That would be the case had we started with <code>x = 13</code>, for example.) However, note that the loop will never stop if the condition never changes to falsy. That's an <em>infinite loop</em>, and almost never good. (That would be the case had we started with <code>x = 0</code> and <code>y = 0</code>.)
+            </p>
+          </div>
+          <div>
+            <p>
+              There is another form, the <code>do...while</code> loop, which is almost the same, except that the condition is evaluated after each block executes, rather than before, so it always runs at least once:
+              <pre>
+var x = 1;
+var y = 2;
+do {
+    console.log( x );
+    console.log( y );
+    x += y;
+    y += x;
+} while ( x &lt; 30 );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+            <p>
+              This form is much less common than the simple <code>while</code> loop.
+            </p>
+          </div>
+        </div>
+
+        <h2><code>for</code></h2>
+        <div>
+          <p>
+            A <code>for</code> statement also creates a loop. It's form is more specialized than the <code>while</code> statement, but it captures a very common pattern. It is particularly suited for working with arrays and similar sequences. The form is
+            <pre>
+<b>for</b> <b>(</b> [initialization]<b>;</b> [condition]<b>;</b> [update] <b>)</b> <b>{</b>
+    statement(s);
+<b>}</b>
+            </pre>
+            It is equivalent to a <code>while</code> loop with this organization:
+            <pre>
+[initialization];
+while ( [condition] ) {
+    statement(s);
+    [update];
+}
+            </pre>
+          </p>
+          <div>
+            <p>
+              Here's an example that should seem familiar:
+              <pre>
+var i, j;
+for ( i = 1, j = 2; i &lt; 30; i += j, j += i ) {
+    console.log( i );
+    console.log( j );
+}
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+            <p>
+              Notice that multiple statements, separated by commas, can appear in the initialization and update clauses.
+            </p>
+          </div>
+          <div>
+            <p>
+              A very common use is to loop through an array.
+              <pre>
+var people = [
+    { name: 'Ayşa', favoriteColor: 'aqua' },
+    { name: 'Bob', favoriteColor: 'blue' },
+    { name: 'Cordelia', favoriteColor: 'coral' }
+];
+var i;
+var len;
+var person;
+
+for ( i = 0, len = people.length; i &lt; len; ++i ) {
+    person = people[ i ];
+    console.log( person.name + ' likes ' + person.favoriteColor + '.' );
+}
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <div>
+            <p>
+              There is now an <code>array.forEach()</code> method that you can also use to iterate through an array:
+              <pre>
+var people = [
+    { name: 'Ayşa', favoriteColor: 'aqua' },
+    { name: 'Bob', favoriteColor: 'blue' },
+    { name: 'Cordelia', favoriteColor: 'coral' }
+];
+
+people.forEach( function( person ) {
+    console.log( person.name + ' likes ' + person.favoriteColor + '.' );
+} );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <div>
+            <p>
+              There is also a <code>for...in</code> statement that iterates through all of the properties in an object:
+              <pre>
+var person = {
+    name: 'Ayşa',
+    age: 15,
+    favoriteColor: 'aqua'
+};
+var key;
+
+for ( key in person ) {
+    console.log( key + ': ' + person[ key ] );
+}
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+        </div>
+      </div>
+
+
+      <h1>Best Practices</h1>
+      <div class="accordion h2">
+        <h2>Adopt a Style</h2>
+        <div>
+          <p>
+            JavaScript, like most programming languages, allows you to write code many different ways. There are, however, styles and idioms that make it easiest to read and maintain code. Over time programmers become opinionated, and opinions differ, but especially on a team it is important to be flexible and strive for consensus. Consistency is valuable.
+          </p>
+          <p>
+            It helps to adopt or develop a <em>style guide</em>. One example that I like is the <a href="https://github.com/felixge/node-style-guide" target="_blank">Node Style Guide</a> by Felix Geisendörfer.
+          </p>
+        </div>
+
+        <h2>Strict Mode</h2>
+        <div>
+          !!!
+        </div>
+        
+        <h2>Variables</h2>
+        <div class="accordion h2">
+          <h3>Guidelines</h3>
+          <div>
+            <p>
+              Generally, variables should be declared inside of, and at the beginning of functions, always with the <code>var</code> keyword.
+            </p>
+            <p>
+            </p>
+          </div>
+          <h2>The <code>var</code> keyword</h2>
+          <div>
+            <p>
+              It is essential that you use <code>var</code> before the first mention of a variable. It is usually a good idea to put all of your variable declarations at the beginning of a function.
+            </p>
+          </div>
+          <h3>Naming</h3>
+          <div>
+            <p>
+              JavaScript is fairly flexible regarding names of variables and functions, but most coding styles encourage "camel case", starting with a lower-case letter and beginning each additional word in the name with a capital letter, e.g. <code>thisVariableName</code>.
+            </p>
+            <p>
+              Some coding styles use all-caps for constants, i.e. variables that are not intended to ever change, e.g. <code>RAMAJANS_NUMBER</code>.
+            </p>
+            <p>
+              Most importantly, names should be descriptive, telling the reader what the variable holds.
+            </p>
+          </div>
+        </div>
+
+        <h2>IIFEs</h2>
+        <div class="accordion h3">
+          <h3>Introduction</h3>
+          <div>
+            <div>
+              <p>
+                One pattern which has proven quite valuable in JavaScript programming is the <em>Immediately-Invoked Function Expression</em> (IIFE). Simply put, this is code that is wrapped inside a function that is immediately called. Here's a simple, if trivial example:
+                <pre>
+<b>(function() {</b>
+console.log( 'I was immediately invoked.' );
+<b>})();</b>
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+              <p>
+                This function is anonymous, because we are only going to call it once, right away. It's declaration and definition are wrapped in parentheses, and the final pair of parentheses are simply the ones we use to call (invoke) the function.
+              </p>
+            </div>
+            <div>
+              <p>
+                The main value of IIFEs is that they help us keep variables and functions separate and "private", so that different parts of our program don't interfere with each other too much. Here is a somewhat artificial example:
+              </p>
+              <p>
+                First, let's write a program that updates a Fibonacci sequence every 100 milliseconds:
+                <pre>
+var x = 1;
+var y = 2;
+function updateFibonacci( ) {
+    console.log( 'Next Fibonacci: ' + x );
+    console.log( 'Next Fibonacci: ' + y );
+    x += y;
+    y += x;
+    if ( x &lt; 30 ) {
+        setTimeout( updateFibonacci, 100 );
+    }
+}
+updateFibonacci( );
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+            </div>
+            <div>
+              <p>
+                Now let's write a program that updates a sequence of squares every 100 milliseconds.
+                <pre>
+var x = 1;
+function updateSquares( ) {
+    console.log( 'Next Square: ' + x*x );
+    ++x;
+    if ( x &lt; 10 ) {
+        setTimeout( updateSquares, 100 );
+    }
+}
+updateSquares( );
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+            </div>
+            <div>
+              <p>
+                Now let's combine them in one program:
+                <pre>
+var x = 1;
+var y = 2;
+function updateFibonacci( ) {
+    console.log( 'Next Fibonacci: ' + x );
+    console.log( 'Next Fibonacci: ' + y );
+    x += y;
+    y += x;
+    if ( x &lt; 30 ) {
+        setTimeout( updateFibonacci, 100 );
+    }
+}
+updateFibonacci( );
+
+var x = 1;
+function updateSquares( ) {
+    console.log( 'Next Square: ' + x*x );
+    ++x;
+    if ( x &lt; 10 ) {
+        setTimeout( updateSquares, 100 );
+    }
+}
+updateSquares( );
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+            </div>
+            <div>
+              <p>
+               Oh, what a mess! This obviously doesn't work because they are both using the same <code>x</code> variable. (Just because they are declared twice doesn't help.) We could try to solve this by using separate variables, e.g., <code>fibX</code>, <code>fibY</code>, and <code>squareX</code>, but in a large program that approach becomes unwieldly.
+              </p>
+              <p>
+                Instead, let's wrap each section in an IIFE:
+                <pre>
+(function() {
+var x = 1;
+var y = 2;
+
+function updateFibonacci( ) {
+    console.log( 'Next Fibonacci: ' + x );
+    console.log( 'Next Fibonacci: ' + y );
+    x += y;
+    y += x;
+    if ( x &lt; 30 ) {
+        setTimeout( updateFibonacci, 100 );
+    }
+}
+updateFibonacci( );
+})();
+
+(function(){
+var x = 1;
+function updateSquares( ) {
+    console.log( 'Next Square: ' + x*x );
+    ++x;
+    if ( x &lt; 10 ) {
+        setTimeout( updateSquares, 100 );
+    }
+}
+updateSquares( );
+})();
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+              <p>
+                Now each sequence is correct, because they have separate, private instances of <code>x</code>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+
+    <button type="button" id="accordionToggle"></button>
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+  </body>
+</html>

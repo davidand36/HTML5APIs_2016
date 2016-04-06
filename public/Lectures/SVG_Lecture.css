@@ -1,0 +1,71 @@
+/*
+  SVG_Lecture.css
+
+  CSS for the SVG lecture
+*/
+
+div.svgHolder
+{
+    width: 300px;
+    height: 150px;
+    border: thin solid;
+    float: right;
+}
+
+
+.cat-bg {
+    background: url( 'images/Cat.png' );
+    width: 500px;
+    height: 240px;
+}
+
+
+svg.cat {
+    width: 180px;
+    height: 180px;
+}
+
+svg.cat .head,
+svg.cat .ear
+{
+    stroke: black;
+    stroke-width: 3;
+    fill: white;
+}
+
+svg.cat .eye
+{
+    stroke: black;
+    fill: rgb( 100, 200, 100 );
+}
+
+svg.cat .pupil
+{
+    fill: black;
+}
+
+svg.cat .whiskers,
+svg.cat .mouth
+{
+    stroke: black;
+    fill: none;
+}
+
+svg.cat .nose
+{
+    stroke: black;
+    stroke-linejoin: miter;
+    fill: rgb( 255, 200, 200 );
+}
+
+svg.cat .mouth
+{
+    stroke-width: 2;
+}
+
+svg.cat text
+{
+    font-family: sans-serif;
+    font-size: 20px;
+    text-anchor: middle;
+}

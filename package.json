@@ -1,0 +1,35 @@
+{
+  "name": "HTML5APIs_2016",
+  "version": "0.1.0",
+  "description": "Web site for my lectures, examples, etc., for the University of Washington PCE course on HTML5 Application Programming Interfaces.",
+  "main": "web.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:davidand36/HTML5APIs_2016.git"
+  },
+  "keywords": [
+    "HTML5",
+    "APIs",
+    "Lectures"
+  ],
+  "author": "David M. Anderson",
+  "license": "AGPL 3",
+  "bugs": {
+    "url": "https://github.com/davidand36/HTML5APIs_2016/issues"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "homepage": "https://github.com/davidand36/HTML5APIs_2016",
+  "dependencies": {
+    "body-parser": "^1.12.2",
+    "compression": "^1.0.9",
+    "cookie-parser": "^1.3.4",
+    "express": "^4.7.2",
+    "logfmt": "^1.1.2",
+    "serve-favicon": "^2.0.1"
+  }
+}

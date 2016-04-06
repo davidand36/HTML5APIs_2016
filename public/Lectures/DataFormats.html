@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Data Formats</title>
+    <link rel="stylesheet" href="Lecture.css" />
+  </head>
+  <body>
+
+    <h1 class="top">Data Formats</h1>
+
+    <div class="accordion h1">
+
+      <h1>Introduction</h1>
+      <div>
+        <p>
+          We often need to send collections of data between different programs or save and retrieve them from some form of storage. This generally requires us to convert the data to a string and back again.
+        </p>
+        <p>
+          Two of the most common approaches used today are XML and JSON.
+        </p>
+      </div>
+
+      <h1>XML</h1>
+      <div class="accordion h2">
+        <h2>Overview</h2>
+        <div>
+          <p>
+            <em>XML</em> stands for <em>Extensible Markup Language</em> and is sort of a generalization of HTML. It uses the same form of tags inside angle brackets (<code>&lt;</code> and <code>&gt;</code>) with various attributes to enclose text and other content. <em>Schemas</em> can be created to define specific XML-based formats, specifying the particular tags and how they may be used.
+          </p>
+          <p>
+            The rules for XML are somewhat stricter than for HTML. For instance all tags must be "closed", so that an &lt;li&gt; tag cannot stand by itself, but must have a matching &lt;/li&gt; tag. Empty elements must be "self-closed", so that &lt;hr&gt; must be replaced by &lt;hr /&gt;. In HTML5, it is a good idea to adhere to these policies, but they are not required by browsers nor the standard.
+          </p>
+          <p>
+            XML is often used for document formats, such as <a href="http://www.opendocumentformat.org/" target="_blank">OpenDocument</a>. It is also commonly used to structure data, such as records from databases.
+          </p>
+          <p>
+            There is a rich ecosystem of tools and related formats for handling XML and its DOM.
+          </p>
+        </div>
+        <h2>Example</h2>
+        <div>
+          <pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;catalog&gt;
+  &lt;record&gt;
+    &lt;title&gt;The Dock of the Bay&lt;/title&gt;
+    &lt;artist&gt;Otis Redding&lt;/title&gt;
+    &lt;label&gt;Volt/Atco&lt;/label&gt;
+    &lt;year&gt;1968&lt;/year&gt;
+  &lt;/record&gt;
+  &lt;record&gt;
+    &lt;title&gt;Confession Blues&lt;/title&gt;
+    &lt;artist&gt;Ray Charles&lt;/title&gt;
+    &lt;label&gt;Down Beat Records&lt;/label&gt;
+    &lt;year&gt;1949&lt;/year&gt;
+  &lt;/record&gt;
+&lt;/catalog&gt;
+          </pre>
+          or
+          <pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;catalog&gt;
+  &lt;record title="The Dock of the Bay" artist="Otis Redding" label="Volt/Atco" year="1968" /&gt;
+  &lt;record title="Confession Blues" artist="Ray Charles" label="Down Beat Records" year="1949" /&gt;
+&lt;/catalog&gt;
+          </pre>
+        </div>
+        <h2>JavaScript support</h2>
+        <div>
+          <p>
+            JavaScript has built-in support for XML. A <code>DOMParser</code> object can parse an XML string into a <code>Document</code> tree, which can be navigated like Web page (using <code>getElementById()</code>, for example). Going the other way, one can use <code>createDocment()</code>, <code>createElement()</code>, <code>appendChild</code>, etc., to build a DOM tree, and then use an <code>XMLSerializer</code> to convert that to an string in XML format.
+          </p>
+          <p>
+            For a detailed discussion, see the Mozilla Developer Network's article, <a href="https://developer.mozilla.org/en-US/docs/Web/Guide/Parsing_and_serializing_XML" target="_blank">Parsing and serializing XML</a>.
+          </p>
+        </div>
+      </div>
+
+      <h1>JSON</h1>
+      <div class="accordion h2">
+        <h2>Overview</h2>
+        <div>
+          <p>
+            <em>JSON</em> stands for <em>JavaScript Object Notation</em>. This format represents data as text that looks very much like the object literals used in JavaScript. In spite of the name, many languages have support for the format.
+          </p>
+        </div>
+        <h2>Example</h2>
+        <div>
+          <pre>
+[
+  {
+    "title": "The Dock of the Bay",
+    "artist": "Otis Redding",
+    "label": "Volt/Atco",
+    "year": 1968
+  },
+  {
+    "title": "Confession Blues",
+    "artist": "Ray Charles",
+    "label": "Down Beat Records",
+    "year": 1949
+  }
+]
+          </pre>
+          <p>
+            In JSON property names must be double quoted, as well as all string values.
+          </p>
+        </div>
+        <h2>JavaScript support</h2>
+        <div>
+          <p>
+            Modern browsers and environments like Node.js have a built-in <code>JSON</code> object that can convert data to and from JSON.
+          </p>
+          <p>
+            <code>JSON.parse()</code> parses a JSON string, returning the value it represents. (There is an optional second parameter, but we won't go into it here.)
+          </p>
+          <p>
+            Example:
+          </p>
+          <div>
+            <pre>
+var json = '[ { "title": "The Dock of the Bay", "artist": "Otis Redding", "label": "Volt/Atco", "year": 1968 }, { "title": "Confession Blues", "artist": "Ray Charles", "label": "Down Beat Records", "year": 1949 } ]';
+var catalog = JSON.parse( json );
+console.log( catalog );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+          <p>
+            <code>JSON.stringify()</code> converts a value to JSON. It takes an optional third parameter which, if present, inserts some white space into the output for readability ("pretty printing"). (There is an optional second parameter, but we won't go into it here.)
+          </p>
+          <p>
+            Example:
+          </p>
+          <div>
+            <pre>
+var catalog = [
+  {
+    title: "The Dock of the Bay",
+    artist: "Otis Redding",
+    label: "Volt/Atco",
+    year: 1968
+  },
+  {
+    "title": 'Confession Blues',
+    "artist": 'Ray Charles',
+    "label": 'Down Beat Records',
+    "year": 1949
+  }
+];
+var json = JSON.stringify( catalog );
+console.log( json );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+          <p>
+            (In JavaScript object literals, quotes around property names are generally optional, and single quotes may be used for names and string values.) This resulting string is pretty compact, suitable for computer-to-computer communication.
+          </p>
+          <p>
+            Another example:
+          </p>
+          <div>
+            <pre>
+var catalog = [
+  {
+    title: "The Dock of the Bay",
+    artist: "Otis Redding",
+    label: "Volt/Atco",
+    year: 1968
+  },
+  {
+    "title": "Confession Blues",
+    "artist": "Ray Charles",
+    "label": "Down Beat Records",
+    "year": 1949
+  }
+];
+var json = JSON.stringify( catalog, null, 4 );
+console.log( json );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+          <p>
+            This way we get four space indentation, which makes the output easier for us humans to read.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <button type="button" id="accordionToggle"></button>
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+  </body>
+</html>

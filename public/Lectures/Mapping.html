@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Mapping</title>
+    <link rel="stylesheet" href="Lecture.css" />
+  </head>
+  <body>
+    <div id="errorMsgDiv" style="display:none;"></div>
+
+    <h1 class="top">HTML5 APIs: Mapping</h1>
+
+    <div class="accordion h1">
+      <h1>Introduction</h1>
+      <div>
+        <p>
+          Web sites can often use maps. A business or organization may use maps to help users find its stores or offices. Some Web sites have a focus on geographic data, often using <a href="Geolocation.html" target="_blank">geolocation</a> to customize the experience based on the user's location.
+        </p>
+        <p>
+          Several companies and organizations have amassed the data required for detailed maps. MapQuest, Google, and Microsoft (Bing) all have proprietary data. A notable project is the <a href="http://wiki.osmfoundation.org/wiki/Main_Page" target="_blank">OpenStreetMap Foundation</a>, which has allowed millions of contributors to build an open and free database of geographic data.
+        </p>
+        <p>
+          Each of these organizations has its own map Web site. In addition, MapQuest has been running <a href="http://open.mapquest.co.uk/" target="_blank">MapQuest Open</a>, which uses OpenStreetMap data.
+        </p>
+        <p>
+          All of these organizations also provide ways for Web developers to include maps on their own Web pages. The simplest form of map is a "static" map, which is effectively just an <code>&lt;img&gt;</code> with the map image as its source. A fancier map, often called a "slippy" map, allows the user to pan around (generally by dragging or clicking on directional buttons or arrow keys) and zoom, just as is allowed on the dedicated map Web sites.
+        </p>
+      </div>
+
+      <h1>Static maps</h1>
+      <div>
+        <p>
+          For static maps, all one needs is the appropriate URL for the map provider. Some providers require developers to register with them (and possibly pay money). Others are more liberal with their services. Some third parties also provide this service, using, e.g. OpenStreetMap data.
+        </p>
+        <p>
+          Here is an example, using <a href="http://staticmap.openstreetmap.de/" target="_blank">staticMapLite</a> and OpenStreetMap data. This URL:
+          <pre>
+&lt;img src="http://staticmap.openstreetmap.de/staticmap.php?center=47.6205,-122.3493&zoom=16&size=600x400&maptype=mapnik" /&gt;
+          </pre>
+          produces this map: <br />
+          <img src="http://staticmap.openstreetmap.de/staticmap.php?center=47.6205,-122.3493&zoom=16&size=600x400&maptype=mapnik" />
+        <p>
+      </div>
+
+      <h1>Slippy maps</h1>
+      <div>
+        <p>
+          For slippy maps, it is necessary to include the provider's JavaScript and use its API. Each of the providers uses a similar, though slightly different API. There are also third-party APIs which can generate maps from these data sources. One convenient API is provided by <a href="http://mapstraction.com" target="_blank">Mapstraction</a>, which provides a common interface to several mapping APIs, allowing one to switch from one provider to another.
+        </p>
+        <p>
+          Here is a simple example using Mapstraction to draw maps of a few places using a few different map providers: <a href="/Examples/Maps/" target="_blank">Maps demo</a>.
+        </p>
+      </div>
+    </div>
+
+    <button type="button" id="accordionToggle"></button>
+
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+  </body>
+</html>

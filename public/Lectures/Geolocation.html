@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Geolocation</title>
+    <link rel="stylesheet" href="Lecture.css" />
+  </head>
+  <body>
+    <div id="errorMsgDiv" style="display:none;"></div>
+
+    <h1 class="top">HTML5 APIs: Geolocation</h1>
+    
+    <div class="accordion h1">
+      <h1>Introduction</h1>
+      <div>
+        <p>
+          The Geolocation API provides access to data regarding the location of the client's device. It is a high-level interface, abstracted from details of the device's hardware or the source of location data.
+        </p>
+        <p>
+          If the device has a GPS receiver, access to it is generally provided. Other sources of location data include nearby cell towers and the IP address.
+        </p>
+        <p>
+          There are some obvious privacy and security concerns regarding collecting user location data. Browsers are required to get the user's permission before providing data.
+        </p>
+      </div>
+      <h1>Specification</h1>
+      <div>
+        The W3C maintains the specification for the Geolocation API at <a href="http://dev.w3.org/geo/api/spec-source.html" target="_blank">http://dev.w3.org/geo/api/spec-source.html</a>.
+      </div>
+      <h1>The Geolocation API</h1>
+      <div class="accordion h2">
+        <h2>The <em>Geolocation</em> object</h2>
+        <div>
+          The global <code>navigator</code> object holds a reference, <code>navigator.geolocation</code> to a <em>Geolocation</em> object, which provides the API. (Of course it is wise to check for the presence of this before attempting to use it.)
+        </div>
+        <h2>Methods</h2>
+        <div>
+          <code>navigator.geolocation</code> offers three methods:
+          <ul>
+            <li><code>getCurrentPosition()</code> provides location on a one-time basis</li>
+            <li><code>watchPosition()</code> regularly updates the location. It returns a handle identifying the watch operation</li>
+            <li><code>clearWatch()</code> accepts this handle as an argument and terminates the watch operation</li>
+          </ul>
+        </div>
+        <h2>Arguments</h2>
+        <div>
+          The <code>getCurrentPosition()</code> and <code>watchPosition()</code> methods accept the same three arguments:
+          <ul>
+            <li>a <em>successCallback</em> function</li>
+            <li>an optional <em>errorCallback</em> function</li>
+            <li>an optional <em>options</em> object</li>
+          </ul>
+        </div>
+        <h2>Position</h2>
+        <div>
+          <p>
+            The <em>successCallback</em> function will receive a <em>Position</em> object, which has two member properties:
+            <ul>
+              <li><code>coords</code>, which has several properties:
+                <ul>
+                  <li><code>latitude</code>, in degrees (north is positive)</li>
+                  <li><code>longitude</code>, in degrees (east is positive)</li>
+                  <li><code>altitude</code>, in meters</li>
+                  <li><code>speed</code>, in meters/second</li>
+                  <li><code>heading</code>, in degrees, clockwise from true north, representing the direction of movement</li>
+                  <li><code>accuracy</code>, in meters, of latitude and longitude</li>
+                  <li><code>altitudeAccuracy</code>, in meters</li>
+                </ul>
+              </li>
+              <li><code>timestamp</code>, given in milliseconds</li>
+            </ul>
+          </p>
+          <p>
+            Only <code>coords.latitude</code>, <code>coords.longitude</code>, <code>coords.accuracy</code>, and <code>timestamp</code> are required; the rest may be null. The value of <code>coords.heading</code> may be NaN if the device is stationary.
+          </p>
+        </div>
+        <h2>Options</h2>
+        <div>
+          The <em>options</em> argument to <code>getCurrentPosition()</code> and <code>watchPosition()</code> should be an object with these properties:
+          <ul>
+            <li><code>enableHighAccuracy</code>, a boolean.</li>
+            <li><code>maximumAge</code>, in milliseconds, to allow for already acquired location data</li>
+            <li><code>timeout</code>, in milliseconds: how long to wait before giving up</li>
+          </ul>
+          The spec is not specific, but if <code>enableHighAccuracy</code> is <code>true</code>, GPS will probably be used, if available. This can take longer to acquire a location and can have a serious impact on battery life, especially with <code>watchPosition</code>.
+        </div>
+        <h2>Error codes</h2>
+        <div>
+          If you provide an <em>errorCallback</em>, and you should, then on error your callback will receive an object with a <code>code</code> property. If your argument is <code>error</code>, then <code>error.code</code> may be one of
+          <ul>
+            <li><code>error.PERMISSION_DENIED</code></li>
+            <li><code>error.POSITION_UNAVAILABLE</code></li>
+            <li><code>error.TIMEOUT</code></li>
+          </ul>
+        </div>
+      </div>
+      <h1>Simple example</h1>
+      <div>
+        <pre>
+var navGeoLoc = navigator.geolocation;
+if ( navGeoLoc )
+{
+    navGeoLoc.getCurrentPosition(
+        function successCallback( position )
+        {
+            console.log( 'Position at ' + new Date( position.timestamp ) );
+            console.log( ' Latitude: ' + position.coords.latitude + '°' );
+            console.log( ' Longitude: ' + position.coords.longitude + '°' );
+            console.log( ' Accuracy: ' + position.coords.accuracy + 'm' );
+        },
+        function errorCallback( error )
+        {
+            var message;
+            switch ( error.code )
+            {
+            case error.PERMISSION_DENIED:
+                message = "Geolocation permission denied.";
+                break;
+            case error.POSITION_UNAVAILABLE:
+                message = "Geolocation position unavailable.";
+                break;
+            case error.TIMEOUT:
+                message = "Geolocation timed out.";
+                break;
+            }
+            message += '\n' + error.message;
+            console.log( message );
+        },
+        {
+            enableHighAccuracy: false,
+            maximumAge: 86400000, //1 day
+            timeout: 60000 //1 min
+        } );
+}
+else
+{
+    console.log( 'No geolocation support' );
+}
+        </pre>
+        <button type="button" class="runCode">Run</button>
+      </div>
+      <h1>Richer example</h1>
+      <div>
+        <a href="http://epsilondelta.us/WhereAmI/" target="_blank">Where Am I?</a>
+      </div>
+    </div>
+    
+    <button type="button" id="accordionToggle"></button>
+    
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+  </body>
+</html>

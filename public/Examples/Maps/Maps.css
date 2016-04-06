@@ -1,0 +1,19 @@
+/*
+  Maps.css
+  David M. Anderson
+
+  Style for Maps demo
+*/
+
+.mapHolder {
+    position: relative;
+    width: 80%;
+    margin: 1em auto;
+    height: 400px;
+}
+
+.map {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}

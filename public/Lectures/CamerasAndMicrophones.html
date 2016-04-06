@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Cameras and Microphones</title>
+    <link rel="stylesheet" href="Lecture.css" />
+  </head>
+  <body>
+    <div id="errorMsgDiv" style="display:none;"></div>
+
+    <h1 class="top">HTML5 APIs: Cameras and Microphones</h1>
+    
+    <div class="accordion h1">
+      <h1>Introduction</h1>
+      <div>
+        <p>
+          Many Web devices, desktop, laptop, and mobile, feature cameras and microphones. This means that images and sound are available as input as well as output. Just as HTML5 makes audio and video output easy, it also enables Web sites to obtain input from these devices.
+        </p>
+        <p>
+          After several false starts, the W3C has largely settled on on approach, <em>Media Capture and Streams</em>, which allows for fine-grained control of the data with JavaScript, using the <code>getUserMedia()</code> function, which allows streams to be attached to <code>video</code> and <code>audio</code> elements and processed in real time.
+        </p>
+        <p>
+          Support is still mixed. Chrome, Firefox, Opera, and Android browsers support the spec, but for Internet Explorer it seems to be coming soon, and there is no support in Safari (Mac or iOS).
+        </p>
+        <p>
+          There are obvious privacy and security concerns with providing Web access to data from a user's camera(s) and microphones. Browsers are required to get the user's permission before providing data.
+        </p>
+      </div>
+
+      <h1>Specification</h1>
+      <div>
+        The W3C maintains the specification of Media Capture and Streams at <a href="http://www.w3.org/TR/mediacapture-streams/" target="_blank">http://www.w3.org/TR/mediacapture-streams/</a>.
+      </div>
+
+      <h1>The user-media API</h1>
+      <div class="accordion h2">
+        <h2><code>getUserMedia</code></h2>
+        <div>
+          <p>
+            The global <code>navigator</code> object may provide the <code>getUserMedia()</code> method. This function takes three arguments:
+            <ul>
+              <li><em>constraints</em>, an object with two boolean properties, <code>audio</code> and <code>video</code>, specifying which types of stream tracks are requested.</li>
+              <li><em>successCallback</em></li>
+              <li><em>errorCallback</em></li>
+            </ul>
+          </p>
+          <p>
+            (At this point browsers may add prefixes to the method name, and there are some variations in their APIs. There are some work-arounds for this. Some polyfills fall back to Flash; this won't work for purposes like those discussed here.)
+          </p>
+        </div>
+        <h2>Handling the stream</h2>
+        <div>
+          <p>
+            If <code>getUserMedia()</code> succeeds, the <em>successCallback</em> receives the <em>stream</em> as a parameter. The <code>MediaStream</code> object has various methods, described in the spec.
+          </p>
+          <p>
+            One thing we can do is turn it into a URL:
+            <pre>
+var url = URL.createObjectURL( stream )
+            </pre>
+            (This may also require removing a browser-specific prefix.)
+          </p>
+          <p>
+            The URL can then be assigned as the <code>src</code> property of a <code>video</code> or <code>audio</code> DOM element.
+          </p>
+        </div>
+        <h2>Error code</h2>
+        <div>
+          <p>
+            If you provide an <em>errorCallback</em>, and you should, then on error your callback will receive an object with a <code>code</code> property. At this time, the only documented value corresponds to <code>error.PERMISSION_DENIED</code>.
+          </p>
+          <p>
+            Naturally you should plan for the likely event that either the UserMedia interface is not available or the user denies your app permission to film and/or record her. Some fallback needs to be provided.
+          </p>
+        </div>
+        <h2>Simple example</h2>
+        <div>
+          <pre>
+window.URL =
+    window.URL ||
+    window.webkitURL;
+navigator.getUserMedia =
+    navigator.getUserMedia ||
+    navigator.webkitGetUserMedia ||
+    navigator.mozGetUserMedia ||
+    navigator.msGetUsermedia;
+
+if ( navigator.getUserMedia )
+{
+    navigator.getUserMedia( { video: true, audio: true },
+        function handleStream( stream )
+        {
+            $('#demoVideo')[0].src = URL.createObjectURL( stream );
+        },
+        function errorHandler( error )
+        {
+            console.error( 'getUserMedia error: ' + error.code );
+        } );
+}
+else
+{
+    console.error( 'getUserMedia not supported' );
+}
+          </pre>
+          <video autoplay id="demoVideo"></video>
+          <button type="button" class="runCode">Run</button>
+        </div>
+        <h2>Using with Canvas</h2>
+        <div>
+          <p>
+            Streaming the camera's video and/or microphone's audio directly to the browser screen is nice, but we can do much more.
+          </p>
+          <p>
+            The <code>canvas.drawImage()</code> can accept a <code>video</code> element as its &quot;image&quot;. This grabs the current frame playing in that video, so it needs to be called on each update.
+          </p>
+          <p>
+            Once we have the frame image in a canvas, we have, as usual, direct access to the pixel-level data. This allows us to process or filter the data before presenting it on screen.
+          </p>
+        </div>
+      </div>
+
+      <h1>Richer example</h1>
+      <div>
+        <a href="http://epsilondelta.us/RippleCam/" target="_blank">RippleCam</a>
+      </div>
+
+    </div>
+    
+    <button type="button" id="accordionToggle"></button>
+    
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+  </body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Web Workers</title>
+    <link rel="stylesheet" href="Lecture.css" />
+  </head>
+  <body>
+    <div id="errorMsgDiv" style="display:none;"></div>
+
+    <h1 class="top">HTML5 APIs: Web Workers</h1>
+
+    <div class="accordion h1">
+      <h1>Introduction</h1>
+      <div>
+        <p>
+          JavaScript programs generally do one thing at a time. As events occur--user input, responses from servers, fulfillment of promises, etc.--they are handled one at a time. When you provide a callback function for an event, and the event is triggered, that function executes without interruption, including its calls to other functions.
+        </p>
+        <p>
+          The catch is that your callbacks need to get their work done quickly. If any of them takes a significant amount of time, the Web site will feel unresponsive and the browser may even put up a warning message about your script taking too long and suggesting that the user close your page.
+        </p>
+        <p>
+          Many other languages, such as C++, Java, and Scala, allow programmers to divide the work into separate <em>threads</em> which run, more or less, in parallel. Some of this is accomplished by using multiple cores on the system's CPU(s). But it is also facilitated by operating systems which can give each thread slices of time so that several threads can be running on the same core. That way a long process can be interrupted briefly to handle input, refresh the display, etc.
+        </p>
+        <p>
+          Threading can sometimes simplify coding by separating, say, physics computations from UI. But although <em>concurrency</em> can solve problems, it also creates headaches for programmers. The main problem is that threads generally have access to each other's data and resources. Two threads simultaneously modifying an object or file is usually disasterous. To resolve these conflicts, threaded programs have to use <em>locks</em>, <em>semaphores</em>, <em>critical sections</em>, and similar constructs that temporarily block other threads. This blocking, in turn, threatens to create <em>deadlocks</em>.
+        </p>
+        <p>
+          HTML5 introduced <em>Web Workers</em>, which provides the concurrency of threads but with limitations that make them much safer to use. Most programs do not need to use them, but if you do have some heavy computations, for example, processing large arrays or images, they make it possible to do so in the background while your UI continues to be responsive.
+        </p>
+      </div>
+
+      <h1>The Web Worker API</h1>
+      <div class="accordion h2">
+        <h2>Creation</h2>
+        <div>
+          <p>
+            Web Workers are created by calling the constructor function, passing it the URL of a JavaScript file to run:
+            <pre>
+var myWorker = new Worker( 'myWorkerScript.js' );
+            </pre>
+            You can create multiple workers, giving them the same or different scripts. So you can divide up the load of a single task or get several different things going in the background.
+          </p>
+        </div>
+        <h2>Communication</h2>
+        <div>
+          <p>
+            Unlike threads in most other languages, Web Workers cannot access variables or call functions defined in the main thread or other Workers, and the main thread cannot access a Worker's variables or functions. The only way they can communicate is by passing messages, which can be strings, arrays, or objects, but not functions.
+          </p>
+          <p>
+            Sending a message to a Worker is simple. Use the <code>postMessage()</code> method:
+            <pre>
+myWorker.postMessage( msgData );
+            </pre>
+          </p>
+          <p>
+            Sending a message from a Worker to the thread that created it is even simpler. Use the global <code>postMessage()</code> function:
+            <pre>
+postMessage( msgData );
+            </pre>
+          <p>
+            Receiving messages is accomplished by setting an <code>onmessage</code> handler (callback) function. The handler will receive an event object with a <code>data</code> property that holds the message. To handle messages from a Worker, we write something like this:
+            <pre>
+myWorker.onmessage = function( event ) {
+    console.log( 'I got this message from my worker:', event.data );
+}
+            </pre>
+          </p>
+          <p>
+            Workers can receive messages from their creators even more simply:
+            <pre>
+onmessage = function( event ) {
+    doSomethingWith( event.data );
+}
+            </pre>
+          </p>
+          <p>
+            Messages are always passed as <strong>copies</strong> of the data, unlike, say function parameters, which are passed as references. So if a Worker modifies the object it receives, the main thread's object will not be changed. Thw Worker would need to send the modified version back as a message and the main thread would then update its data, if it so chooses.
+          </p>
+        </div>
+        <h2>Termination</h2>
+        <div>
+          <p>
+            If you no longer need a Worker, you can call the <code>terminate()</code> method to kill it. Any processing the Worker is doing will be halted.
+            <pre>
+myWorker.terminate();
+            </pre>
+          </p>
+          <p>
+            A worker can also terminate itself by calling:
+            <pre>
+close( );
+            </pre>
+            Presumably it would do this when it knows its work is complete.
+          </p>
+          <p>
+            It is a good idea to use one of these to clean up Workers that are no longer needed.
+          </p>
+        </div>
+        <h2>Importing scripts</h2>
+        <div>
+          <p>
+            We already know how to divide the JavaScript code for our main thread into separate files: we just load it with multiple <code>&lt;script&gt;</code> tags in our HTML file.
+          </p>
+          <p>
+            Since a Web Worker is initialized, not with an HTML file, but with a JavaScript file, we need a different way to allow it to use JavaScript from other files. The Web Worker API provides the <code>importScripts()</code> function for this purpose. We pass this function the URL of one or more files (from the same domain as the original one) and they get loaded sequentially:
+            <pre>
+loadScripts( 'scriptOne.js', 'scriptTwo.js' );
+            </pre>
+          </p>
+        </div>
+      </div>
+
+      <h1>Limitations</h1>
+      <div>
+        <p>
+          As mentioned earlier, Web Workers are somewhat limited in what they can do. Workers have no access to the <code>window</code> global object (including the <code>console</code>), nor to the DOM, nor to user input.
+        </p>
+        <p>
+          Web Workers can do a lot, however, including make Ajax and Web Socket connections, and even create Web Workers of their own.
+        </p>
+      </div>
+
+      <h1>Example</h1>
+      <div>
+        <p>
+          Here I have set up a couple of buttons for starting and stopping some computations. I also have a couple of spans, one for data from the Web Worker, and one for text that the user submits. In spite of all of that prime number computation, it should be pretty responsive.
+        </p>
+        <div>
+          <div>
+            <button type="button" id="start-primes">Start primes</button>
+            <button type="button" id="stop-primes">Stop primes</button><br/>
+            Prime numbers: <span id="prime"></span><br/>
+            User input: <span id="user-output"></span><br/>
+            <input type="text" id="user-input" placeholder="Type stuff" />
+            <button type="button" id="submit-input">Submit</button>
+          </div>
+          <pre>
+var worker = new Worker( 'PrimeWorker.js' );
+
+// Messages to the worker:
+$('#start-primes').on( 'click', function( ) {
+    worker.postMessage( 'start' );
+} );
+$('#stop-primes').on( 'click', function( ) {
+    worker.postMessage( 'stop' );
+} );
+
+// Messages from the worker:
+worker.onmessage = function( event ) {
+    $('#prime').html( event.data );
+}
+
+// User input:
+$('#submit-input').on( 'click', function( ) {
+    $('#user-output').html( $('#user-input').val() );
+} );
+          </pre>
+          <button type="button" class="runCode">Run</button>
+        </div>
+        <p>
+          The script for the Web Worker is here: <a href="PrimeWorker.js" target="_blank">PrimeWorker.js</a>.
+        </p>
+      </div>
+
+    </div>
+
+    <button type="button" id="accordionToggle"></button>
+
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+  </body>
+</html>

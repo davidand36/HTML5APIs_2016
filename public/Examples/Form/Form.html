@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Form</title>
+  </head>
+  <body>
+    <h1>Form</h1>
+    <h2>Regular form</h2>
+    <form action="/form" method="post">
+      <input type="hidden" name="HiddenField1" value="Hidden field value 1" />
+      <input type="text" name="TextField1" /> <br />
+      <button type="submit">Submit</button>
+    </form>
+    
+    <hr/>
+
+    <h2>Ajax form</h2>
+    <form id="ajaxForm">
+      <input type="hidden" name="HiddenField2" value="Hidden field value 2" />
+      <input type="text" name="TextField2" /> <br />
+      <button type="submit">Submit</button>
+    </form>
+    <div id="ajaxResponse"></div>
+
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="Form.js"></script>
+  </body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Audio &amp; Video</title>
+    <link rel="stylesheet" href="Lecture.css" />
+    <link rel="stylesheet" href="../table.css" />
+  </head>
+  <body>
+
+    <h1 class="top">HTML5 APIs: Audio &amp; Video</h1>
+
+    <div class="accordion h1">
+      <h1>Audio</h1>
+      <div class="accordion h2">
+        <h2>Overview</h2>
+        <div>
+          With HTML5, apps can play and control sounds. Games can play sound effects, background music, and more. Support still varies between browsers, but the important functionality is now ready for use.
+        </div>
+
+        <h2>Formats</h2>
+        <div class="accordion h3">
+          <h3>Overview</h3>
+          <div>
+            <ul>
+              <li>Digital audio represents the waveform of sound as numbers representing the variation in amplitude of the waves as sampled many times per second.</li>
+              <li>Audio file formats are distinguished by
+                <ul>
+                  <li>Sample settings</li>
+                  <li>Compression</li>
+                  <li>Legal encumbrances</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+
+          <h3>Sample settings</h3>
+          <div>
+            <ul>
+              <li>
+                Digital audio is characterized by
+                <ul>
+                  <li>Sampling rate: the number of samples per second.</li>
+                  <li>Sample size: The number of bits per sample.</li>
+                  <li>Number of channels</li>
+                </ul>
+                <img src="images/Pcm.png" />
+              </li>
+              <li>
+                Sample rate generally ranges from about 8 kHz (8,000 samples per second) for telephone quality to 44.1 kHz for CD audio to 48 kHz or more for high fidelity recording.<br />
+                Human hearing ranges from about 20 Hz to 20 kHz. The Nyquist-Shannon sampling theorem states that the sampling rate should be twice the highest frequency being sampled.
+              </li>
+              <li>
+                Generally either 8 or 16 bits per sample are used. Larger samples allow for more dynamic range.
+              </li>
+              <li>
+                One channel is monaural sound, and generally best for sound effects.<br />
+                Two channels is stereo, typical for music.<br />
+                More channels can be used for 5.1 surround sound, etc.
+              </li>
+            </ul>
+            Most audio file formats are compatible with a range of sample rates and multiple channels.
+          </div>
+
+          <h3>Compression</h3>
+          <div>
+            Sound files are also characterized by the compression used.
+            <ul>
+              <li>No compression. Also called PCM (pulse-code modulation). Easiest to manipulate.</li>
+              <li>Lossless compression. When decompressed all of the original (PCM) data is unaltered.</li>
+              <li>ADPCM (adaptive pulse-code modulation). About 3.5:1 compression with some loss. Fast compression and decompression.</li>
+              <li>Lossy compression. Sophisticated algorithms can reduce data size significantly with minimal reduction in audio quality.</li>
+            </ul>
+          </div>
+
+          <h3>Legal encumbrances</h3>
+          <div>
+            Certain file formats are <em>open-source</em> and free for anyone to use. Others are encumbered by <em>software patents</em> and sometimes uncertainty regarding ownership of rights, generally regarding compression algorithms. (Actually, there are often patents on the open formats, but the patent holders have have granted royalty-free usage rights. Of course nothing can prevent companies from making bogus claims of patent infringement.)
+          </div>
+
+          <h3>Some important audio file formats</h3>
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Format</th>
+                  <th>Compression</th>
+                  <th>Legal</th>
+                  <th>Browsers</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>WAV</td>
+                  <td>Uncompressed (PCM)</td>
+                  <td>Open</td>
+                  <td>Chr, FF, Saf, Op, iOS</td>
+                  <td>Easy to process</td>
+                </tr>
+                <tr>
+                  <td>FLAC</td>
+                  <td>Lossless</td>
+                  <td>Open</td>
+                  <td></td>
+                  <td>Good for archiving</td>
+                </tr>
+                <tr>
+                  <td>MP3</td>
+                  <td>Lossy</td>
+                  <td>Several patents until 2015+</td>
+                  <td>Chr, IE, Saf, iOS, And</td>
+                  <td>Supported on many devices</td>
+                </tr>
+                <tr>
+                  <td>AAC (M4A)</td>
+                  <td>Lossy</td>
+                  <td>Patents on codec</td>
+                  <td>Chr, IE, Saf, iOS</td>
+                  <td>Successor to MP3. YouTube, iTunes, etc.</td>
+                </tr>
+                <tr>
+                  <td>Ogg Vorbis</td>
+                  <td>Lossy</td>
+                  <td>Open</td>
+                  <td>Chr, FF, Op</td>
+                  <td>Ogg is container format. Vorbis is audio codec.</td>
+                </tr>
+                <tr>
+                  <td>Ogg Opus</td>
+                  <td>Lossy</td>
+                  <td>Open</td>
+                  <td>Chr, FF, Op</td>
+                  <td>Low latency</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="5">
+                    Chr=Chrome, FF=FireFox, Op=Opera, IE=Internet Explorer, Saf=Safari, And=Android
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+            No single format is supported by all current browsers, but all of the modern ones support either Ogg Vorbis or MP3.
+          </div>
+
+          <h3>Codec comparision</h3>
+          <div>
+            The IETF working group developing the Opus codec has published this comparison based on listening tests: <br />
+            <img src="images/Opus_quality_comparison.png" />
+          </div>
+
+          <h3>Detecting format support</h3>
+          <div>
+            We can ask whether a particular format is supported:
+            <pre>
+              var audio = new Audio(),
+              mp3Support = audio.canPlayType( 'audio/mpeg' );
+            </pre>
+            The argument is the MIME type of the format.<br />
+            For containers like Ogg we should also specify the codec(s):
+            <pre>
+              var oggVorbisSupport = audio.canPlayType( 'audio/ogg; codecs="vorbis"' );
+            </pre>
+            The value of the variable is always one of these, in decreasing order of likelihood of support:
+            <ul>
+              <li>"probably"</li>
+              <li>"maybe"</li>
+              <li>"" (empty string)</li>
+            </ul>
+          </div>
+
+          <h3>Example</h3>
+          <div class="codeDemo">
+            This will work if our browser &quot;probably&quot; supports Ogg Vorbis or MP3:
+            <pre>
+var formats = [
+    { ext: 'ogg', mime: 'audio/ogg; codecs="vorbis"' },
+    { ext: 'mp3', mime: 'audio/mpeg' }
+];
+var element = document.createElement( 'audio' );
+for ( var f = 0, len = formats.length; f < len; ++f ) {
+    if ( element.canPlayType( formats[ f ].mime ) === 'probably' ) {
+        console.log( formats[ f ].ext + ' is supported, "probably".' );
+    }
+}
+            </pre>
+            <button type="button" class="runCode">Run</button>
+            <p>
+              If that fails, we might check for (and supply) other formats and/or check for &quot;maybe&quot; support.
+            </p>
+          </div>
+        </div>
+
+        <h2>Creating <code>audio</code> elements</h2>
+        <div class="accordion h3">
+          <h3>Directly in HTML</h3>
+          <div>
+            You can declare an audio element directly in your HTML like this:
+            <pre>
+&lt;audio&gt;
+  &lt;source src="audio/MySound.ogg"  type='audio/ogg; codecs="vorbis"'&gt;
+  &lt;source src="audio/MySound.mp3"  type='audio/mpeg'&gt;
+&lt;/audio&gt;
+            </pre>
+            This allows the browser to choose the file it supports. You can also add a <code>controls</code> attribute to the <code>audio</code> element which will place visible playback controls on the Web page.
+          </div>
+
+          <h3>In JavaScript</h3>
+          <div>
+            For games we usually create <code>audio</code> element objects in JavaScript:
+            <pre>
+              var myaudio = new Audio( "audio/MySound." + formatExt );
+            </pre>
+            Unless we want to use the browser controls, we usually do not need to append this to any DOM element.
+          </div>
+        </div>
+
+        <h2>Controlling audio</h2>
+        <div class="accordion h3">
+          <h3>Play</h3>
+          <div>
+            The <code>play()</code> method starts playing the sound referenced by the <code>audio</code> object.
+            <pre>
+var snd = sounds[ "computer" ];
+snd.play( );
+            </pre>
+            <button type="button" class="runAudioCode">Run</button>
+            <button type="button" class="stopAudio">Stop</button>
+          </div>
+
+          <h3>Pause</h3>
+          <div>
+            The <code>pause()</code> method stops playback, which may be resumed with <code>play()</code>.
+            <pre>
+var snd = sounds[ "asaying" ];
+snd.play( );
+setTimeout( function() { snd.pause( ); }, 4*1000 );
+setTimeout( function() { snd.play( ); }, 10*1000 );
+            </pre>
+            <button type="button" class="runAudioCode">Run</button>
+            <button type="button" class="stopAudio">Stop</button>
+            <p>
+              (This code is just to exercise the methods. The timing approach is not the best, as it depends on the the initial <code>play()</code> call working quickly.)
+            </p>
+          </div>
+
+          <h3>Looping</h3>
+          <div>
+            Setting the <code>loop</code> property causes a sound to be repeated (endlessly).
+            <pre>
+var snd = sounds[ "hatecomp" ];
+snd.loop = true;
+snd.play( );
+setTimeout( function() { snd.loop = false; }, 7*1000 );
+            </pre>
+            <button type="button" class="runAudioCode">Run</button>
+          </div>
+
+          <h3>Current time</h3>
+          <div>
+            The <code>currentTime</code> property is the current playback location, measured in seconds. It can be set to skip to ahead (or back) to any point in the sound stream.<br />
+            Here we play the final measures of Diane Nalini's stellar <a href="http://www.kissmelikethat.com/">Kiss Me Like That</a>.
+            <pre>
+var snd = sounds[ "Diane_Nalini_Kiss_me_like_that" ];
+snd.currentTime = 208.4;
+snd.play( );
+            </pre>
+            <button type="button" class="runAudioCode">Run</button>
+            <button type="button" class="stopAudio">Stop</button>
+          </div>
+
+          <h3>Volume</h3>
+          <div>
+            The <code>volume</code> property ranges from 0.0 to 1.0. (No, you can't make it 1.1!)
+            <pre>
+var snd = sounds[ "maketenlouder" ];
+snd.play( );
+setTimeout(
+    function()
+    {
+        snd.volume = 0.25;
+        snd.play( );
+    },
+    10*1000 );
+            </pre>
+            <button type="button" class="runAudioCode">Run</button>
+            <button type="button" class="stopAudio">Stop</button>
+          </div>
+
+          <h3>Muting</h3>
+          <div>
+            The <code>muted</code> property is a boolean which, when <code>true</code>, silences the sound without pausing playback and without affecting the <code>volume</code> property.
+            <pre>
+var snd = sounds[ "Ella_Fitzgerald_Let's_Do_It_(Let's_Fall_in_Love)" ];
+snd.currentTime = 12.0;
+snd.play( );
+setTimeout(
+    function()
+    {
+        snd.muted = true;
+    },
+    6.0*1000 );
+setTimeout(
+    function()
+    {
+        snd.muted = false;
+    },
+    12.1*1000 );
+setTimeout(
+    function()
+    {
+        snd.pause( );
+    },
+    21.5*1000 );
+            </pre>
+            <button type="button" class="runAudioCode">Run</button>
+            <button type="button" class="stopAudio">Stop</button>
+          </div>
+        </div>
+
+        <h2>Monitoring audio</h2>
+        <div class="accordion h3">
+          <h3>Overview</h3>
+          <div>
+            Audio elements have many properties which can be read to determine the state of loading and playback. They also fire many events which you can listen for.<br />
+            We have already discussed the <code>loop</code>, <code>currentTime</code>, <code>volume</code>, and <code>muted</code> properties, which we generally set more than we get.
+          </div>
+
+          <h3><code>ended</code></h3>
+          <div>
+            It is usually necessary to keep track of which sounds are playing. We generally know when a sound has started playing, because our program calls <code>play()</code>, but we need to know which sounds have finished playing. HTML5 audio offers both an <code>ended</code> property and an <code>ended</code> method.
+            <pre>
+var snd = sounds[ "fw11" ];
+snd.play( );
+for ( var i = 0; i < 7; ++i )
+{
+    setTimeout( function()
+                {
+                    console.log( "Ended: " + snd.ended );
+                },
+                i*1000 );
+}
+$(snd).on( "ended",
+        function( event )
+        {
+            console.log( "The sound (" + snd.src + ") just ended" );
+            $(snd).off( "ended" );
+        } );
+            </pre>
+            <button type="button" class="runAudioCode">Run</button>
+            <button type="button" class="stopAudio">Stop</button>
+          </div>
+
+          <h3>More</h3>
+          <div>
+            Other useful properties include
+            <ul>
+              <li><code>duration</code> (seconds). (May not be known before play begins.)</li>
+              <li><code>readyState</code>: a number (0-4) indicating how much of the required data the browser has received</li>
+              <li><code>seekable</code>: a <em>TimeRanges</em> object</li>
+            </ul>
+            Other useful events include
+            <ul>
+              <li><code>canplaythrough</code>: when the browser estimates it can play to the end without running out of data.</li>
+              <li><code>timeupdate</code>: fired during playback, roughly every 0.25 second.</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <h2>Limitations</h2>
+        <div>
+          <ul>
+            <li>This is a new API and not fully specified or implemented yet.</li>
+            <li>As noted, no standard, universally supported format.</li>
+            <li>Seeking (with <code>currentTime</code> can be unreliable.</li>
+            <li>Latency, especially across the Internet, can be significant.</li>
+            <li>Mobile browsers have serious limitations with audio, such as:
+              <ul>
+                <li>iOS cannot play multiple sounds simultaneously!</li>
+                <li>Neither Android nor iOS offer <code>volume</code> control.</li>
+                <li>Android 2.x and iOS (?) do not always fire the <code>ended</code> event, so you may need to use the <code>pause</code> event and check the <code>currentTime</code>.</li>
+              </ul>
+            </li>
+            <li>Advanced audio API's, to allow synchronization of media elements, access to sample data, filtering and effects, etc., are still being developed. (The <a href="http://www.w3.org/TR/audioproc/" target="_blank">W3C Working Draft</a> references two proposals, one from Google and another from Mozilla.)</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <h1>Video</h1>
+      <div class="accordion h2">
+        <h2>Overview</h2>
+        <div>
+          <p>
+            HTML5 video works very similarly to audio, with the obvious difference that it includes visual data, usually in addition to audio data.
+          </p>
+          <p>
+            You can include <code>&lt;video&gt;</code> elements in your HTML, with or without controls. You can also create them dynamically, using JavaScript. Unlike audio elements, you will almost always want to add them to the page's DOM so that they are visible. (Recall that you don't need to do this with audio elements created programatically.)
+          </p>
+        </div>
+        <h2>Formats</h2>
+        <div>
+          <p>
+            As with audio, there are several formats available and in development for video, and none is supported by all browsers. These are the current important ones for the Web.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Format</th>
+                <th>Codecs</th>
+                <th>Legal</th>
+                <th>Browsers</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MP4</td>
+                <td>
+                  Video: H.264<br />
+                  Audio: AAC
+                </td>
+                <td>Patents not freely licensed</td>
+                <td>IE, Saf, Chr*, FF*, Op*, iOS, And</td>
+                <td>Supported on many devices</td>
+              </tr>
+              <tr>
+                <td>Ogg Theora Vorbis</td>
+                <td>
+                  Video: Theora<br />
+                  Audio: Vorbis
+                </td>
+                <td>Open</td>
+                <td>Chr, FF, Op, And</td>
+                <td>Ogg is container format.</td>
+              </tr>
+              <tr>
+                <td>WebM</td>
+                <td>
+                  Video: VP8 or VP9<br />
+                  Audio: Vorbis or Opus
+                </td>
+                <td>Open</td>
+                <td>Chr, FF, Op, And</td>
+                <td>Generally better compression than Theora</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="5">
+                  Chr=Chrome, FF=FireFox, Op=Opera, IE=Internet Explorer, Saf=Safari, And=Android, *=supported but not recommended
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+          <p>
+            MP4 is supported in recent versions of all major browsers, but developers are strongly encouraged to provide at least WebM as well.
+          </p>
+        </div>
+        <h2>Detecting supported formats</h2>
+        <div>
+          <div class="codeDemo">
+            This will work if our browser &quot;probably&quot; supports WebM, Ogg Theora Vorbis, or MP4:
+            <pre>
+var formats = [
+        { ext: 'webm', mime: 'video/webm' },
+        { ext: 'ogv', mime: 'video/ogg; codecs="theora, vorbis"' },
+        { ext: 'mp4', mime: 'video/mp4' }
+];
+var element = document.createElement( 'video' );
+for ( var f = 0, len = formats.length; f < len; ++f ) {
+    if ( element.canPlayType( formats[ f ].mime ) === 'probably' ) {
+        console.log( formats[ f ].ext + ' is supported, "probably".' );
+    }
+}
+            </pre>
+            <button type="button" class="runCode">Run</button>
+            <p>
+              If that fails, we might check for (and supply) other formats and/or check for &quot;maybe&quot; support.
+            </p>
+          </div>
+        </div>
+        <h2>Example</h2>
+        <div>
+          <p>
+            Here is an example using the video <a href="http://creativecommons.org/videos/wanna-work-together" target="_blank">Wanna Work Together</a>, which explains the <a href="http://creativecommons.org/" target="_blank">Creative Commons</a> licenses. I downloaded the Ogg Theora Vorbis file and used the command-line tool <code>avconv</code> to create WebM and MP4 versions.
+          </p>
+          <div>
+            <div id="videoHolder"></div>
+            <button id="play-video">Play</button>
+            <button id="pause-video">Pause</button>
+            <button id="restart-video">Restart</button>
+            <pre>
+var vid = videos[ 'wannaworktogether' ];
+$('#videoHolder').append( vid );
+$('#play-video').on( 'click',
+    function( ) {
+        vid.play( );
+    } );
+$('#pause-video').on( 'click',
+    function( ) {
+        vid.pause( );
+    } );
+$('#restart-video').on( 'click',
+    function( ) {
+        vid.currentTime = 0;
+    } );
+            </pre>
+            <button type="button" class="runVideoCode">Run</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <button type="button" id="accordionToggle">Expand</button>
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+    <script src="AudioVideoLecture.js"></script>
+  </body>
+</html>

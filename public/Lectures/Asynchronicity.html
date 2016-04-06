@@ -1,0 +1,650 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Asynchronicity</title>
+    <link rel="stylesheet" href="Lecture.css" />
+  </head>
+  <body>
+
+    <h1 class="top">Asynchronicity</h1>
+
+    <div class="accordion h1">
+      <h1>Introduction</h1>
+      <div>
+        <p>
+          Most programs deal with tasks that require some significant amount of time to complete. Reading files from drives, requesting records from databases, and waiting for data to be sent over the Internet all involve delays. Some programs, generally ones that do not involve human interaction, can get away with simply waiting for each task to finish before proceeding. Web applications can rarely do so, because it makes them seem jerky and unresponsive to user input.
+        </p>
+        <p>
+          When a function does not return until the task it starts has completed, we say it is <em>synchronous</em> (a.k.a. <em>blocking</em>). In contrast, if a function starts a task but returns almost immediately while the task continues, we call it <em>asynchronous</em> (a.k.a. <em>non-blocking</em>). Asynchronous functions solve the problem mentioned above, allowing the application to handle user input or other requests smoothly.
+        </p>
+        <p>
+          The catch is that we still usually need to know when the task has completed, and often need the result of that task. There are a few ways to handle asynchronicity. The most basic of these is with <em>callback functions</em>. A more powerful way is the <em>deferred-promise</em> pattern, which builds on callbacks.
+        </p>
+      </div>
+
+      <h1>Callbacks</h1>
+      <div class="accordion h2">
+        <h2>Overview</h2>
+        <div>
+          <p>
+            Suppose <code>doSomethingTimeConsuming()</code> is an asynchronous function that starts some time-consuming task. Often it will be written so that it accepts a <em>callback function</em> as an argument. The agreement is that when the task completes, that callback function will be called, often with the result of that task.
+          </p>
+        </div>
+        <h2>Example: setTimeout</h2>
+        <div>
+          <p>
+            Browsers (and Node.js) offer a global function, <code>setTimeout()</code> which waits for a specified number of milliseconds and then calls the function you supply it. For example:
+          </p>
+          <div>
+            <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+function timeoutHandler( ) {
+    console.log( 'Called back at', timeElapsed() );
+}
+
+console.log( 'Starting at', timeElapsed() );
+<b>setTimeout( timeoutHandler, 2000 )</b>;
+console.log( 'Called setTimeout at', timeElapsed() );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+          <p>
+            Rather than passing in a predefined, named function, you can also pass in an anonymous function as your callback:
+          </p>
+          <div>
+            <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+console.log( 'Starting at ', timeElapsed() );
+setTimeout( <b>function( ) {
+        console.log( 'Called back at', timeElapsed() );
+    }</b>,
+    2000 );
+console.log( 'Called setTimeout at', timeElapsed() );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+        </div>
+        <h2>Passing callbacks along</h2>
+        <div>
+          <p>
+            Functions in JavaScript are objects that can be passed around like any data and it is common to do so with callbacks. For example, we may have a function that initiates one or more asynchronous tasks and lets the caller decide what to do when they (each) finish:
+          </p>
+          <div>
+            <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+function runTheTasks( <b>callbackA</b>, <b>callbackB</b> ) {
+    console.log( 'Starting tasks at', timeElapsed() );
+    setTimeout( <b>callbackA</b>, 3000 );
+    setTimeout( <b>callbackB</b>, 1000 );
+    console.log( 'Finished calling tasks at', timeElapsed() );
+}
+
+function handleSlowTask( ) {
+    console.log( 'Slow task finished at', timeElapsed() );
+}
+
+function handleSlowerTask( ) {
+    console.log( 'Slower task finished at', timeElapsed() );
+}
+
+runTheTasks( handleSlowerTask, handleSlowTask );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+        </div>
+        <h2>Passing data to the callback</h2>
+        <div>
+          <p>
+            When a task finishes, we often return data to a callback function as an argument or arguments.
+          </p>
+          <div>
+            <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+function asynchTask( callback ) {
+    setTimeout( function( ) {
+            callback( <b>timeElapsed()</b> );
+        },
+        1000 );
+}
+
+function myCallback( <b>elapsed</b> ) {
+    console.log( 'asynchTask called me at', elapsed );
+}
+
+asynchTask( myCallback );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+        </div>
+        <h2>Error handling</h2>
+        <div>
+          <p>
+            Not all tasks succeed. Sometimes there are errors. The file or resource you request may not exist, the server may be down, etc. There are a couple of ways an asynchronous function can inform its caller of an error.
+          </p>
+          <p>
+            One approach is to pass an error message (or another sort of object with error information) to the callback as an argument. Node.js takes this approach; the error message is always the first argument to callbacks. If the error argument is null, no error occurred.
+          </p>
+          <div>
+            <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+function myCallback( <b>errorMsg</b>, successMsg ) {
+    if ( errorMsg ) {
+        console.error( errorMsg );
+    } else {
+        console.log( successMsg );
+    }
+}
+
+function happyTask( callback ) {
+    setTimeout( function( ) {
+            callback( <b>null</b>, 'happyTask succeeded at ' + timeElapsed() );
+        },
+        1000 );
+}
+
+function sadTask( callback ) {
+    setTimeout( function( ) {
+            callback( <b>'sadTask failed at ' + timeElapsed()</b> );
+        },
+        500 );
+}
+
+happyTask( myCallback );
+sadTask( myCallback );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+          <p>
+            Another approach to reporting errors is to use two callbacks, one called on success and the other called on error. jQuery uses this approach with its Ajax shortcut functions, for instance.
+          </p>
+          <div>
+            <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+function mySuccessCallback( msg ) {
+    console.log( msg );
+}
+
+function myFailureCallback( msg ) {
+    console.error( msg );
+}
+
+function happyTask( <b>successCallback, failureCallback</b> ) {
+    setTimeout( function( ) {
+            successCallback( 'happyTask succeeded at ' + timeElapsed() );
+        },
+        1000 );
+}
+
+function sadTask( <b>successCallback, failureCallback</b> ) {
+    setTimeout( function( ) {
+            failureCallback( 'sadTask failed at ' + timeElapsed() );
+        },
+        500 );
+}
+
+happyTask( mySuccessCallback, myFailureCallback );
+sadTask( mySuccessCallback, myFailureCallback );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+        </div>
+        <h2>Chaining tasks</h2>
+        <div>
+          <p>
+            Sometimes we need to run a series of asynchronous tasks, where one must complete before the next is started, often because each needs information obtained from a previous task. We can achieve this with nested callbacks.
+          </p>
+          <div>
+            <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+var total = 0;
+
+setTimeout( <b>function</b>( ) {
+        console.log( 'First task finished at', timeElapsed() );
+        total += timeElapsed();
+        setTimeout( <b>function</b>( ) {
+                console.log( 'Second task finished at', timeElapsed() );
+                total += timeElapsed();
+                setTimeout( <b>function</b>( ) {
+                        console.log( 'third task finished at', timeElapsed() );
+                        total += timeElapsed();
+                        console.log( 'Total =', total );
+                    },
+                    1250 );
+            },
+            1500 );
+    },
+    1000 );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+          <p>
+            This nesting is rather cumbersome and inflexible. Reordering tasks isn't trivial, for instance. It is also not easy to set up a callback that is called when all of several tasks have completed.
+          </p>
+        </div>
+      </div>
+
+      <h1>Promises</h1>
+      <div class="accordion h2">
+        <h2>Introduction</h2>
+        <div>
+          <p>
+            As we saw in the section on chaining, callbacks by themselves can be a bit cumbersome. One of the nicest ways to harness their power is through a pattern called <em>promises</em>.
+          </p>
+          <p>
+            There are several libraries, including jQuery, which deliver some form of promises, but they are now becoming part of the JavaScript standard (JS6), and are already available as such in modern browsers. (I.e., not in IE, yet.) There is a polyfill which implements it in older browsers: <a href="https://www.npmjs.com/package/es6-promise-polyfill" target="_blank">es6-promise-polyfill</a>.
+          </p>
+          <p>
+            I will begin by describing the use of promises as they work in JS6 and later discuss jQuery's approach. Other libraries of note are <a href="https://github.com/kriskowal/q" target="_blank">Q</a>, <a href="https://github.com/cujojs/when" target="_blank">when</a>, and <a href="https://github.com/tildeio/rsvp.js" target="_blank">RSVP</a>. The latter is similar to the new JS6 standard.
+          </p>
+          <p>
+            The latest draft specification is <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-constructor" target="_blank">here</a>. A more readable introduction is at <a href="http://www.html5rocks.com/en/tutorials/es6/promises/" target="_blank">HTML5 Rocks</a>. All of the implementations, including the standard, except jQuery, adhere to a specification called <a href="https://github.com/promises-aplus/promises-spec" target="_blank">Promises/A+</a>.
+          </p>
+        </div>
+        <h2>Overview</h2>
+        <div>
+          <p>
+            With callbacks there are two actors: One, which we can call the task performer, knows how to execute the task and when and how it has completed. The other, which we might call the task manager invokes the performer and provides the callback(s), which determine what to do with the result.
+          </p>
+          <p>
+            With promises we have a similar division of duties. The task performer issues a <em>promise</em> object. When the task completes, the performer <em>resolves</em> or <em>rejects</em> the promise, depending on the outcome. The task manager can attach callbacks to the promise, using <em>then()</em>, which will be called when the task is completed.
+          </p>
+        </div>
+        <h2>Simple example</h2>
+        <div>
+          <div>
+            <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+console.log( 'Task started at', timeElapsed() );
+var promise = <b>new Promise</b>( <b>function( resolve, reject )</b> {
+        setTimeout( function( ) {
+                <b>resolve</b>( timeElapsed() );
+            },
+            1000 );
+    } );
+console.log( 'Promise returned at', timeElapsed() );
+
+promise.<b>then</b>( function( elapsed ) {
+        console.log( 'Task finished at', elapsed );
+    } );
+console.log( 'Called then() at', timeElapsed() );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+          <p>
+            Notice that the task performer doesn't deal directly with any callback. There is still a callback function, but it is passed to <code>then()</code>. This is what distinguishes the <em>promise</em> pattern.
+          </p>
+          <p>
+            The task performer calls <code>resolve()</code> when the task is complete. It can pass data as a parameter, which is received as the argument to the callback passed to <code>then()</code>.
+          </p>
+          <p>
+            Notice also that (a) the promise is returned from the <code>Promise</code> constructor immediately and that (b) <code>then()</code> also returns immediately. Neither are waiting for the task to complete. In particular, calling <code>then( onSuccess )</code> does not cause <code>onSuccess()</code> to be executed. It merely registers it as a callback to be executed when the promise is eventually resolved.
+          </p>
+        </div>
+        <h2>Returning promises</h2>
+        <div>
+          <p>
+            It's generally better to wrap the task performer in a function that returns a promise like this:
+          </p>
+          <div>
+            <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+console.log( 'performTask() defined at', timeElapsed() );
+<b>function performTask( )</b> {
+    var promise = new Promise( function( resolve, reject ) {
+            setTimeout( function( ) {
+                    resolve( timeElapsed() );
+                },
+                1000 );
+        } );
+    <b>return promise;</b>
+}
+
+console.log( 'Calling performTask() at', timeElapsed() );
+<b>performTask( )
+    .then</b>( function( elapsed ) {
+            console.log( 'Task finished at', elapsed );
+        } );
+console.log( 'Called performTask() at', timeElapsed() );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+        </div>
+        <h2>Error handling</h2>
+        <div class="accordion h3">
+          <h3>reject() and then()</h3>
+          <div>
+            <p>
+              As noted, when a task completes successfully, the performer must <em>resolve</em> the promise. If the task ends in failure, the performer must <em>reject</em> it instead. It can, and should, pass an error object or message to <code>reject()</code>.
+            </p>
+            <p>
+              There are two ways for task managers to watch for errors. The basic way is to pass a second callback to <code>then()</code>.
+            </p>
+            <div>
+              <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+function happyTask( ) {
+    var promise = new Promise( function( resolve, reject ) {
+            setTimeout( function( ) {
+                    resolve( timeElapsed() );
+                },
+                2000 );
+        } );
+    return promise;
+}
+
+function sadTask( ) {
+    var promise = new Promise( function( resolve, reject ) {
+            setTimeout( function( ) {
+                    <b>reject</b>( Error( timeElapsed() ) );
+                },
+                1000 );
+        } );
+    return promise;
+}
+
+happyTask( )
+    .then(
+        function( elapsed ) {
+            console.log( 'Happy task succeeded at', elapsed );
+        },
+        function( error ) {
+            console.log( 'Happy task failed at', error );
+        }
+     );
+
+sadTask( )
+    .then(
+        function( elapsed ) {
+            console.log( 'Sad task succeeded at', elapsed );
+        },
+        function( error ) {
+            console.log( 'Sad task failed at', error );
+        }
+     );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </div>
+          </div>
+          <h3>catch()</h3>
+          <div>
+            <p>
+              An alternative method to catch errors is <code>catch()</code>. This is really just syntactic sugar, as <br /><code>catch( callback )</code> <br />is equivalent to <br /><code>then( null, callback )</code>, <br />but it is convenient and a bit more readable.
+            </p>
+            <div>
+              <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+function happyTask( ) {
+    var promise = new Promise( function( resolve, reject ) {
+            setTimeout( function( ) {
+                    resolve( timeElapsed() );
+                },
+                2000 );
+        } );
+    return promise;
+}
+
+function sadTask( ) {
+    var promise = new Promise( function( resolve, reject ) {
+            setTimeout( function( ) {
+                    reject( Error( timeElapsed() ) );
+                },
+                1000 );
+        } );
+    return promise;
+}
+
+happyTask( )
+    .then( function( elapsed ) {
+            console.log( 'Happy task succeeded at', elapsed );
+        } )
+    <b>.catch</b>( function( error ) {
+            console.log( 'Happy task failed at', error );
+        } );
+
+sadTask( )
+    .then( function( elapsed ) {
+            console.log( 'Sad task succeeded at', elapsed );
+        } )
+    <b>.catch</b>( function( error ) {
+            console.log( 'Sad task failed at', error );
+        } );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </div>
+          </div>
+        </div>
+        <h2>Chaining callbacks</h2>
+        <div>
+          <p>
+            The <code>then()</code> method itself returns a promise, so we can chain such calls.
+          </p>
+          <p>
+            When the callback (success or error) returns an ordinary value, the promise that <code>then()</code> returns is immediately <em>resolved</em> with that value. So the (success) callback in the next <code>then()</code> gets that value. This allows each successive step to modify or filter the result of the previous step.
+          </p>
+          <p>
+            If the callback throws an exception, then the returned promise is <em>rejected</em>. An error handler for that promise receives the exception as its argument.
+          </p>
+          <div>
+            <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+function performTask( ) {
+    var promise = new Promise( function( resolve, reject ) {
+            setTimeout( function( ) {
+                    resolve( timeElapsed() );
+                },
+                1000 );
+        } );
+    return promise;
+}
+
+performTask( )
+    .then( function( elapsed ) {
+            return elapsed + ' milliseconds'; //add units
+        } )
+    .then( function( elapsedString ) {
+            return 'performTask() completed after ' + elapsedString + '.'; //add text
+        } )
+    .then( function( message ) {
+            console.log( message );
+        } );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+        </div>
+        <h2>Chaining tasks</h2>
+        <div>
+          <p>
+            As just explained, <code>then()</code> returns a promise. If the callback itself returns a promise, then that promise effectively becomes the one that <code>then()</code> returns. This is very nice, because it means we can easily chain tasks so that each waits for the previous task to complete before beginning.
+          </p>
+          <div>
+            <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+function performFirstTask( ) {
+    var promise = new Promise( function( resolve, reject ) {
+            setTimeout( function( ) {
+                    resolve( timeElapsed() );
+                },
+                1000 );
+        } );
+    return promise;
+}
+
+function performSecondTask( elapsed ) {
+    var promise = new Promise( function( resolve, reject ) {
+            setTimeout( function( ) {
+                    resolve( elapsed + ', ' + timeElapsed() );
+                },
+                1000 );
+        } );
+    return promise;
+}
+
+function performThirdTask( msg ) {
+    var promise = new Promise( function( resolve, reject ) {
+            setTimeout( function( ) {
+                    resolve( msg + ', ' + timeElapsed() );
+                },
+                1000 );
+        } );
+    return promise;
+}
+
+performFirstTask( )
+    .then( performSecondTask )
+    .then( performThirdTask )
+    .then( function( msg ) {
+            console.log( msg );
+        } );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+        </div>
+        <h2>Promise.all</h2>
+        <div>
+          <p>
+            Chaining runs tasks in serial, one after another. Sometimes, instead, we want to run several tasks in parallel, but we need to wait until they have all completed before executing a callback. The <code>Promise.all()</code> function allows us to do this.
+          </p>
+          <p>
+            <code>Promise.all()</code> takes a array of promises as its argument. It returns a promise that resolves when all of the promises have resolved. When it resolves the success callback is passed an array of the corresponding results. If any of the promises are rejected, the returned promise is also rejected with the same error.
+          </p>
+          <div>
+            <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+function performFirstTask( ) {
+    var promise = new Promise( function( resolve, reject ) {
+            setTimeout( function( ) {
+                    resolve( 'First task: ' + timeElapsed() );
+                },
+                1500 );
+        } );
+    return promise;
+}
+
+function performSecondTask( ) {
+    var promise = new Promise( function( resolve, reject ) {
+            setTimeout( function( ) {
+                    resolve( 'Second task: ' + timeElapsed() );
+                },
+                1000 );
+        } );
+    return promise;
+}
+
+function performThirdTask( ) {
+    var promise = new Promise( function( resolve, reject ) {
+            setTimeout( function( ) {
+                    resolve( 'Third task: ' + timeElapsed() );
+                },
+                500 );
+        } );
+    return promise;
+}
+
+<b>Promise.all</b>( [ performFirstTask(), performSecondTask(), performThirdTask() ] )
+    .then( function( results ) {
+            for ( var i = 0, len = results.length; i < len; ++i ) {
+                console.log( i + ') ' + results[ i ] );
+            }
+        } );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+          </div>
+        </div>
+        <h2>jQuery</h2>
+        <div class="accordion h3">
+          <h3>Overview</h3>
+          <div>
+            <p>
+              jQuery offers promises that are similar to the new standard. The main difference is in how the promises are created. (This is true of other promise libraries.)
+            </p>
+            <p>
+              In jQuery the task performer creates a <em>deferred</em> object, which has the <code>resolve()</code> and <code>reject()</code> methods, among others. <em>Deferred</em> objects also have a <code>promise()</code> method produces the object that the task performer presents to task managers. jQuery's <em>promise</em> objects have the usual <code>then()</code> method. Instead of <code>catch()</code>, they have a <code>fail()</code> method.
+            </p>
+            <p>
+              The jQuery API Web site has the <a href="http://api.jquery.com/category/deferred-object/" target="_blank">documentation of Deferred</a>.
+            </p>
+          </div>
+          <h3>Example</h3>
+          <div>
+            <div>
+              <pre>
+var start = new Date().getTime();
+function timeElapsed( ) { return new Date().getTime() - start; }
+
+console.log( 'performTask() defined at', timeElapsed() );
+function performTask( ) {
+    var deferred = <b>$.Deferred()</b>;
+    setTimeout( function( ) {
+            <b>deferred.resolve</b>( timeElapsed() );
+        },
+        1000 );
+    return <b>deferred.promise()</b>;
+}
+
+console.log( 'Calling performTask() at', timeElapsed() );
+performTask( )
+    .then( function( elapsed ) {
+            console.log( 'Task finished at', elapsed );
+        } );
+console.log( 'Called performTask() at', timeElapsed() );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </div>
+          </div>
+          <h3>Problems with jQuery</h3>
+          <div>
+            <p>
+              Unfortunately, jQuery's implementation of promises is <a href="https://blog.domenic.me/youre-missing-the-point-of-promises/" target="_blank">somewhat broken</a>. The problem isn't in the manner of creating promises. That's pretty easy to isolate, as in the example above. The main problems are two-fold. First, jQuery's <code>then()</code> does not return a new promise, but modifies the original one. So if two task managers have references to a promise, one of them can mess with the state of the other's. Second, jQuery's <code>then()</code> does not handle exceptions correctly, i.e., does not cause them to reject the returned promise.
+            </p>
+            <p>
+              For basic, simple applications, jQuery is adequate. But because of these problems, if you want all of the benefits of promises, the best option is generally to use the new JS6 or another library and convert jQuery's promises into real ones.
+            </p>
+            <p>
+              Using the new standard (JS6) promises, for instance:
+              <pre>
+var jsPromise = Promise.resolve( $.get( '/some/url' ) );
+              </pre>
+              (jQuery's Ajax functions, such as <code>$.get()</code>, return its form of promises.)
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <button type="button" id="accordionToggle"></button>
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+  </body>
+</html>
