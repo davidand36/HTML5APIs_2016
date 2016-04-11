@@ -36,7 +36,7 @@ $('#the-number').on( 'focus', clearMessage );
 
 //=============================================================================
 
-function processForm( ) {
+function processForm( evt ) {
     var val = $('#the-number').val();
     var num = parseFloat( val );
     if ( isNaN( num ) ) {
@@ -44,6 +44,7 @@ function processForm( ) {
     } else {
         processNumber( num );
     }
+    evt.preventDefault( );
 }
 
 //=============================================================================
