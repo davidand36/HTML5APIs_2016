@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Assignement 2</title>
+    <link rel="stylesheet" href="../list.css" />
+  </head>
+  <body>
+
+    <h1>HTML5 APIs Assignment 2: Object List</h1>
+
+    <p>
+      You will create a Web site that manages a simple in-memory database. The database will be a list (array) of objects. What the objects represent is up to you. They could be movies, contacts, a company's laptops, etc.
+    </p>
+    <p>
+      Create an HTML document with two sections (e.g., <code>div</code>s) which we will use as "pages". In the first section create a table with a heading whose columns are for the fields (properties) in your object database. Give it an empty <code>tbody</code> with an ID you will use in your JavaScript to populate the table. Make a button for adding new items.
+    </p>
+    <p>
+      In the second section, create a form with fields for the properties of your objects. Set the style of this section to <code>"display:none"</code> so it starts off hidden. Give both sections IDs so you can show and hide them in your JavaScript.
+    </p>
+    <p>
+      In your JavaScript, create an array variable to hold your data.
+    </p>
+    <p>
+      Write a function that creates a table row (<code>tr</code>) for each object in the array, with a cell (<code>td</code>) for each property to be displayed. Append each of these rows to the table body.
+    </p>
+    <p>
+      Write a handler for the new-item button. It should hide the table and show the form. It should set a handler for the form's <code>submit</code> button.
+    </p>
+    <p>
+      Write a handler for the <code>submit</code> button that creates an object using the form data and adds that object to the array. Then it should call the first function you wrote to recreate the table with the updated database and show that table, hiding the form.
+    </p>
+    <p>
+      Optional: On each row of the table, add buttons to edit and delete the object. This is a bit harder. To make this work, you should give each object a unique ID when you create it, and set that ID as an attribute (e.g. <code>data-id</code>) of the corresponding table row (or of each button), so you can determine which object to edit or delete. For editing, you can reuse the same form, but you'll have to modify the code to distinguish between adding a new object and editing an existing one.
+    </p>
+    <p>
+      Use <a href="https://canvas.uw.edu/courses/1044441" target="_blank">Canvas</a> to submit the URL to your Web page.
+    </p>
+  </body>
+</html>
