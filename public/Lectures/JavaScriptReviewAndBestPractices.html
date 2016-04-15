@@ -2038,6 +2038,74 @@ updateSquares( );
               </p>
             </div>
           </div>
+          <h3>Module pattern</h3>
+          <div>
+            <p>
+              Like any function, immediately-invoked functions can return values. This is useful for the <em>module pattern</em>, a.k.a. <em>revealing module pattern</em>. In general, a module is a function or object that handles a specific aspect of a program. For example one might have a module devoted to statistical calculations, another for dialog boxes, another for database management, etc.
+            </p>
+            <p>
+              Modules will often have variables and functions that they need to do their job, but which should not be public. Here's a somewhat contrived example:
+              <pre>
+var loginManager = (function() {
+    var loggedIn = false;
+    var userName;
+
+    function serverLogin( name, passwd ) {
+        //Pretend to send data to server, which authenticates, etc.
+        if ( passwd === 'correct password' ) {
+            loggedIn = true;
+            userName = name;
+        } else {
+            logout( );
+        }
+    }
+
+    function login( name, password ) {
+        serverLogin( name, password );
+    }
+
+    function logout( ) {
+        loggedIn = false;
+        userName = undefined;
+    }
+
+    function isLoggedIn( ) {
+        return loggedIn;
+    }
+
+    function getUserName( ) {
+        return userName;
+    }
+
+    return {
+        login: login,
+        logout: logout,
+        isLoggedIn: isLoggedIn,
+        getUserName: getUserName
+    };
+})();
+
+console.log( loginManager.isLoggedIn() );
+console.log( loginManager.getUserName() );
+loginManager.login( 'Bad Guy', 'incorrect password' );
+console.log( loginManager.isLoggedIn() );
+console.log( loginManager.getUserName() );
+loginManager.login( 'Good Guy', 'correct password' );
+console.log( loginManager.isLoggedIn() );
+console.log( loginManager.getUserName() );
+loginManager.logout( );
+console.log( loginManager.isLoggedIn() );
+console.log( loginManager.getUserName() );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+            <p>
+              Now we have an object, <code>loginManager</code>, with four <em>public</em> methods, <code>login()</code>, <code>logout()</code>, <code>isLoggedIn()</code>, and <code>isLoggedOut()</code>. The variables <code>loggedIn</code> and <code>userName</code> are <em>private</em>; they cannot be accessed outside of <code>loginManager</code>. Neither can the private function <code>serverLogin()</code>.
+            </p>
+            <p>
+              This is a great example of <em>closures</em>, by the way: The function that created <code>loginManager</code> has already returned by the time we start using its methods. But those methods still have access to the local variables and methods that were present at their creation.
+            </p>
+          </div>
         </div>
       </div>
 
