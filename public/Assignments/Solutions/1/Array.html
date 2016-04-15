@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Assignment 1 Solution</title>
+  </head>
+  <body>
+    <h1>Number Form</h1>
+    <form>
+      <label for="the-number">Enter numbers here:</label>
+      <input type="number" id="the-number" />
+      <button type="submit" id="submit">Submit</button>
+      <button type="button" id="reset">Reset</button>
+      <div id="message"></div>
+    </form>
+
+    <table>
+      <tr>
+        <td>Count</td>
+        <td id="count"></td>
+      </tr>
+      <tr>
+        <td>Sum</td>
+        <td id="sum"></td>
+      </tr>
+      <tr>
+        <td>Average</td>
+        <td id="average"></td>
+      </tr>
+      <tr>
+        <td>Standard Deviation</td>
+        <td id="std-dev"></td>
+      </tr>
+      <tr>
+        <td>Median</td>
+        <td id="median"></td>
+      </tr>
+    </table>
+
+    <script src="../../../lib/jquery-2.js"></script>
+    <script src="ArrayStats.js"></script>
+  </body>
+</html>
