@@ -522,7 +522,7 @@ console.log( <b>typeof unknownVar</b> );
           <h3>Basics</h3>
           <div>
             <p>
-              In JavaScript, functions are <em>first-class objects</em>, which is to say that they can be assigned to variables, passed as arguments to other functions, and be return values of functions. 
+              In JavaScript, functions are <em>first-class objects</em>, which is to say that they can be assigned to variables, passed as arguments to other functions, and be return values of functions.
             </p>
             <p>
               You can declare a function a couple of ways:
@@ -638,7 +638,7 @@ function <b>foo</b>( <b>x</b> ) <b>{</b> //global function. Scope of x is foo()
                 <button type="button" class="runCode">Run</button>
               </p>
               <p>
-                Notice that the variable <code>e</code> became a global variable, even though it was declared inside of <code>bar()</code>, because we omitted the <code>var</code> keyword. This is almost always a mistake. The <code>"use strict"</code> directive, which will be discussed later, would prevent this.
+                Notice that the variable <code>e</code> became a global variable, even though it was declared inside of <code>bar()</code>, because we omitted the <code>var</code> keyword. This is almost always a mistake. <em>Strict mode</em>, which will be discussed later, would prevent this.
               </p>
             </div>
             <div>
@@ -817,7 +817,7 @@ counter.addAndLog( -12 );
               <h5>Ordinary function calls</h5>
               <div>
                 <p>
-                  If you simply call an ordinary function, then <code>this</code> traditionally refers to the <em>global</em> object, which is <code>window</code> in a browser. That's usually a mistake, so in <em>strict</em> mode JavaScript 5 sets the default binding to <code>undefined</code>. That way you will get an error when you attempt to use it.
+                  If you simply call an ordinary function, then <code>this</code> traditionally refers to the <em>global</em> object, which is <code>window</code> in a browser. That's usually a mistake, so in <em>strict mode</em> JavaScript 5 sets the default binding to <code>undefined</code>. That way you will get an error when you attempt to use it.
                   <pre>
 function greet( greeting ) {
     <b>'use strict'</b>;
@@ -977,7 +977,7 @@ function showArgs( ) {
     }
 }
 
-showArgs( 'Hello', 'Zoe', 23 );                                          
+showArgs( 'Hello', 'Zoe', 23 );
               </pre>
               <button type="button" class="runCode">Run</button>
             </p>
@@ -1785,11 +1785,48 @@ for ( key in person ) {
           </p>
         </div>
 
+        <h2>Separate Markup, Style, and Scripts</h2>
+        <div>
+          <p>
+            Keep your HTML, CSS, and JavaScript in separate files. In your HTML files, don't do this:
+            <pre>
+&lt;style&gt;
+  /* Various CSS statements here... */
+&lt;/style&gt;
+...
+&lt;script&gt;
+  /* My program code here... */
+&lt;/script&gt;
+            </pre>
+            Do this instead:
+            <pre>
+&lt;link href="MyStyles.css" rel="stylesheet"&gt;
+...
+&lt;script src="MyProgram.js"&gt;&lt;/script&gt;
+            </pre>
+          </p>
+          <p>
+            Also, with rare exceptions, don't put the <code>&lt;script&gt;</code> tags in the <code>&lt;head&gt;</code> of your document. Instead, put them at the end of the <code>&lt;body&gt;</code>. That way the browser has already loaded all of the static elements of your DOM, so you will almost never need to put your code in a <code>$(document).ready()</code> handler. The document will already be ready.
+          </p>
+        </div>
+
         <h2>Strict Mode</h2>
         <div>
-          !!!
+          <p>
+            Add the line
+            <pre>
+'use strict';
+            </pre>
+            at the top of your script files. (If you wrap your scripts in IIFEs, as we'll discuss later, put it at the beginning of the wrapping function.)
+          </p>
+          <p>
+            This turns on <em>strict mode</em>. In strict mode certain mistakes will be reported as errors when you run your code. For example, if you accidentally leave off the <code>var</code> keyword or misspell a variable name somewhere, it will no longer silently become a new global variable.
+          </p>
+          <p>
+            For more details, read MDN's <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode" target="_blank">fine article</a>.
+          </p>
         </div>
-        
+
         <h2>Variables</h2>
         <div class="accordion h2">
           <h3>Guidelines</h3>
@@ -1816,6 +1853,40 @@ for ( key in person ) {
             </p>
             <p>
               Most importantly, names should be descriptive, telling the reader what the variable holds.
+            </p>
+          </div>
+          <h3>Global variables</h3>
+          <div>
+            <p>
+              Global variables cannot be avoid entirely, but you need to keep them to a minimum. One way to do this is to make one global variable for your application or library and to make everything else that needs to be global a property of this. For example, instead of this:
+              <pre>
+var username = '';
+var shoppingCart = [];
+              </pre>
+              do this:
+              <pre>
+var myApp = {};
+myApp.username = '';
+myApp.shoppingCart = [];
+              </pre>
+            </p>
+            <p>
+              If your program is divided into several files, as larger ones will be, then you don't want to keep redeclaring <code>myApp</code> (or whatever you call your global). So if you have one file that declares:
+              <pre>
+var myApp = {};
+myApp.username = '';
+              </pre>
+              and another file that declares:
+              <pre>
+var myApp = {};
+myApp.shoppingCart = [];
+              </pre>
+              then the second declaration of <code>myApp</code> will wipe out the first one. (And in some situations you can't be sure which file will be processed first.) We can get around this problem fairly easily, though, by taking advantage of the <code>||</code> operator and the way it short-circuits:
+              <pre>
+var myApp = myApp || {};
+myApp.username = '';
+              </pre>
+              If <code>myApp</code> is already defined, that value is retained. If not, then <code>myApp</code> is initialized to an empty object.
             </p>
           </div>
         </div>
@@ -1969,7 +2040,7 @@ updateSquares( );
           </div>
         </div>
       </div>
-      
+
     </div>
 
 
