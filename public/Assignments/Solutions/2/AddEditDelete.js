@@ -1,7 +1,7 @@
 /*
-  ObjectList.js
+  AddedEditDelete.js
 
-  Maintains in-memory database
+  Maintains in-memory database. Implements add, edit, and delete
 */
 
 (function() {

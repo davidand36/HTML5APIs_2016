@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Assignment 2 Solution</title>
+  </head>
+  <body>
+
+    <h1>Object List</h1>
+
+    <div id="table-page">
+      <button type="button" id="new-item">Add New Item</button>
+
+      <table>
+        <thead>
+          <tr>
+            <th>
+              Name
+            </th>
+            <th>
+              Age
+            </th>
+            <th>
+              <!--Actions-->
+            </th>
+          </tr>
+        </thead>
+        <tbody id="items">
+        </tbody>
+      </table>
+    </div>
+
+
+    <div id="form-page" style="display:none">
+      <form>
+        <label for="name">Name</label>
+        <input type="text" id="name" />
+        <br />
+        <label for="age">Age</label>
+        <input type="number" id="age" />
+        <br />
+        <button type="submit" id="submit">Submit</button>
+        <button type="button" id="cancel">Cancel</button>
+      </form>
+    </div>
+
+    <script src="../../../lib/jquery-2.js"></script>
+    <script src="AddEditDelete.js"></script>
+  </body>
+</html>
