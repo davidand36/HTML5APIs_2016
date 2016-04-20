@@ -106,6 +106,46 @@ console.log( dave.nickname );
               <button type="button" class="runCode">Run</button>
             </p>
           </div>
+          <h3>Methods</h3>
+          <div>
+            <div>
+              <p>
+                A function which is a property of an object is called a <em>method</em>.
+                <pre>
+var sayer = {
+    foo: function( ) {
+        console.log( 'I say "foo".' );
+    },
+    bar: function( ) {
+        console.log( 'I say "bar".' );
+    }
+};
+
+sayer.foo( );
+sayer.bar( );
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+            </div>
+            <div>
+              <p>
+                Methods can refer to their object with the keyword <code>this</code>, and thus access other properties of the object:
+                <pre>
+var counter = {
+    count: 0,
+    addAndLog: function( increment ) {
+        this.count += increment;
+        console.log( this.count );
+    }
+};
+
+counter.addAndLog( 4 );
+counter.addAndLog( -12 );
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+            </div>
+          </div>
           <h3>Prototypes</h3>
           <div class="accordion h4">
             <h4>The prototype chain</h4>
@@ -556,7 +596,7 @@ function getName( person ) {
 }
 
 var names = people.map( getName );
-console.log( arr2 );
+console.log( names );
               </pre>
               But we can also call it like this:
               <pre>
@@ -606,8 +646,8 @@ console.log( e );
 console.log( x );
 console.log( y );
 
-function <b>foo</b>( <b>x</b> ) <b>{</b> //global function. Scope of x is foo()
-    var <b>c</b> = 3;    //scope is foo()
+function <b>foo</b>( <b>x</b> ) <b>{</b>
+    var <b>c</b> = 3;
 
     console.log( a );
     console.log( b );
@@ -619,11 +659,10 @@ function <b>foo</b>( <b>x</b> ) <b>{</b> //global function. Scope of x is foo()
 
     bar( 20 );
 
-    function <b>bar</b>( <b>y</b> ) <b>{</b> //callable anywhere in foo()
-                                             //Scope of y is bar()
-       var <b>d</b> = 4; //scope is bar()
-       var <b>a</b> = 5; //scope is bar(), overrides global
-       <b>e</b> = 6;     //No var, so global
+    function <b>bar</b>( <b>y</b> ) <b>{</b>
+       var <b>d</b> = 4;
+       var <b>a</b> = 5;
+       <b>e</b> = 6;
 
        console.log( a );
        console.log( b );
@@ -638,7 +677,7 @@ function <b>foo</b>( <b>x</b> ) <b>{</b> //global function. Scope of x is foo()
                 <button type="button" class="runCode">Run</button>
               </p>
               <p>
-                Notice that the variable <code>e</code> became a global variable, even though it was declared inside of <code>bar()</code>, because we omitted the <code>var</code> keyword. This is almost always a mistake. <em>Strict mode</em>, which will be discussed later, would prevent this.
+                In traditional JavaScript, the variable <code>e</code> becomes a global variable, even though it was declared inside of <code>bar()</code>, because we omitted the <code>var</code> keyword. This is almost always a mistake. <em>Strict mode</em>, which will be discussed later, prevents this.
               </p>
             </div>
             <div>
@@ -647,26 +686,31 @@ function <b>foo</b>( <b>x</b> ) <b>{</b> //global function. Scope of x is foo()
                 <pre>
 var <b>a</b> = 1; //global variable
 var <b>b</b> = 2; //global variable
-console.log( a ); //1
-console.log( b ); //2
+console.log( a );
+console.log( b );
+//console.log( c ); //error: not defined (out of scope)
+//console.log( d ); //error: not defined (out of scope)
+//console.log( e ); //error: not defined (out of scope)
+//console.log( x ); //error: not defined (out of scope)
+//console.log( y ); //error: not defined (out of scope)
 
 foo( 10 );
 //bar( 30 ); //error: not defined (out of scope)
 
-console.log( a ); //1
-console.log( b ); //2
+console.log( a );
+console.log( b );
 //console.log( c ); //error: not defined (out of scope)
 //console.log( d ); //error: not defined (out of scope)
-console.log( e ); //6
+//console.log( e ); //6 if global, otherwise not allowed
 //console.log( x ); //error: not defined (out of scope)
 //console.log( y ); //error: not defined (out of scope)
 
 function <b>foo</b>( <b>x</b> ) <b>{</b> //global function. Scope of x is foo()
     var <b>c</b> = 3;    //scope is foo()
 
-    console.log( a ); //1
-    console.log( b ); //2
-    console.log( c ); //3
+    console.log( a );
+    console.log( b );
+    console.log( c );
     //console.log( d ); //error: not defined (out of scope)
     //console.log( e ); //error: not yet defined
     console.log( x );
@@ -678,13 +722,13 @@ function <b>foo</b>( <b>x</b> ) <b>{</b> //global function. Scope of x is foo()
                                              //Scope of y is bar()
        var <b>d</b> = 4; //scope is bar()
        var <b>a</b> = 5; //scope is bar(), overrides global
-       <b>e</b> = 6;     //No var, so global
+       //<b>e</b> = 6;   //No var, so either global or not allowed
 
-       console.log( a ); //5
-       console.log( b ); //2
-       console.log( c ); //3
-       console.log( d ); //4
-       console.log( e ); //6
+       console.log( a );
+       console.log( b );
+       console.log( c );
+       console.log( d );
+       //console.log( e ); //6 if global, otherwise not allowed
        console.log( x );
        console.log( y );
     <b>}</b>
@@ -764,64 +808,22 @@ counter1( );
               </p>
             </div>
           </div>
-          <h3>Methods and <code>this</code></h3>
+          <h3><code>this</code></h3>
           <div class="accordion h4">
-            <h4>Methods</h4>
+            <h4>The receiver of a function</h4>
             <div>
-              <div>
-                <p>
-                  A function which is a property of an object is called a <em>method</em>.
-                  <pre>
-var sayer = {
-    foo: function( ) {
-        console.log( 'I say "foo".' );
-    },
-    bar: function( ) {
-        console.log( 'I say "bar".' );
-    }
-};
-
-sayer.foo( );
-sayer.bar( );
-                  </pre>
-                  <button type="button" class="runCode">Run</button>
-                </p>
-              </div>
-              <div>
-                <p>
-                  Methods can refer to their object with the keyword <code>this</code>, and thus access other properties of the object:
-                  <pre>
-var counter = {
-    count: 0,
-    addAndLog: function( increment ) {
-        this.count += increment;
-        console.log( this.count );
-    }
-};
-
-counter.addAndLog( 4 );
-counter.addAndLog( -12 );
-                  </pre>
-                  <button type="button" class="runCode">Run</button>
-                </p>
-              </div>
+              <p>
+                Functions in JavaScript can refer to an object called <code>this</code>, often called the <em>receiver</em> of the function. We also say that the function is <em>bound</em> to the receiver object. The receiver does not depend on the function, but on how it is called.
+              </p>
             </div>
-            <h4><code>this</code></h4>
-            <div class="accordion h5">
-              <h5>The receiver of a function</h5>
-              <div>
-                <p>
-                  Functions in JavaScript can refer to an object called <code>this</code>, often called the <em>receiver</em> of the function. We also say that the function is <em>bound</em> to the receiver object. The receiver does not depend on the function, but on how it is called.
-                </p>
-              </div>
-              <h5>Ordinary function calls</h5>
-              <div>
-                <p>
-                  If you simply call an ordinary function, then <code>this</code> traditionally refers to the <em>global</em> object, which is <code>window</code> in a browser. That's usually a mistake, so in <em>strict mode</em> JavaScript 5 sets the default binding to <code>undefined</code>. That way you will get an error when you attempt to use it.
-                  <pre>
+            <h4>Ordinary function calls</h4>
+            <div>
+              <p>
+                If you simply call an ordinary function, then <code>this</code> traditionally refers to the <em>global</em> object, which is <code>window</code> in a browser. That's usually a mistake, so in <em>strict mode</em> JavaScript 5 sets the default binding to <code>undefined</code>. That way you will get an error when you attempt to use it.
+                <pre>
 function greet( greeting ) {
     <b>'use strict'</b>;
-    console.log( greeting + ', ' + this.firstname );
+    console.log( greeting + ', ' + <b>this</b>.firstname );
 }
 
 try {
@@ -829,17 +831,17 @@ try {
 } catch ( exception ) {
     console.log( 'Exception thrown: ', exception );
 }
-                  </pre>
-                  <button type="button" class="runCode">Run</button>
-                </p>
-              </div>
-              <h5>Methods</h5>
-              <div>
-                <p>
-                  If a function is called as the method of an object, then, as we've seen, that object is the receiver.
-                  <pre>
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+            </div>
+            <h4>Methods</h4>
+            <div>
+              <p>
+                If a function is called as the method of an object, then, as we've seen, that object is the receiver.
+                <pre>
 function greetPerson( greeting ) {
-    console.log( greeting + ', ' + this.firstname );
+    console.log( greeting + ', ' + <b>this</b>.firstname );
 }
 
 var person1 = {
@@ -854,29 +856,29 @@ var person2 = {
 
 person1.greet( 'Hello' );
 person2.greet( 'Hi' );
-                  </pre>
-                  <button type="button" class="runCode">Run</button>
-                </p>
-              </div>
-              <h5>Constructors</h5>
-              <div>
-                <p>
-                  If a function is called with <code>new</code>, then it is interpreted as a <em>constructor</em>, and <code>this</code> refers to the new object being created, as discussed earlier.
-                </p>
-              </div>
-              <h5><code>call()</code>, <code>apply()</code>, <code>bind()</code></h5>
-              <div>
-                <p>
-                  JavaScript also provides methods to bind any function to any object:
-                  <ul>
-                    <li>function.call()</li>
-                    <li>function.apply()</li>
-                    <li>function.bind()</li>
-                  </ul>
-                  For example:
-                  <pre>
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+            </div>
+            <h4>Constructors</h4>
+            <div>
+              <p>
+                If a function is called with <code>new</code>, then it is interpreted as a <em>constructor</em>, and <code>this</code> refers to the new object being created, as discussed earlier.
+              </p>
+            </div>
+            <h4><code>call()</code>, <code>apply()</code>, <code>bind()</code></h4>
+            <div>
+              <p>
+                JavaScript also provides methods to bind any function to any object:
+                <ul>
+                  <li><code>function.call()</code></li>
+                  <li><code>function.apply()</code></li>
+                  <li><code>function.bind()</code></li>
+                </ul>
+                For example:
+                <pre>
 function greetPerson( greeting ) {
-    console.log( greeting + ', ' + this.firstname );
+    console.log( greeting + ', ' + <b>this</b>.firstname );
 }
 
 var person1 = {
@@ -889,19 +891,19 @@ var person2 = {
 
 greetPerson.call( person1, 'Hello' );
 greetPerson.apply( person2, [ 'Hi' ] );
-                  </pre>
-                  <button type="button" class="runCode">Run</button>
-                </p>
-              </div>
-              <h5>Nested functions</h5>
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+            </div>
+            <h4>Nested functions</h4>
+            <div>
+              <p>
+                One thing to be aware of is that <code>this</code>, unlike normal local variables, is not passed along to nested, inner functions. Those functions have their own <code>this</code>, determined by the rules just discussed.
+              </p>
               <div>
                 <p>
-                  One thing to be aware of is that <code>this</code>, unlike normal local variables, is not passed along to nested, inner functions. Those functions have their own <code>this</code>, determined by the rules just discussed.
-                </p>
-                <div>
-                  <p>
-                    For example, consider this code, where a constructor calls a nested function to set the properties of <code>this</code> based on the properties of the argument it receives:
-                    <pre>
+                  For example, consider this code, where a constructor calls a nested function to set the properties of <code>this</code> based on the properties of the argument it receives:
+                  <pre>
 function Thing( props ) {
     'use strict';
     function copyProps( ) {
@@ -914,17 +916,17 @@ function Thing( props ) {
 
 var thing1 = new Thing( { foo: 1, bar: 'bar' } );
 console.log( thing1 );
-                    </pre>
-                    <button type="button" class="runCode">Run</button>
-                  </p>
-                  <p>
-                    The problem here is that <code>this</code> in <code>copyProps()</code> does not refer to the <code>Thing</code> constructor's <code>this</code>. Instead, since <code>copyProps()</code> is being called as an ordinary function and we are in strict mode, <code>this</code> is set to <code>undefined</code>.
-                  </p>
-                </div>
-                <div>
-                  <p>
-                    There are a couple of ways we can fix this. One is to pass <code>Thing()</code>'s <code>this</code> as a parameter to <code>copyProps()</code>:
-                    <pre>
+                  </pre>
+                  <button type="button" class="runCode">Run</button>
+                </p>
+                <p>
+                  The problem here is that <code>this</code> in <code>copyProps()</code> does not refer to the <code>Thing</code> constructor's <code>this</code>. Instead, since <code>copyProps()</code> is being called as an ordinary function and we are in strict mode, <code>this</code> is set to <code>undefined</code>.
+                </p>
+              </div>
+              <div>
+                <p>
+                  There are a couple of ways we can fix this. One is to pass <code>Thing()</code>'s <code>this</code> as a parameter to <code>copyProps()</code>:
+                  <pre>
 function Thing( props ) {
     'use strict';
     function copyProps( <b>dest</b> ) {
@@ -937,14 +939,14 @@ function Thing( props ) {
 
 var thing1 = new Thing( { foo: 1, bar: 'bar' } );
 console.log( thing1 );
-                    </pre>
-                    <button type="button" class="runCode">Run</button>
-                  </p>
-                </div>
-                <div>
-                  <p>
-                    Another option is to create a regular local variable in <code>Thing()</code> that holds a reference to <code>this</code>. That variable will then be in the scope of <code>copyProps()</code>:
-                    <pre>
+                  </pre>
+                  <button type="button" class="runCode">Run</button>
+                </p>
+              </div>
+              <div>
+                <p>
+                  Another option is to create a regular local variable in <code>Thing()</code> that holds a reference to <code>this</code>. That variable will then be in the scope of <code>copyProps()</code>:
+                  <pre>
 function Thing( props ) {
     'use strict';
     var <b>self = this</b>;
@@ -958,10 +960,9 @@ function Thing( props ) {
 
 var thing1 = new Thing( { foo: 1, bar: 'bar' } );
 console.log( thing1 );
-                    </pre>
-                    <button type="button" class="runCode">Run</button>
-                  </p>
-                </div>
+                  </pre>
+                  <button type="button" class="runCode">Run</button>
+                </p>
               </div>
             </div>
           </div>
