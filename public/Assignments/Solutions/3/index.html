@@ -10,7 +10,7 @@
 
     <form>
       <label>Enter numbers or text: <br/>
-        <textarea id="user-input"></textarea>
+        <textarea id="user-input" rows="5" cols="50"></textarea>
       </label> <br/>
       <button type="submit" id="submit">Submit</button>
       <button type="button" id="reset">Reset</button>
@@ -36,6 +36,14 @@
     <h2>The Strings</h2>
     <strong>Concatenated:</strong><br/>
     <div id="concatenation"></div>
+    <table>
+      <thead>
+        <th>Word</th>
+        <th>Count</th>
+      </thead>
+      <tbody id="word-counts">
+      </tbody>
+    </table>
 
     <script src="../../../lib/jquery-2.js"></script>
     <script src="NumbersAndStrings.js"></script>
