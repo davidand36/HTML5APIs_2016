@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Assignment 3 Solution</title>
+  </head>
+  <body>
+
+    <h1>Numbers and Strings</h1>
+
+    <form>
+      <label>Enter numbers or text: <br/>
+        <textarea id="user-input" rows="5" cols="50"></textarea>
+      </label> <br/>
+      <button type="submit" id="submit">Submit</button>
+      <button type="button" id="reset">Reset</button>
+      <div id="message"></div>
+    </form>
+
+    <h2>The Numbers</h2>
+    <table>
+      <tr>
+        <td>Count</td>
+        <td id="count"></td>
+      </tr>
+      <tr>
+        <td>Sum</td>
+        <td id="sum"></td>
+      </tr>
+      <tr>
+        <td>Average</td>
+        <td id="average"></td>
+      </tr>
+    </table>
+
+    <h2>The Strings</h2>
+    <strong>Concatenated:</strong><br/>
+    <div id="concatenation"></div>
+    <table>
+      <thead>
+        <th>Word</th>
+        <th>Count</th>
+      </thead>
+      <tbody id="word-counts">
+      </tbody>
+    </table>
+
+    <script src="../../../lib/jquery-2.js"></script>
+    <script src="NumbersAndStrings.js"></script>
+  </body>
+</html>
