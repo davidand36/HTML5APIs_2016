@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <title>HTML5 APIs: Maps</title>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <link rel="stylesheet" href="http://openlayers.org/en/v3.15.1/css/ol.css">
     <link rel="stylesheet" href="Lecture.css" />
   </head>
   <body>
@@ -35,30 +37,143 @@
         <p>
           Here is an example, using <a href="http://staticmap.openstreetmap.de/" target="_blank">staticMapLite</a> and OpenStreetMap data. This URL:
           <pre>
-&lt;img src="http://staticmap.openstreetmap.de/staticmap.php?center=47.6205,-122.3493&zoom=16&size=600x400&maptype=mapnik" /&gt;
+&lt;img src="http://staticmap.openstreetmap.de/staticmap.php?size=600x400&center=47.6205,-122.3493&zoom=16&markers=47.6205,-122.3493,ol-marker-gold&maptype=mapnik" /&gt;
           </pre>
-          produces this map: <br />
-          <img src="http://staticmap.openstreetmap.de/staticmap.php?center=47.6205,-122.3493&zoom=16&size=600x400&maptype=mapnik" />
+          produces this map: <br/>
+          <img src="http://staticmap.openstreetmap.de/staticmap.php?size=600x400&center=47.6205,-122.3493&zoom=16&markers=47.6205,-122.3493,ol-marker-gold&maptype=mapnik" /> <br/>
+          You can use the <a href="http://staticmap.openstreetmap.de/wizzard/" target="_blank">simple map wizzard</a> to build the URL.
         <p>
+        <p>
+          The work is in setting the query parameters in the URL. The ones used here are:
+          <ul>
+            <li><code>size</code>: the dimensions of the image in pixels</li>
+            <li><code>center</code>: the latitude and longitude</li>
+            <li><code>zoom</code>: sets the scale and level of detail</li>
+            <li><code>markers</code>: optional specification of location and type of markers to add to map</li>
+            <li><code>maptype</code>: this site offers a few choices for the style</li>
+          </ul>
+        </p>
         <p>
           Here is an example using <a href="https://developers.google.com/maps/documentation/static-maps/" target="_blank">Google Static Maps</a>. This URL:
           <pre>
-&lt;img src="https://maps.googleapis.com/maps/api/staticmap?center=47.6205,-122.3493&zoom=16&size=600x400" /&gt;
+&lt;img src="https://maps.googleapis.com/maps/api/staticmap?size=600x400&center=47.6205,-122.3493&zoom=16&markers=color:yellow|47.6205,-122.3493" /&gt;
           </pre>
           produces this map: <br/>
-          <img src="https://maps.googleapis.com/maps/api/staticmap?center=47.6205,-122.3493&zoom=16&size=600x400" /> <br/>
-          Notice that both APIs use many of the same parameters.
+          <img src="https://maps.googleapis.com/maps/api/staticmap?size=600x400&center=47.6205,-122.3493&zoom=16&markers=color:yellow|47.6205,-122.3493" /> <br/>
+          Notice that both APIs use many of the same basic parameters, though some, such as <code>markers</code> have a somewhat different syntax. Google's offers quite a few features.
+        </p>
+        <p>
+          MapQuest offers a <a href="http://www.mapquestapi.com/staticmap/" target="_blank">Static Map Service</a> for its proprietary data, and also an <a href="http://open.mapquestapi.com/staticmap/" target="_blank">Open Static Map Service</a> for the OpenStreetMap data. Microsoft also a <a href="https://msdn.microsoft.com/en-us/library/ff701724.aspx" target="_blank">Bing Maps REST Service</a> for static maps.
         </p>
       </div>
 
       <h1>Slippy maps</h1>
-      <div>
-        <p>
-          For slippy maps, it is necessary to include the provider's JavaScript and use its API. Each of the providers uses a similar, though slightly different API. There are also third-party APIs which can generate maps from these data sources. One convenient API is provided by <a href="http://mapstraction.com" target="_blank">Mapstraction</a>, which provides a common interface to several mapping APIs, allowing one to switch from one provider to another.
-        </p>
-        <p>
-          Here is a simple example using Mapstraction to draw maps of a few places using a few different map providers: <a href="/Examples/Maps/" target="_blank">Maps demo</a>.
-        </p>
+      <div class="accordion h2">
+        <h2>Intro</h2>
+        <div>
+          <p>
+            For slippy maps, it is necessary to include the provider's JavaScript and use its API. Each of the providers uses a similar, though slightly different API. There are also third-party APIs which can generate maps from these data sources.
+          </p>
+        </div>
+        <h2>Leaflet</h2>
+        <div>
+          <p>
+            <a href="http://leafletjs.com/" target="_blank">Leaflet</a> is a fairly light-weight open source API for displaying map data from various sources.
+          <p>
+          <p>
+            You need to include the library's CSS and JavaScript files in your document. Then you create a <code>&lt;div&gt;</code> element for each map you want on your page, with an <code>id</code>. You need to set the <code>height</code> of the <code>&lt;div&gt;</code>, which you should do in your CSS. (You would probably want to set the width and margins as well.)
+          </p>
+          <div>
+            <p>
+              Leaflet creates a global variable, <code>L</code>, with all of its public methods. You first need to create an object representing the map:
+              <pre>
+var leafletMap = L.map( 'leaflet-map' ); //The id of the div
+              </pre>
+            </p>
+            <p>
+              You add one or more <em>layers</em> to the map. Most commonly, we add <em>tile</em> layers. The tiles are rectangular images that are arranged to make up the map. You need to specify how to get these tiles by providing a URL template. For OpenStreetMap tiles you can do this:
+              <pre>
+L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+        attribution: '&copy; &lt;a href="http://openstreetmap.org"&gt;OpenStreetMap&lt;/a&gt; contributors, &lt;a href="http://creativecommons.org/licenses/by-sa/2.0/"&gt;CC-BY-SA&lt;/a&gt;',
+        maxzoom: 19
+    } ).addTo( leafletMap );
+              </pre>
+            </p>
+            <p>
+              You need to specify the (initial) location and zoom level:
+              <pre>
+leafletMap.setView( [ 47.6205, -122.3493 ], 16 );
+              </pre>
+            </p>
+            <p>
+              You can easily add markers and pop-ups:
+              <pre>
+var marker = L.marker( [ 47.6205, -122.3493 ] );
+marker.bindPopup( 'The Space Needle' );
+marker.addTo( leafletMap );
+              </pre>
+            </p>
+            <button type="button" class="runCode">Run</button>
+          </div>
+          <div id="leaflet-map" style="height: 300px"></div>
+          <p>
+            If you want to explore other providers of tiles you should consider the <a href="https://github.com/leaflet-extras/leaflet-providers" target="_blank">leaflet-providers</a> extension. Also look at <a href="https://gist.github.com/mourner/1804938" target="_blank">this Gist</a> for the most common providers.
+          </p>
+          <p>
+            Leaflet allows you to do a lot more than we've touched on here. There are also many <a href="http://leafletjs.com/plugins.html" target="_blank">Leaflet Plugins</a> which add to the built-in capabilities of Leaflet.
+          </p>
+        </div>
+        <h2>Google Maps</h2>
+        <div>
+          <p>
+            The <a href="https://developers.google.com/maps/documentation/javascript/" target="_blank">Google Maps JavaScript API</a> is a proprietary library that makes it easy to work with Google's own map data as well as data from other sources.
+          </p>
+          <div>
+            <p>
+              You begin by creating a map object.
+              <pre>
+var googleMap = new google.maps.Map( $('#google-map')[0] );
+              </pre>
+              You then need to set the location and zoom level:
+              <pre>
+googleMap.setCenter( { lat: 47.6205, lng: -122.3493 } );
+googleMap.setZoom( 16 );
+              </pre>
+              (You can also pass the center and zoom as options when you create the map object.)
+            </p>
+            <p>
+              You can add markers and info windows:
+              <pre>
+var marker = new google.maps.Marker( {
+        position: { lat: 47.6205, lng: -122.3493 }
+    } );
+marker.setMap( googleMap );
+
+var infoWindow = new google.maps.InfoWindow( {
+        content: 'The Space Needle'
+    } );
+marker.addListener( 'click', function( ) {
+        infoWindow.open( googleMap, marker );
+    } );
+              </pre>
+            </p>
+            <button type="button" class="runCode">Run</button>
+          </div>
+          <div id="google-map" style="height: 300px"></div>
+          <p>
+            By default, of course, the Google Maps API uses Google's own tiles and data, but it can be used with other providers as well. Here is an example from the <a href="http://wiki.openstreetmap.org/wiki/Google_Maps_Example" target="_blank">OpenStreetMaps Wiki</a>.
+          </p>
+          <p>
+            Needless to say, there is a lot more that you can do using Google's Map API.
+          </p>
+        </div>
+        <h2>OpenLayers</h2>
+        <div>
+          <p>
+            <a href="http://openlayers.org/" target="_blank">OpenLayers</a> is another popular open-source map library. It is somewhat more feature rich than Leaflet, and has an API similar to Google's.
+          </p>
+        </div>
       </div>
     </div>
 
@@ -67,6 +182,9 @@
 
     <script src="../lib/jquery-2.js"></script>
     <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script src="http://openlayers.org/en/v3.15.1/build/ol.js"></script>
     <script src="Lectures.js"></script>
   </body>
 </html>
