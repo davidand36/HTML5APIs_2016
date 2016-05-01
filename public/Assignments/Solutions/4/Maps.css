@@ -1,0 +1,18 @@
+/*
+  Maps.css
+  David M. Anderson
+
+  Style for Maps demo
+*/
+
+.static-map {
+    display: block;
+    margin: 1em;
+}
+
+.slippy-map {
+    position: relative;
+    width: 600px;
+    height: 400px;
+    margin: 1em;
+}

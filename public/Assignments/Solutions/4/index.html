@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Maps</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
+    <link rel="stylesheet" href="http://openlayers.org/en/v3.15.1/css/ol.css">
+    <link rel="stylesheet" href="Maps.css">
+  </head>
+  <body>
+    <header>
+      <h1>Maps</h1>
+    </header>
+
+    <form>
+      <label>Choose a location <br/>
+        <select id="location-menu"></select>
+      </label>
+    </form>
+    <form>
+      or enter coordinates: <br/>
+      <label for="latitude">Latitude</label>
+      <input type="number" id="latitude" min="-90" max="90" step="any" />
+      <label for="longitude">Longitude</label>
+      <input type="number" id="longitude" min="-180" max="180" step="any" />
+      <label for="zoom">Zoom</label>
+      <input type="number" id="zoom" min="1" max="20" step="1" />
+      <button type="submit" id="submit-coords">Submit</button>
+    </form>
+    <form>
+      <button type="button" id="use-device-loc">Use Device Location</button>
+    </form>
+
+    OpenStreetMaps (static)
+    <img id="static-osm" class="static-map" />
+    Google (static)
+    <img id="static-google" class="static-map" />
+    Leaflet - OpenStreetMaps (slippy)
+    <div id="slippy-leaflet-osm" class="slippy-map" /></div>
+    Leaflet - MapQuest aerial (slippy)
+    <div id="slippy-leaflet-aerial" class="slippy-map" /></div>
+    Google - hybrid (slippy)
+    <div id="slippy-google" class="slippy-map" /></div>
+    OpenLayers - MapQuest OSM (slippy)
+    <div id="slippy-openlayers" class="slippy-map" /></div>
+
+    <script src="/lib/jquery-2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script src="http://openlayers.org/en/v3.15.1/build/ol.js"></script>
+    <script src="Maps.js"></script>
+  </body>
+</html>
