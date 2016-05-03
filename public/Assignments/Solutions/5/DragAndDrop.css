@@ -12,6 +12,13 @@
 
 .draggable {
     position: absolute;
+    cursor: -webkit-grab;
+    cursor: grab;
+}
+
+.draggable.dragging {
+    cursor: -webkit-grabbing;
+    cursor: grabbing;
 }
 
 #thing1 {

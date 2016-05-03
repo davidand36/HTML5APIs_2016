@@ -24,6 +24,8 @@ function startDrag( evt ) {
     $(document).on( 'mousemove', drag );
     $(document).on( 'mouseup', stopDrag );
 
+    thing.addClass( 'dragging' );
+
     //-------------------------------------------------------------------------
 
     function drag( evt ) {
@@ -42,6 +44,8 @@ function startDrag( evt ) {
     function stopDrag( evt ) {
         $(document).off( 'mousemove' );
         $(document).off( 'mouseup' );
+
+        thing.removeClass( 'dragging' );
     }
 }
 
