@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Assignement 5</title>
+    <link rel="stylesheet" href="../list.css" />
+  </head>
+  <body>
+
+    <h1>HTML5 APIs Assignment 5: Inputs and Drag-and-Drop</h1>
+
+    <p>
+      This week you have a choice: reading and displaying values from various inputs, or moving elements around with a mouse (drag and drop).
+    </p>
+
+    <h2>Inputs</h2>
+    <p>
+      Make a table for different kinds of input elements. (This includes not just <code>input</code> elements per se, but also <code>textarea</code> and <code>select</code>.) In the first column, show type of input (e.g. 'input type="checkbox"'). In the second column, put an actual element of that type.
+      The third column is for the values entered by the user.
+    </p>
+    <p>
+      Your JavaScript should read and display the initial value for each input, and then handle the <code>change</code> event for the inputs by displaying the new value. For most inputs, you can use jQuery's <code>val()</code> method. An exception is checkboxes, for which you can use jQuery's <code>prop()</code> method.
+    </p>
+    <p>
+      Here's what the table might look like with just the basic inputs: <br/>
+      <img src="Inputs_short.png" /> <br/>
+      Consider expanding the table to include most of the input types HTML5 offers, including <code>select</code> with the <code>multiple</code> attribute. (Certain input types, such as buttons, don't really have values, so don't bother with those.) <br/>
+      <img src="Inputs_long.png" />
+    </p>
+
+    <h2>Drag and Drop</h2>
+    <p>
+      Make a page where the user can drag a couple of elements around with a mouse.
+    </p>
+    <p>
+      Make a large <code>div</code> (with <code>relative</code> position) and put some smaller elements (with <code>absolute</code> position) inside of it.
+    </p>
+    <p>
+      Set a handler for the <code>mousedown</code> event on those draggable elements. It should have a variable that holds the event <code>target</code> (the element that was clicked on). It should also get the difference between the position of that element (its <code>left</code> and <code>top</code> CSS settings) and the mouse (the event's <code>pageX</code> and <code>pageY</code> in jQuery).
+    </p>
+    <p>
+      That event handler should then set event handlers for two other events: A <code>mousemove</code> handler should update the element's position so that the difference between that and the mouse's new position stays constant. A <code>mouseup</code> handler should remove those two event handlers so dragging finishes. (With jQuery, use the <code>off</code> method.) These handlers should be set on the entire <code>document</code>, rather than the target element.
+    </p>
+    <p>
+      Optional features: Confine the dragged elements to remain inside the outer <code>div</code>. Set the <code>cursor</code> for the draggle elements appropriately (e.g. <code>grab</code>).
+    </p>
+    <p>
+      <img src="DragAndDrop.png" />
+    </p>
+    <hr />
+    <p>
+      Use <a href="https://canvas.uw.edu/courses/1044441" target="_blank">Canvas</a> to submit the URL to your Web page.
+    </p>
+  </body>
+</html>
