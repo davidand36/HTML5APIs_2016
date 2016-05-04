@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Inputs</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="stylesheet" href="Inputs.css">
+  </head>
+  <body>
+    <header>
+      <h1>Inputs</h1>
+    </header>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Control type</th>
+          <th>Control</th>
+          <th>Value entered</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>input type="checkbox"</code></td>
+          <td><input type="checkbox" name="checkbox" /></td>
+          <td id="checkbox-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="color"</code></td>
+          <td><input type="color" name="color" /></td>
+          <td id="color-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="date"</code></td>
+          <td><input type="date" name="date" /></td>
+          <td id="date_value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="datetime"</code></td>
+          <td><input type="datetime" name="datetime" /></td>
+          <td id="datetime-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="datetime-local"</code></td>
+          <td><input type="datetime-local" name="datetime-local" /></td>
+          <td id="datetime-local-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="email"</code></td>
+          <td><input type="email" name="email" /></td>
+          <td id="email-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="month"</code></td>
+          <td><input type="month" name="month" /></td>
+          <td id="month-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="number"</code></td>
+          <td><input type="number" name="number" /></td>
+          <td id="number-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="password"</code></td>
+          <td><input type="password" name="password" /></td>
+          <td id="password-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="radio"</code></td>
+          <td>
+            <input type="radio" name="radio" value="1st" />First <br/>
+            <input type="radio" name="radio" value="2nd" />Second <br />
+            <input type="radio" name="radio" value="3rd" />Third <br />
+          </td>
+          <td id="radio-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="range"</code></td>
+          <td><input type="range" name="range" /></td>
+          <td id="range-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="search"</code></td>
+          <td><input type="search" name="search" /></td>
+          <td id="search-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="tel"</code></td>
+          <td><input type="tel" name="tel" /></td>
+          <td id="tel-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="text"</code></td>
+          <td><input type="text" name="text" /></td>
+          <td id="text-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="time"</code></td>
+          <td><input type="time" name="time" /></td>
+          <td id="time-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="url"</code></td>
+          <td><input type="url" name="url" /></td>
+          <td id="url-value"></td>
+        </tr>
+        <tr>
+          <td><code>input type="week"</code></td>
+          <td><input type="week" name="week" /></td>
+          <td id="week-value"></td>
+        </tr>
+        <tr>
+          <td><code>textarea</code></td>
+          <td><textarea name="textarea"></textarea></td>
+          <td id="textarea-value"></td>
+        </tr>
+        <tr>
+          <td><code>select</code></td>
+          <td>
+            <select name="select">
+              <optgroup label="implicit values">
+                <option>First</option>
+                <option>Second</option>
+              </optgroup>
+              <optgroup label="explicit values">
+                <option value="3rd">Third</option>
+                <option value="4th">Fourth</option>
+              </optgroup>
+            </select>
+          </td>
+          <td id="select-value"></td>
+        </tr>
+        <tr>
+          <td><code>select</code> (<code>multiple</code>)</td>
+          <td>
+            <select name="select-multiple" multiple>
+              <optgroup label="implicit values">
+                <option>First</option>
+                <option>Second</option>
+              </optgroup>
+              <optgroup label="explicit values">
+                <option value="3rd">Third</option>
+                <option value="4th">Fourth</option>
+              </optgroup>
+            </select>
+          </td>
+          <td id="select-multiple-value"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <script src="/lib/jquery-2.js"></script>
+    <script src="Inputs.js"></script>
+  </body>
+</html>
