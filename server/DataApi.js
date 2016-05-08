@@ -45,13 +45,32 @@ module.exports = function( express ) {
     function listItems( request, response ) {
         try {
             var collection = getCollection( request.params.collctn );
-            collection.find( ).toArray( function( err, docs ) {
-                if ( err ) {
-                    response.send( { error: err } );
-                } else {
-                    response.send( docs );
+            var query = {};
+            var cursor = collection.find( query );
+            if ( request.query.count ) {
+                cursor.count( function( err, count ) {
+                    if ( err ) {
+                        response.send( { error: err } );
+                    } else {
+                        response.send( { count: count } );
+                    }
+                } );
+            }
+            else {
+                if ( request.query.skip ) {
+                    cursor = cursor.skip( +request.query.skip )
                 }
-            } );
+                if ( request.query.limit ) {
+                    cursor = cursor.limit( +request.query.limit );
+                }
+                cursor.toArray( function( err, docs ) {
+                    if ( err ) {
+                        response.send( { error: err } );
+                    } else {
+                        response.send( docs );
+                    }
+                } );
+            }
         } catch ( excptn ) {
             response.send( { error: excptn } );;
         }
