@@ -8,6 +8,7 @@
 module.exports = function( express ) {
 
     var router = express.Router();
+    var cors = require( 'cors' );
     var mongodb = require( 'mongodb' );
 
     var database;
@@ -16,11 +17,12 @@ module.exports = function( express ) {
 
     connectToDb( );
 
-    router.get( '/:collctn', listItems );
-    router.get( '/:collctn/:id', getItem );
-    router.post( '/:collctn', addItem );
-    router.put( '/:collctn/:id', updateItem );
-    router.delete( '/:collctn/:id', deleteItem );
+    router.get( '/:collctn', cors(), listItems );
+    router.get( '/:collctn/:id', cors(), getItem );
+    router.post( '/:collctn', cors(), addItem );
+    router.put( '/:collctn/:id', cors(), updateItem );
+    router.delete( '/:collctn/:id', cors(), deleteItem );
+    router.options( '/:collctn/:id', cors() );
 
     //=========================================================================
 
