@@ -1,0 +1,422 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Client-Server Communication</title>
+    <link rel="stylesheet" href="Lecture.css" />
+  </head>
+  <body>
+
+    <h1 class="top">Client-Server Communication</h1>
+
+    <div class="accordion h1">
+      <h1>Introduction</h1>
+      <div class="accordion h2">
+        <p>
+          The World-Wide Web uses a client-server model. The clients are, typically, browsers. They send requests over the Internet to Web servers for HTML, CSS, and JavaScript files and related data--images, videos, information obtained from databases or computations.
+        </p>
+        <p>
+          Clients and servers communicate using the Hypertext Transport Protocol (HTTP). This is a <em>stateless</em> protocol, meaning that each request is essentially independent of each other request.
+        </p>
+      </div>
+
+      <h1>Requests and Responses</h1>
+      <div class="accordion h2">
+        <h2>Overview</h2>
+        <div>
+          <p>
+          With HTTP, the client (browser) sends a <em>request</em> and the server sends a <em>response</em>.
+          </p>
+        </div>
+        <h2>Request</h2>
+        <div>
+          <p>
+            An HTTP request has several components, including
+            <ul>
+              <li>URL</li>
+              <li>Method</li>
+              <li>Headers</li>
+              <li>Data</li>
+            </ul>
+          </p>
+          <p>
+            The <em>URL</em> determines where the request is sent, but may also indicate the nature of the request to the server. For example, the URL <br />
+            <code>https://shielded-sea-3725.herokuapp.com/data-api/danderson?skip=1&amp;limit=2</code> <br />
+            is sent to the server at <code>https://shielded-sea-3725.herokuapp.com</code>, which then, processes the request a bit and passes it to a <code>DataApi</code> module, which in turn calls a function that returns data for a collection called "danderson". The portion of the URL after the question mark (<code>?</code>) is called a <em>query string</em> and will be discussed below.
+          </p>
+          <p>
+            In general, a URL specifies the "location" of a "resource", which can be a page of HTML, an image, a record from a database, etc.
+          </p>
+          <p>
+            The <em>method</em> of a request is a verb that indicates the desired action to be performed on the resource. The most important methods are
+            <ul>
+              <li><code>GET</code>, which requests the retrieval of data, i.e. a string representing the resource.</li>
+              <li><code>POST</code>, which sends data to the server, often the contents of a form or the representation of a new resource.</li>
+              <li><code>PUT</code>, which also sends data to the server, often representing an updated version of a resource.</li>
+              <li><code>DELETE</code>, which requests that the resource be deleted.</li>
+            </ul>
+          </p>
+          <p>
+            <em>Headers</em> pass "meta-data" regarding the request and/or client. Each header has a standardized name and appropriate value, both strings.
+          </p>
+          <p>
+            Requests can also send data.
+          </p>
+          <p>
+            For GET requests, the data are appended to the URL as query strings. In the example URL given above, the query string <code>offset=8&limit=4</code> sends a parameter called <code>offset</code>, with a value of <code>8</code> and a parameter called <code>limit</code>, with a value of <code>4</code>.
+          </p>
+          <p>
+            For POST and PUT requests, data can also be sent in the request <em>body</em>. One reason for this is that URLs are limited in length, generally to around 2000 characters. Servers also limit the size of the request body, but the limit is typically much higher.
+          </p>
+        </div>
+        <h2>Response</h2>
+        <div>
+          <p>
+            An HTTP response also has several components, including
+            <ul>
+              <li>Status Code</li>
+              <li>Headers</li>
+              <li>Data</li>
+            </ul>
+          </p>
+          <p>
+            The <em>status code</em> consists of a number and short string. Numbers in the 200's indicate success; in the 400's, client error; and in the 500's, server error. Here is a <a href="http://www.restapitutorial.com/httpstatuscodes.html" target="_blank">nice reference</a>.
+          </p>
+          <p>
+            As with requests, response <em>headers</em> contain "meta-data" about the response and/or server.
+          </p>
+          <p>
+            A successful response generally returns, as <em>data</em>, a representation of the requested resource or something similar. If an error occurred, the data may provide more details about what went wrong.
+          </p>
+        </div>
+      </div>
+
+      <h1>Ajax</h1>
+      <div class="accordion h2">
+        <h2>Overview</h2>
+        <div>
+          <p>
+            <em>Ajax</em> stands for <em>Asynchronous JavaScript and XML</em>, but it is more general than that. It is technique where the client can request data from the server without a page refresh. It can then use these data to update or modify the contents of the current page.
+          </p>
+          <p>
+            <em>Asynchronous</em> means that after the JavaScript client sends the request to the server, it doesn't stop everything while waiting for the response. Instead it provides a callback function to handle the result and then resumes handling user input, timer events, etc. When the server finally does respond, the callback is invoked, but in the meantime the program has remained responsive.
+          </p>
+          <p>
+            <em>XML</em> is the file format that Ajax originally handled by default. But the same techniques can be used for many types of data, including HTML and JSON-formatted data.
+          </p>
+        </div>
+        <h2>XMLHttpRequest</h2>
+        <div>
+          <p>
+          Although various techniques have been used to accomplish Ajax, the primary one uses an <em>XMLHttpRequest</em> object, which is available on all modern browsers. Using <code>XMLHttpRequest</code> directly is a bit cumbersome, even aside from differences between browser implementations. You can find the details at the <a href="http://www.w3.org/TR/XMLHttpRequest/" target="_blank">W3C XMLHttpRequest Level 1 working draft</a>.
+          </p>
+        </div>
+        <h2>Ajax with jQuery</h2>
+        <div>
+          <p>
+            <em>jQuery</em> and similar libraries provide interfaces that simplify Ajax programming. See the <a href="http://api.jquery.com/category/ajax/" target="_blank">jQuery Ajax</a> documentation for details.
+          </p>
+          <p>
+            The most general-purpose method is <code>jQuery.ajax()</code>, or, since the <code>jQuery</code> object is usually referred to with the shorthand <code>$</code>, <code>$.ajax()</code>. It takes two arguments. The first is the URL. The second is an object where we specify the settings. The most important settings are:
+            <ul>
+              <li><code>method</code>: <code>'GET'</code>, <code>'POST'</code>, <code>'PUT'</code>, <code>'DELETE'</code>, etc.</li>
+              <li><code>success</code>: the function to be called if the request succeeds</li>
+              <li><code>error</code>: the function to be called if the request fails</li>
+              <li><code>data</code>: data to be sent, generally an object</li>
+            </ul>
+          </p>
+          <div>
+            <p>
+              Example:
+              <pre>
+$.ajax( 'https://shielded-sea-3725.herokuapp.com/data-api/danderson',
+    {
+        method: 'GET',
+        data: {
+                  skip: 1,
+                  limit: 2
+              },
+        success: function( data ) {
+                     console.log( 'Data received:', data );
+                 },
+        error: function( jqXHR, textStatus, errorThrown ) {
+                   console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
+               }
+    } );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+            </p>
+          </div>
+          <p>
+            jQuery offers several higher-level functions which are short-hand for the more common uses of AJAX. These include:
+            <ul>
+              <li><code>$.get()</code></li>
+              <li><code>$.getJSON()</code></li>
+              <li><code>$.post()</code></li>
+              <li><code>$(element).load()</code></li>
+            </ul>
+          </p>
+        </div>
+      </div>
+
+      <h1>RESTful APIs</h1>
+      <div class="accordion h2">
+        <h2>CRUD</h2>
+        <div>
+          <p>
+            A <em>database</em> typically consists of one or more related collections of items. You can often imagine these as arrays of objects. In some <em>Database Management Systems</em> (<em>DBMS</em>s) (e.g. SQL), the collections are called <em>tables</em> and the items are called <em>records</em>. In other DBMSs (e.g. MongoDB), the items are called <em>documents</em>. I often refer to them generically as <em>items</em>. In traditional databases there is a <em>schema</em> that specifies the names, types, and other aspects of the <em>fields</em> (properties) of the records in each table. Some newer databases, often called <em>NoSQL</em> databases are more free-form, though it is a good idea to keep the data pretty consistent.
+          </p>
+          <p>
+            The acronym <em>CRUD</em> summarizes the four basic operations on a database. These operations are
+            <ul>
+              <li>Create</li>
+              <li>Read</li>
+              <li>Update</li>
+              <li>Delete</li>
+            </ul>
+            Typically create, update, and delete are done one item (record or document) at a time. While we sometimes read a single record, we often read a list of the items, perhaps matching the criteria of a query (search).
+          </p>
+          <p>
+            <em>REST</em> stands for <em>Representational State Transfer</em> which is a formal description of the architecture underlying HTTP. Web services are said to be <em>RESTful</em> if they map the CRUD operations to the methods as follows:
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>CRUD Operation</th>
+                <th>HTTP Method</th>
+                <th>URI</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Create</td>
+                <td>POST</td>
+                <td>Collection</td>
+              </tr>
+              <tr>
+                <td>Read</td>
+                <td>GET</td>
+                <td>Collection or Element</td>
+              </tr>
+              <tr>
+                <td>Update</td>
+                <td>PUT</td>
+                <td>Element</td>
+              </tr>
+              <tr>
+                <td>Delete</td>
+                <td>DELETE</td>
+                <td>Element</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            In a RESTful API, the URI for a collection is generally of the form <code>base_url/collection_name</code>, e.g. <code>https://example.com/movies</code>. The URI for an element is of the form <code>base_url/collection_name/ID</code>, e.g. <code>https://example.com/movies/5551212</code>.
+          </p>
+        </div>
+        <h2>Example</h2>
+        <div class="accordion h3">
+          <h3>Sample database</h3>
+          <div>
+            <p>
+              For this course I have set up a simple RESTful API to a <a href="https://www.mongodb.com/" target="_blank">MongoDB</a> database. There will be one collection for each of us. The name of your collection is your first initial plus your last name. For example, since my name is David Anderson, my collection is "danderson". MongoDB is a NoSQL database, so you can put any plain JavaScript objects in your collection.
+            </p>
+            <p>
+              Now let's see how each of the CRUD operations can be done using AJAX.
+            </p>
+          </div>
+          <h3>Create</h3>
+          <div>
+            <p>
+              Items are created using the <code>POST</code> method. Here is a simple form and the code that sets up the handler to submit the data:
+            </p>
+            <form>
+              <label>Name:
+                <input type="text" id="create-name" />
+              </label>
+              <label>Age:
+                <input type="number" id="create-age" />
+              </label>
+              <button type="button" id="create-submit">Submit</button>
+            </form>
+            <pre>
+$('#create-submit').off( );
+$('#create-submit').on( 'click', function( evt ) {
+    var collection = 'danderson'; //Use your own!
+    var name = $('#create-name').val();
+    var age = $('#create-age').val();
+    $.ajax( 'https://shielded-sea-3725.herokuapp.com/data-api/' + collection,
+    {
+        method: 'POST',
+        data: {
+                  name: name,
+                  age: age
+              },
+        success: function( data ) {
+                     console.log( 'Data received:', data );
+                 },
+        error: function( jqXHR, textStatus, errorThrown ) {
+                   console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
+               }
+    } );
+    evt.preventDefault( );
+} );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+            <p>
+              If you check the console, you will see that on success, the API returns the ID of the newly-created item. RESTful APIs differ in exactly what they return, but they should at least give you that.
+            </p>
+          </div>
+          <h3>Read</h3>
+          <div>
+            <p>
+              Items are read using the <code>GET</code> method. As mentioned earlier, there are two forms of reading: a list or a single item.
+            </p>
+            <div>
+              <p>
+                For a list, we use the collection URI:
+                <pre>
+var collection = 'danderson'; //Use your own!
+$.ajax( 'https://shielded-sea-3725.herokuapp.com/data-api/' + collection,
+{
+    method: 'GET',
+    success: function( data ) {
+                 console.log( 'Data received:', data );
+             },
+    error: function( jqXHR, textStatus, errorThrown ) {
+               console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
+           }
+} );
+                </pre>
+                <button type="button" class="runCode">Run</button>
+              </p>
+              <p>
+                For a full list, we don't need to supply any data in the request. For large collections, you wouldn't usually want to send the entire list. Consequently, most APIs provide ways to get just some of the items. For this API, you can specify how many items to skip and a limit on the number to return. I used these in the AJAX with jQuery section above. This allows you to "paginate" the list. First you would set <code>skip: 0</code> and <code>limit: 10</code>, say. You would then provide a button or other UI to allow the user to go to the next "page", with <code>skip: 10</code> and <code>limit: 10</code>. The fifth "page" would have <code>skip: 40</code> and <code>limit: 10</code>.
+              </p>
+            </div>
+            <div>
+              <p>
+                To read an individual item, you need to supply the ID. Here's a form where you can enter the ID and retrieve the item:
+              </p>
+              <form>
+                <label>ID:
+                  <input type="text" id="read-id" />
+                </label>
+                <button type="button" id="read-submit">Submit</button>
+              </form>
+              <pre>
+$('#read-submit').off( );
+$('#read-submit').on( 'click', function( evt ) {
+    var collection = 'danderson'; //Use your own!
+    var id = $('#read-id').val();
+    $.ajax( 'https://shielded-sea-3725.herokuapp.com/data-api/' + collection + '/' + id,
+    {
+        method: 'GET',
+        success: function( data ) {
+                     console.log( 'Data received:', data );
+                 },
+        error: function( jqXHR, textStatus, errorThrown ) {
+                   console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
+               }
+    } );
+    evt.preventDefault( );
+} );
+              </pre>
+              <button type="button" class="runCode">Run</button>
+              <p>
+                This is a bit artificial. In a real application, you would maintain the IDs behind the scenes and not concern the user with them.
+              </p>
+            </div>
+          </div>
+          <h3>Update</h3>
+          <div>
+            <p>
+              Updating, that is modifying an existing item, is done using the <code>PUT</code> method. You need to supply the ID in the URL and all of the properties of the object, not just the ones that change:
+            </p>
+            <form>
+              <label>ID:
+                <input type="text" id="update-id" />
+              </label>
+              <label>Name:
+                <input type="text" id="update-name" />
+              </label>
+              <label>Age:
+                <input type="number" id="update-age" />
+              </label>
+              <button type="button" id="update-submit">Submit</button>
+            </form>
+            <pre>
+$('#update-submit').off( );
+$('#update-submit').on( 'click', function( evt ) {
+    var collection = 'danderson'; //Use your own!
+    var id = $('#update-id').val();
+    var name = $('#update-name').val();
+    var age = $('#update-age').val();
+    $.ajax( 'https://shielded-sea-3725.herokuapp.com/data-api/' + collection + '/' + id,
+    {
+        method: 'PUT',
+        data: {
+                  name: name,
+                  age: age
+              },
+        success: function( data ) {
+                     console.log( 'Data received:', data );
+                 },
+        error: function( jqXHR, textStatus, errorThrown ) {
+                   console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
+               }
+    } );
+    evt.preventDefault( );
+} );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+            <p>
+              (Again, the user wouldn't actually enter the ID in a real Web app.)
+            </p>
+          </div>
+          <h3>Delete</h3>
+          <div>
+            <p>
+              To delete an item, we use the <code>DELETE</code> method and supply the ID in the URL:
+            </p>
+            <form>
+              <label>ID:
+                <input type="text" id="delete-id" />
+              </label>
+              <button type="button" id="delete-submit">Submit</button>
+            </form>
+            <pre>
+$('#delete-submit').off( );
+$('#delete-submit').on( 'click', function( evt ) {
+    var collection = 'danderson'; //Use your own!
+    var id = $('#delete-id').val();
+    $.ajax( 'https://shielded-sea-3725.herokuapp.com/data-api/' + collection + '/' + id,
+    {
+        method: 'DELETE',
+        success: function( data ) {
+                     console.log( 'Data received:', data );
+                 },
+        error: function( jqXHR, textStatus, errorThrown ) {
+                   console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
+               }
+    } );
+    evt.preventDefault( );
+} );
+            </pre>
+            <button type="button" class="runCode">Run</button>
+            <p>
+              (Again, the user wouldn't actually enter the ID in a real Web app.)
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <button type="button" id="accordionToggle"></button>
+
+    <script src="../lib/jquery-2.js"></script>
+    <script src="../lib/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="Lectures.js"></script>
+  </body>
+</html>
