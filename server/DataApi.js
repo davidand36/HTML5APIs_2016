@@ -158,7 +158,8 @@ module.exports = function( express ) {
     //=========================================================================
 
     function getCollection( collName ) {
-        if ( collName === 'danderson' ) {
+        var accounts = process.env.DATA_API_ACCOUNTS;
+        if ( accounts.indexOf( collName ) >= 0 ) {
             return database.collection( collName );
         } else {
             throw 'Invalid collection: ' + collName;
