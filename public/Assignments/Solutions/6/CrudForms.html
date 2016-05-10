@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>CRUD Forms</title>
+    <link rel="stylesheet" href="CrudForms.css">
+  </head>
+  <body>
+    <header>
+      <h1>CRUD Forms</h1>
+    </header>
+
+    <div id="error-message"></div>
+    
+    <h2>Create</h2>
+    <form>
+      <label>Name:
+        <input type="text" id="create-name" />
+      </label>
+      <label>Age:
+        <input type="number" id="create-age" />
+      </label>
+      <button type="submit" id="create-submit">Submit</button>
+    </form>
+    <div id="create-result"></div>
+
+    <h2>Read</h2>
+    <h3>List</h3>
+    <form>
+      <button type="submit" id="list-submit">List</button>
+    </form>
+    <div id="list-result"></div>
+
+    <h3>Single Item</h3>
+    <form>
+      <label>ID:
+        <input type="text" id="read-id" />
+      </label>
+      <button type="submit" id="read-submit">Submit</button>
+    </form>
+    <div id="read-result"></div>
+
+    <h2>Update</h2>
+    <form>
+      <label>ID:
+        <input type="text" id="update-id" />
+      </label>
+      <label>Name:
+        <input type="text" id="update-name" />
+      </label>
+      <label>Age:
+        <input type="number" id="update-age" />
+      </label>
+      <button type="submit" id="update-submit">Submit</button>
+    </form>
+    <div id="update-result"></div>
+
+    <h2>Delete</h2>
+    <form>
+      <label>ID:
+        <input type="text" id="delete-id" />
+      </label>
+      <button type="submit" id="delete-submit">Submit</button>
+    </form>
+    <div id="delete-result"></div>
+
+    <script src="/lib/jquery-2.js"></script>
+    <script src="CrudForms.js"></script>
+  </body>
+</html>
+
