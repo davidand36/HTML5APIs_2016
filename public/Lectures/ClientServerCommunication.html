@@ -242,10 +242,12 @@ $.ajax( 'https://shielded-sea-3725.herokuapp.com/data-api/danderson',
             <pre>
 $('#create-submit').off( );
 $('#create-submit').on( 'click', function( evt ) {
+    var baseUrl = 'https://shielded-sea-3725.herokuapp.com/data-api/';
     var collection = 'danderson'; //Use your own!
     var name = $('#create-name').val();
     var age = $('#create-age').val();
-    $.ajax( 'https://shielded-sea-3725.herokuapp.com/data-api/' + collection,
+
+    $.ajax( baseUrl + collection,
     {
         method: 'POST',
         data: {
@@ -276,8 +278,10 @@ $('#create-submit').on( 'click', function( evt ) {
               <p>
                 For a list, we use the collection URI:
                 <pre>
+var baseUrl = 'https://shielded-sea-3725.herokuapp.com/data-api/';
 var collection = 'danderson'; //Use your own!
-$.ajax( 'https://shielded-sea-3725.herokuapp.com/data-api/' + collection,
+
+$.ajax( baseUrl + collection,
 {
     method: 'GET',
     success: function( data ) {
@@ -307,9 +311,11 @@ $.ajax( 'https://shielded-sea-3725.herokuapp.com/data-api/' + collection,
               <pre>
 $('#read-submit').off( );
 $('#read-submit').on( 'click', function( evt ) {
+    var baseUrl = 'https://shielded-sea-3725.herokuapp.com/data-api/';
     var collection = 'danderson'; //Use your own!
     var id = $('#read-id').val();
-    $.ajax( 'https://shielded-sea-3725.herokuapp.com/data-api/' + collection + '/' + id,
+
+    $.ajax( baseUrl + collection + '/' + id,
     {
         method: 'GET',
         success: function( data ) {
@@ -348,11 +354,13 @@ $('#read-submit').on( 'click', function( evt ) {
             <pre>
 $('#update-submit').off( );
 $('#update-submit').on( 'click', function( evt ) {
+    var baseUrl = 'https://shielded-sea-3725.herokuapp.com/data-api/';
     var collection = 'danderson'; //Use your own!
     var id = $('#update-id').val();
     var name = $('#update-name').val();
     var age = $('#update-age').val();
-    $.ajax( 'https://shielded-sea-3725.herokuapp.com/data-api/' + collection + '/' + id,
+
+    $.ajax( baseUrl + collection + '/' + id,
     {
         method: 'PUT',
         data: {
@@ -388,9 +396,11 @@ $('#update-submit').on( 'click', function( evt ) {
             <pre>
 $('#delete-submit').off( );
 $('#delete-submit').on( 'click', function( evt ) {
+    var baseUrl = 'https://shielded-sea-3725.herokuapp.com/data-api/';
     var collection = 'danderson'; //Use your own!
     var id = $('#delete-id').val();
-    $.ajax( 'https://shielded-sea-3725.herokuapp.com/data-api/' + collection + '/' + id,
+
+    $.ajax( baseUrl + collection + '/' + id,
     {
         method: 'DELETE',
         success: function( data ) {
