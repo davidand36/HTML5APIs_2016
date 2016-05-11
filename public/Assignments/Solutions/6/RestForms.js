@@ -1,7 +1,7 @@
 /*
-  CrudForms.js
+  RestForms.js
 
-  Handles basic CRUD forms
+  Handles basic CRUD forms for RESTful API
 */
 
 (function() {
@@ -34,18 +34,22 @@ function createItem( evt ) {
                     name: name,
                     age: age
                 },
-                success: function( data ) {
-                    var msg;
-                    console.log( 'Data received:', data );
-                    if ( data.error ) {
-                        displayErrorMessage( data.error );
-                    } else {
-                        msg = 'Created ID=' + data.created;
-                        $('#create-result').html( msg );
-                    }
-                },
+                success: handleCreateResult,
                 error: handleAjaxError
             } );
+
+    //-------------------------------------------------------------------------
+
+    function handleCreateResult( data ) {
+        var msg;
+        console.log( 'Data received:', data );
+        if ( data.error ) {
+            displayErrorMessage( data.error );
+        } else {
+            msg = 'Created ID=' + data.created;
+            $('#create-result').html( msg );
+        }
+    }
 }
 
 //=============================================================================
@@ -57,26 +61,30 @@ function listItems( evt ) {
     $.ajax( baseUrl + collection,
             {
                 method: 'GET',
-                success: function( data ) {
-                    var msg;
-                    console.log( 'Data received:', data );
-                    if ( data.error ) {
-                        displayErrorMessage( data.error );
-                    } else {
-                        msg = '<ul>';
-                        data.forEach( function( item ) {
-                            msg += '<li>' +
-                                'ID: ' + item._id +
-                                '  Name: ' + item.name +
-                                '  Age: ' + item.age +
-                                '</li>';
-                        } );
-                        msg += '</ul>';
-                        $('#list-result').html( msg );
-                    }
-                },
+                success: handleListResult,
                 error: handleAjaxError
             } );
+
+    //-------------------------------------------------------------------------
+
+    function handleListResult( data ) {
+        var msg;
+        console.log( 'Data received:', data );
+        if ( data.error ) {
+            displayErrorMessage( data.error );
+        } else {
+            msg = '<ul>';
+            data.forEach( function( item ) {
+                msg += '<li>' +
+                    'ID: ' + item._id +
+                    '  Name: ' + item.name +
+                    '  Age: ' + item.age +
+                    '</li>';
+            } );
+            msg += '</ul>';
+            $('#list-result').html( msg );
+        }
+    }
 }
 
 //=============================================================================
@@ -90,20 +98,24 @@ function readItem( evt ) {
     $.ajax( baseUrl + collection + '/' + id,
             {
                 method: 'GET',
-                success: function( data ) {
-                    var msg;
-                    console.log( 'Data received:', data );
-                    if ( data.error ) {
-                        displayErrorMessage( data.error );
-                    } else {
-                        msg = 'ID: ' + data._id + '<br/>' +
-                            'Name: ' + data.name + '<br/>' +
-                            'Age: ' + data.age;
-                        $('#read-result').html( msg );
-                    }
-                },
+                success: handleReadResult,
                 error: handleAjaxError
             } );
+
+    //-------------------------------------------------------------------------
+
+    function handleReadResult( data ) {
+        var msg;
+        console.log( 'Data received:', data );
+        if ( data.error ) {
+            displayErrorMessage( data.error );
+        } else {
+            msg = 'ID: ' + data._id + '<br/>' +
+                'Name: ' + data.name + '<br/>' +
+                'Age: ' + data.age;
+            $('#read-result').html( msg );
+        }
+    }
 }
 
 //=============================================================================
@@ -123,18 +135,22 @@ function updateItem( evt ) {
                     name: name,
                     age: age
                 },
-                success: function( data ) {
-                    var msg;
-                    console.log( 'Data received:', data );
-                    if ( data.error ) {
-                        displayErrorMessage( data.error );
-                    } else {
-                        msg = 'Updated ID=' + data.updated;
-                        $('#update-result').html( msg );
-                    }
-                },
+                success: handleUpdateResult,
                 error: handleAjaxError
             } );
+
+    //-------------------------------------------------------------------------
+
+    function handleUpdateResult( data ) {
+        var msg;
+        console.log( 'Data received:', data );
+        if ( data.error ) {
+            displayErrorMessage( data.error );
+        } else {
+            msg = 'Updated ID=' + data.updated;
+            $('#update-result').html( msg );
+        }
+    }
 }
 
 //=============================================================================
@@ -148,18 +164,22 @@ function deleteItem( evt ) {
     $.ajax( baseUrl + collection + '/' + id,
             {
                 method: 'DELETE',
-                success: function( data ) {
-                    var msg;
-                    console.log( 'Data received:', data );
-                    if ( data.error ) {
-                        displayErrorMessage( data.error );
-                    } else {
-                        msg = 'Deleted ID=' + data.deleted;
-                        $('#delete-result').html( msg );
-                    }
-                },
+                success: handleDeleteResult,
                 error: handleAjaxError
             } );
+
+    //-------------------------------------------------------------------------
+
+    function handleDeleteResult( data ) {
+        var msg;
+        console.log( 'Data received:', data );
+        if ( data.error ) {
+            displayErrorMessage( data.error );
+        } else {
+            msg = 'Deleted ID=' + data.deleted;
+            $('#delete-result').html( msg );
+        }
+    }
 }
 
 //=============================================================================
