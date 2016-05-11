@@ -77,8 +77,8 @@ function listItems( evt ) {
             data.forEach( function( item ) {
                 msg += '<li>' +
                     'ID: ' + item._id +
-                    '  Name: ' + item.name +
-                    '  Age: ' + item.age +
+                    ',  Name: ' + item.name +
+                    ',  Age: ' + item.age +
                     '</li>';
             } );
             msg += '</ul>';
