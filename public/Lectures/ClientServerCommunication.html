@@ -136,15 +136,20 @@ $.ajax( 'https://shielded-sea-3725.herokuapp.com/data-api/danderson',
                   skip: 1,
                   limit: 2
               },
-        success: function( data ) {
-                     console.log( 'Data received:', data );
-                 },
-        error: function( jqXHR, textStatus, errorThrown ) {
-                   console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
-               }
+        success: function logListResult( data ) {
+            console.log( 'Data received:', data );
+        },
+        error: logAjaxError
     } );
+
+function logAjaxError( jqXHR, textStatus, errorThrown ) {
+    console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
+}
               </pre>
               <button type="button" class="runCode">Run</button>
+            </p>
+            <p>
+              Notice that you can use anonymous functions, like the <code>success</code> method here, or a named function, like the <code>error</code> method here.
             </p>
           </div>
           <p>
@@ -247,6 +252,8 @@ $('#create-submit').on( 'click', function( evt ) {
     var name = $('#create-name').val();
     var age = $('#create-age').val();
 
+    evt.preventDefault( );
+
     $.ajax( baseUrl + collection,
     {
         method: 'POST',
@@ -254,15 +261,18 @@ $('#create-submit').on( 'click', function( evt ) {
                   name: name,
                   age: age
               },
-        success: function( data ) {
-                     console.log( 'Data received:', data );
-                 },
-        error: function( jqXHR, textStatus, errorThrown ) {
-                   console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
-               }
+        success: logCreateResult,
+        error: logAjaxError
     } );
-    evt.preventDefault( );
 } );
+
+function logCreateResult( data ) {
+    console.log( 'Data received:', data );
+}
+
+function logAjaxError( jqXHR, textStatus, errorThrown ) {
+    console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
+}
             </pre>
             <button type="button" class="runCode">Run</button>
             <p>
@@ -284,13 +294,17 @@ var collection = 'danderson'; //Use your own!
 $.ajax( baseUrl + collection,
 {
     method: 'GET',
-    success: function( data ) {
-                 console.log( 'Data received:', data );
-             },
-    error: function( jqXHR, textStatus, errorThrown ) {
-               console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
-           }
+    success: logListResult,
+    error: logAjaxError
 } );
+
+function logListResult( data ) {
+    console.log( 'Data received:', data );
+}
+
+function logAjaxError( jqXHR, textStatus, errorThrown ) {
+    console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
+}
                 </pre>
                 <button type="button" class="runCode">Run</button>
               </p>
@@ -315,18 +329,23 @@ $('#read-submit').on( 'click', function( evt ) {
     var collection = 'danderson'; //Use your own!
     var id = $('#read-id').val();
 
+    evt.preventDefault( );
+
     $.ajax( baseUrl + collection + '/' + id,
     {
         method: 'GET',
-        success: function( data ) {
-                     console.log( 'Data received:', data );
-                 },
-        error: function( jqXHR, textStatus, errorThrown ) {
-                   console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
-               }
+        success: logReadResult,
+        error: logAjaxError
     } );
-    evt.preventDefault( );
 } );
+
+function logReadResult( data ) {
+    console.log( 'Data received:', data );
+}
+
+function logAjaxError( jqXHR, textStatus, errorThrown ) {
+    console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
+}
               </pre>
               <button type="button" class="runCode">Run</button>
               <p>
@@ -360,6 +379,8 @@ $('#update-submit').on( 'click', function( evt ) {
     var name = $('#update-name').val();
     var age = $('#update-age').val();
 
+    evt.preventDefault( );
+
     $.ajax( baseUrl + collection + '/' + id,
     {
         method: 'PUT',
@@ -367,15 +388,18 @@ $('#update-submit').on( 'click', function( evt ) {
                   name: name,
                   age: age
               },
-        success: function( data ) {
-                     console.log( 'Data received:', data );
-                 },
-        error: function( jqXHR, textStatus, errorThrown ) {
-                   console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
-               }
+        success: logUpdateResult,
+        error: logAjaxError
     } );
-    evt.preventDefault( );
 } );
+
+function logUpdateResult( data ) {
+    console.log( 'Data received:', data );
+}
+
+function logAjaxError( jqXHR, textStatus, errorThrown ) {
+    console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
+}
             </pre>
             <button type="button" class="runCode">Run</button>
             <p>
@@ -400,18 +424,23 @@ $('#delete-submit').on( 'click', function( evt ) {
     var collection = 'danderson'; //Use your own!
     var id = $('#delete-id').val();
 
+    evt.preventDefault( );
+
     $.ajax( baseUrl + collection + '/' + id,
     {
         method: 'DELETE',
-        success: function( data ) {
-                     console.log( 'Data received:', data );
-                 },
-        error: function( jqXHR, textStatus, errorThrown ) {
-                   console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
-               }
+        success: logDeleteResult,
+        error: logAjaxError
     } );
-    evt.preventDefault( );
 } );
+
+function logDeleteResult( data ) {
+    console.log( 'Data received:', data );
+}
+
+function logAjaxError( jqXHR, textStatus, errorThrown ) {
+    console.log( 'AJAX error. Status:', textStatus, 'error:', errorThrown );
+}
             </pre>
             <button type="button" class="runCode">Run</button>
             <p>
