@@ -1,8 +1,7 @@
 /*
   RestAppDataMgr.js
 
-  Manages the data, maintaining a copy in memory (as an object list),
-  and sending requests to Data API.
+  Manages the data, using the RESTful Data API.
 */
 
 var app = app || {};
@@ -130,9 +129,9 @@ app.dataMgr = (function() {
     function reportAjaxError( callback, jqXHR, textStatus, errorThrown ) {
         console.error( 'AJAX error. Status:', textStatus,
                        'error:', errorThrown );
-        onFailure( 'AJAX error <br/>' +
-                   'Status: ' + textStatus + '<br/>' +
-                   'Error: ' + errorThrown );
+        callback( 'AJAX error <br/>' +
+                  'Status: ' + textStatus + '<br/>' +
+                  'Error: ' + errorThrown );
     }
 
     //=========================================================================
