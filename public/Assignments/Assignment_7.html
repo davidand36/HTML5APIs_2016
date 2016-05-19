@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 APIs: Assignment 7</title>
+    <link rel="stylesheet" href="../list.css" />
+  </head>
+  <body>
+
+    <h1>HTML5 APIs Assignment 7: Local Storage</h1>
+
+    <p>
+      This week you will use <code>localStorage</code>. You have a choice: use <code>localStorage</code> for a simple setting or two entered by the user, or use it to store a local database for an app like the Object List and Rest Data API apps from earlier assignments.
+    </p>
+
+    <h2>Local Storage Settings</h2>
+    <p>
+      Create a Web page with two <code>div</code>s, one of which will be shown at a time. Call the first "hello-page" and the second "form-page".
+    </p>
+    <p>
+      The Hello page should have some text like "Hello, ", and a <code>span</code> where the user's name will be inserted. It should also have two buttons, one for editing the settings, and one for removing them.
+    </p>
+    <p>
+      The Form page will have a form for entering "settings". For this exercise, the only setting can be the user's name. The form might look like this: <br/>
+      <img src="LocalStorageSettingsForm.png" />
+    </p>
+    <p>
+      In your JavaScript, try to read the settings as <code>localStorage[ "LSS_Settings" ]</code>. If you get a string, use <code>JSON.parse()</code> to convert it into an object, say <code>settings</code>. If that object has a non-empty <code>name</code> property, show the Hello page and fill in the user's name. The screen might look like this: <br/>
+      <img src="LocalStorageSettingsHello.png" />
+    </p>
+    <p>
+      If the settings value you read is <code>undefined</code>, or has no <code>name</code> property, then show the Form page. When the user submits the form, update the <code>settings.name</code> property and use <code>JSON.stringify()</code> to make <code>settings</code> into a string and set <code>localStorage[ "LSS_Settings" ]</code> to that string to save it. Then show the Hello page.
+    </p>
+    <p>
+      As mentioned, the Hello page should have buttons for editing and removing the settings.
+    </p>
+
+    <hr />
+    <h2>REST App</h2>
+    <p>
+      Create a Web app like the one for the Object List assignment with a table for the items and a form for creating and editing them. The only difference is that instead of just keeping the database in an array in your app's memory, you will also use <code>localStorage</code> to store the data, reading from it at start-up and saving to it whenever data changes.
+    </p>
+    <p>
+      The table might look like this: <br/>
+      <img src="CrudAppTable.png" /> <br/>
+      Your form might look something like this: <br/>
+      <img src="CrudAppForm.png" />
+    </p>
+
+    <hr />
+    <p>
+      Use <a href="https://canvas.uw.edu/courses/1044441" target="_blank">Canvas</a> to submit the URL to your Web page.
+    </p>
+  </body>
+</html>
