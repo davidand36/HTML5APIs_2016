@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>LocalStorage Settings</title>
+    <link rel="stylesheet" href="RestApp.css">
+  </head>
+  <body>
+
+    <h1>LocalStorage Settings</h1>
+
+    <div id="hello-page">
+      <p>
+        Hello, <span class="show-name"></span>!
+      </p>
+      <button type="button" id="edit-settings">Edit Settings</button>
+      <button type="button" id="clear-settings">Clear Settings</button>
+    </div>
+
+
+    <div id="form-page" style="display:none">
+      <form>
+        <label for="name">Your name:</label>
+        <input type="text" id="name" />
+        <button type="submit" id="submit">Submit</button>
+      </form>
+    </div>
+
+    <script src="../../../lib/jquery-2.js"></script>
+    <script src="LocalStorageSettings.js"></script>
+  </body>
+</html>

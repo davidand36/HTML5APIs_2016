@@ -1,0 +1,21 @@
+/*
+  LocalStorageCrudApp.css
+*/
+
+
+#error-message {
+    background-color: tomato;
+}
+
+table {
+    margin-top: 1em;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 0.25em 1em;
+}
