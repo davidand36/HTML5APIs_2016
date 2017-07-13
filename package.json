@@ -21,7 +21,7 @@
     "url": "https://github.com/davidand36/HTML5APIs_2016/issues"
   },
   "engines": {
-    "node": "0.10.x"
+    "node": ">=8.1.4"
   },
   "homepage": "https://github.com/davidand36/HTML5APIs_2016",
   "dependencies": {
